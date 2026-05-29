@@ -1,4 +1,4 @@
-"""mirnan Clean API — Dedicated Field Engine Backend.
+"""mirnan_al_huroof Clean API — Dedicated Field Engine Backend.
 
 سيرفر خفيف لخدمة خاصية التجاذب والتنافر الفيزيائي للحروف.
 """
@@ -16,14 +16,14 @@ from typing import Optional, Dict, Any, List
 # تأكد من مسار المشروع
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-import model as mirnan_model
+import model as mirnan_al_huroof_model
 from src.physics import FieldEngine
 from src.physics.vector_interpreter import interpret_letter
 from src.physics.word_physics import get_letter_db
 from src.semantics.arabic_semantics import decompose_word_definition, LETTER_DEFINITIONS
 from src.semantics.letter_meanings import LETTER_RICH_MEANINGS
 
-app = FastAPI(title="Mirnan Clean API", description="Letter-Physics Attraction & Repulsion Engine")
+app = FastAPI(title="Mirnan Al-Huroof Clean API", description="Letter-Physics Attraction & Repulsion Engine")
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,8 +44,8 @@ def get_engine():
         raise HTTPException(status_code=503, detail="Model is loading, please retry in a moment")
     _loading = True
     try:
-        print("Loading mirnan vocabulary and building FieldEngine...")
-        vocab = mirnan_model.load_vocab()
+        print("Loading mirnan_al_huroof vocabulary and building FieldEngine...")
+        vocab = mirnan_al_huroof_model.load_vocab()
         engine = FieldEngine(vocab)
         return engine
     finally:
@@ -329,8 +329,8 @@ async def update_benchmark_words(request: BenchmarkUpdateRequest):
             
         # 2. تحديث كائن معجم المعايرة المصغر في الـ engine
         eng = get_engine()
-        import model as mirnan_model
-        eng.benchmark_vocab = mirnan_model.load_benchmark_vocab()
+        import model as mirnan_al_huroof_model
+        eng.benchmark_vocab = mirnan_al_huroof_model.load_benchmark_vocab()
         
         # 3. إعادة بناء المصفوفات الطورية
         eng.rebuild()
@@ -349,4 +349,4 @@ async def root():
     index_path = os.path.join(ui_dir, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    return {"message": "Mirnan Clean Field API is running. UI index.html not found."}
+    return {"message": "Mirnan Al-Huroof Clean Field API is running. UI index.html not found."}

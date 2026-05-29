@@ -1,11 +1,11 @@
 @echo off
-title Mirnan - Letter Physics Field Analyzer
+title Mirnan Al-Huroof - Letter Physics Field Analyzer
 cd /d "%~dp0"
 set PYTHONPATH=%~dp0
 
 echo.
 echo ==================================================
-echo        Mirnan - Letter Physics Field Analyzer
+echo        Mirnan Al-Huroof - Letter Physics Field Analyzer
 echo ==================================================
 echo.
 echo  1. Interactive Terminal (CLI)

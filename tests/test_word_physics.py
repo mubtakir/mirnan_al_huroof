@@ -7,7 +7,7 @@ from src.physics import (
 )
 from src.semantics.arabic_semantics import CharacterSemanticEmbedding
 
-class TestCleanMirnanPhysics:
+class TestCleanMirnan Al-HuroofPhysics:
     def test_phase_vector_shape(self):
         v = compute_word_phase_vector("علم")
         assert v.shape == (22,), f"Base phase vector shape should be (22,), got {v.shape}"

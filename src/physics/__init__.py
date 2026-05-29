@@ -1,4 +1,4 @@
-"""مرنان النظيف — فقط التجاذب والتنافر الفيزيائي للحروف.
+"""مرنان الحروف النظيف — فقط التجاذب والتنافر الفيزيائي للحروف.
 """
 from src.physics.constants import PHASE_DIM
 from src.physics.word_physics import (

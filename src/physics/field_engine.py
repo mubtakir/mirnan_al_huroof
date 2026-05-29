@@ -1,4 +1,4 @@
-"""محرك حقل الجذب والتنافر — مرنان النظيف.
+"""محرك حقل الجذب والتنافر — مرنان الحروف النظيف.
 
 يقوم بحساب التجاذب والتنافر الفيزيائي للكلمات بناءً على تشابه المتجهات الطورية لحروفها.
 يدعم الفضاءات الطورية الثلاثة:
@@ -74,8 +74,8 @@ def _is_valid_arabic_word(word: str) -> bool:
 class FieldEngine:
     def __init__(self, vocab):
         self.vocab = vocab
-        import model as mirnan_model
-        self.benchmark_vocab = mirnan_model.load_benchmark_vocab()
+        import model as mirnan_al_huroof_model
+        self.benchmark_vocab = mirnan_al_huroof_model.load_benchmark_vocab()
 
         self.all_pvs = None
         self.benchmark_pvs = None

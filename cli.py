@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""مرنان النظيف — واجهة الأوامر التفاعلية لحقل الجذب والتنافر.
+"""مرنان الحروف النظيف — واجهة الأوامر التفاعلية لحقل الجذب والتنافر.
 
 الاستخدام:
   python cli.py [الكلمة] [--space combined|physical|philosophical] [--k 15] [--interactive]
@@ -142,7 +142,7 @@ def print_letter_info(letter, engine=None):
 
 def interactive_loop(engine, space_type, top_k):
     print("\n" + "*" * 60)
-    print("      مرنان الفيزيائي — حلقة التحليل التفاعلي لحقل الحروف")
+    print("      مرنان الحروف الفيزيائي — حلقة التحليل التفاعلي لحقل الحروف")
     print("  اكتب الكلمة للتحليل، أو 'exit' للخروج.")
     print("  لتغيير الفضاء: /space [combined|physical|philosophical]")
     print("  لتغيير العدد: /k [5-30]")
@@ -251,7 +251,7 @@ def interactive_loop(engine, space_type, top_k):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="مرنان النظيف — تحليل حقل الجذب والتنافر للكلمات")
+    parser = argparse.ArgumentParser(description="مرنان الحروف النظيف — تحليل حقل الجذب والتنافر للكلمات")
     parser.add_argument('word', nargs='?', help="الكلمة المراد تحليل حقلها")
     parser.add_argument('--space', default='combined', choices=['combined', 'physical', 'philosophical'],
                         help="الفضاء الطوري للحساب (combined, physical, philosophical)")
