@@ -1,0 +1,3 @@
+Keys: ['letters', 'dim_names']
+dim_names: ['concentration', 'internal_external', 'stability_motion', 'density', 'temperature', 'time_accumulation', 'time_peak', 'time_discharge', 'motion_linear', 'motion_rotary', 'motion_pulse', 'motion_stretch', 'motion_slip', 'motion_air', 'axis_v', 'mass', 'hardness_solid', 'penetration', 'charge', 'reference_self', 'space_extensionality', 'time_causality']
+Sample letter ء: {'symbol': 'ء', 'operator': '+1', 'v': [1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1]}

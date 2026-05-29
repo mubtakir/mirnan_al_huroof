@@ -1,0 +1,7 @@
+=== Physical Phase Similarity ===
+علم <-> نور: +0.6068
+علم <-> ينير: -0.1062
+
+=== Philosophical Semantic Similarity ===
+علم <-> نور: +0.2233
+علم <-> ينير: +0.1115

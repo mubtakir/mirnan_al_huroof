@@ -1,0 +1,8 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+debug_*
+*.png
+*.bak
+*.log
+ram_state.json

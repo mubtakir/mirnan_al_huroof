@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: "PIDLM: Physics-Inspired Dynamical Language Model & Phase-Symbolic Hybrid Architecture"
+message: "If you use this software or theoretical architecture in your academic research, please cite it using the following metadata."
+type: software
+authors:
+  - given-names: Basil Yahya
+    family-names: Abdullah
+    affiliation: Filament Theory Founder
+  - given-names: Antigravity AI
+    affiliation: Google DeepMind
+repository-code: "https://github.com/basil-abdullah/pidlm"
+url: "https://github.com/basil-abdullah/pidlm"
+abstract: >-
+  A physics-inspired language modeling architecture that replaces probabilistic token sampling and Transformers with continuous non-linear differential equations (Kuramoto oscillators), enhanced by a Phase-Symbolic Hybrid bridge for exact mathematical and structural code generation.
+keywords:
+  - Physics-Inspired AI
+  - Kuramoto Oscillators
+  - Neuro-Symbolic AI
+  - Phase Pinning
+  - Hebbian Learning
+license: Apache-2.0
+version: 2.0.0
+date-released: "2026-05-18"

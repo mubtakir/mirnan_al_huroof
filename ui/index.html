@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرنان | حقل الجذب والتنافر الفيزيائي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- الخلفية التفاعلية -->
+    <div class="background-waves">
+        <div class="wave wave1"></div>
+        <div class="wave wave2"></div>
+        <div class="wave wave3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- الهيدر الرئيسي -->
+        <header class="app-header">
+            <div class="header-main">
+                <div class="logo-container">
+                    <i class="fa-solid fa-atom quantum-icon"></i>
+                    <div class="logo-text">
+                        <h1>مرنان <span>الفيزيائي</span></h1>
+                        <p>Acoustic-Semantic Wave Field Analyzer</p>
+                    </div>
+                </div>
+                <div class="info-badge">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>167,311 كلمة في المعجم</span>
+                </div>
+            </div>
+            
+            <!-- لوحة التحكم في الأبعاد والفضاءات -->
+            <div class="control-panel" id="analyzer-controls">
+                <div class="control-group">
+                    <label for="space-select"><i class="fa-solid fa-infinity"></i> الفضاء الطوري الحروفي:</label>
+                    <div class="select-wrapper">
+                        <select id="space-select">
+                            <option value="combined" selected>الطور المدمج الكامل (38 بُعداً)</option>
+                            <option value="physical">الطور المادي الأصواتي (22 بُعداً)</option>
+                            <option value="philosophical">الطور الفلسفي الدلالي (16 بُعداً)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="vocab-select"><i class="fa-solid fa-book"></i> قاعدة الكلمات:</label>
+                    <div class="select-wrapper">
+                        <select id="vocab-select">
+                            <option value="full" selected>المعجم الكامل (167K كلمة)</option>
+                            <option value="benchmark">معجم المعايرة المصغر (Benchmark)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group" style="flex: 0.4; min-width: 180px;">
+                    <label for="hebbian-toggle" style="cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-light); font-weight: 600;">
+                        <input type="checkbox" id="hebbian-toggle" checked style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
+                        <span>التعزيز السياقي (الهيبي)</span>
+                    </label>
+                </div>
+                
+                <div class="control-group">
+                    <label for="k-slider"><i class="fa-solid fa-list-ol"></i> عدد الكلمات المعروضة:</label>
+                    <div class="slider-wrapper">
+                        <input type="range" id="k-slider" min="5" max="30" step="5" value="15">
+                        <span id="k-value">15</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- منطقة العرض والتحليل مقسمة لعمودين -->
+        <main class="analysis-viewport">
+            <div class="viewport-container">
+                
+                <!-- العمود الأيمن: الشريط الجانبي للمعايرة والكلمات المصغرة -->
+                <aside class="sidebar-panel">
+                    <!-- لوحة اختيار الحروف -->
+                    <div class="letters-panel">
+                        <h3><i class="fa-solid fa-keyboard"></i> اختر الحرف للمعايرة:</h3>
+                        <div class="letters-selector" id="letters-selector-grid">
+                            <!-- تضاف ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- لوحة منزلقات الأبعاد -->
+                    <div class="sliders-panel">
+                        <div class="sliders-header">
+                            <h3><i class="fa-solid fa-sliders"></i> أبعاد الحرف: <span id="current-letter-title">-</span></h3>
+                            <div class="calibrator-actions">
+                                <button class="action-btn" id="apply-calibration-btn" title="تحديث مؤقت في الذاكرة ومزامنة شاشة العرض"><i class="fa-solid fa-bolt"></i> معايرة</button>
+                                <button class="action-btn save-btn" id="save-calibration-btn" title="حفظ نهائي إلى ملف JSON"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
+                            </div>
+                        </div>
+                        
+                        <div class="sliders-container" id="sliders-container-grid">
+                            <!-- منزلقات الأبعاد الـ 22 تضاف ديناميكياً -->
+                        </div>
+
+                        <!-- لوحة معاني الحرف وتفسير متجهه -->
+                        <div class="letter-interpretation-panel" id="letter-interpretation-panel" style="display:none;">
+                            <div class="interpretation-section">
+                                <h4><i class="fa-solid fa-lightbulb"></i> المعاني المتفرعة</h4>
+                                <div id="letter-rich-meanings"></div>
+                            </div>
+                            <div class="interpretation-section">
+                                <h4><i class="fa-solid fa-wave-square"></i> تفسير المتجه</h4>
+                                <div id="letter-vector-interp"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- مدير معجم المعايرة المصغر -->
+                    <div class="benchmark-manager">
+                        <h3><i class="fa-solid fa-list-check"></i> كلمات معجم المعايرة المصغر:</h3>
+                        <div class="benchmark-input-row">
+                            <input type="text" id="new-benchmark-word" placeholder="أدخل كلمة جديدة للرصد..." autocomplete="off">
+                            <button type="button" id="add-benchmark-btn" aria-label="إضافة"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div class="benchmark-words-list" id="benchmark-words-list-container">
+                            <!-- تضاف ديناميكياً مع أزرار حذف -->
+                        </div>
+                        <div class="benchmark-actions">
+                            <button class="action-btn save-btn" id="save-benchmark-btn" style="width: 100%; justify-content: center;"><i class="fa-solid fa-cloud-arrow-up"></i> حفظ معجم المعايرة نهائياً</button>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- العمود الأيسر: شاشة تحليل المجال ثنائية القطب -->
+                <section class="main-analysis-panel">
+                    <!-- مبدل الوضع: تحليل المجال / تفكيك دلالي -->
+                    <div class="mode-switcher">
+                        <button class="mode-btn active" data-mode="field" id="mode-field-btn">
+                            <i class="fa-solid fa-magnet"></i> قياس المجال
+                        </button>
+                        <button class="mode-btn" data-mode="define" id="mode-define-btn">
+                            <i class="fa-solid fa-microscope"></i> تفكيك دلالي
+                        </button>
+                    </div>
+
+                    <!-- موجه البداية -->
+                    <div class="welcome-box" id="welcome-box">
+                        <i class="fa-solid fa-compass-drafting wave-illustration"></i>
+                        <h2>استكشف الطبيعة الموجية للغة العربية</h2>
+                        <p>أدخل كلمة واحدة لفحص حقل طاقتها. سيقوم مرنان بقياس التوافق والتباعد الطوري لحروف الكلمة مع الكلمات المعروضة اعتماداً على البصمة الفيزيائية للحروف بدون أي تدريب إحصائي تقليدي.</p>
+                        
+                        <div class="quick-examples">
+                            <span>أمثلة سريعة:</span>
+                            <button class="example-btn">صبح</button>
+                            <button class="example-btn">عدل</button>
+                            <button class="example-btn">علم</button>
+                            <button class="example-btn">نور</button>
+                            <button class="example-btn">ظلم</button>
+                        </div>
+                    </div>
+
+                    <!-- لوحة النتائج (تظهر بعد الإدخال) -->
+                    <div class="results-grid" id="results-grid" style="display: none;">
+                        <!-- عمود التجاذب -->
+                        <section class="results-column attracted-column">
+                            <h3 class="column-title"><i class="fa-solid fa-circle-chevron-up"></i> حقل التجاذب (تآلف دلالي وفيزيائي)</h3>
+                            <div class="words-list" id="attracted-list">
+                                <!-- تضاف ديناميكياً -->
+                            </div>
+                        </section>
+
+                        <!-- عمود التنافر -->
+                        <section class="results-column repelled-column">
+                            <h3 class="column-title"><i class="fa-solid fa-circle-chevron-down"></i> حقل التنافر (تنافر دلالي وفيزيائي)</h3>
+                            <div class="words-list" id="repelled-list">
+                                <!-- تضاف ديناميكياً -->
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- لوحة التفكيك الدلالي (تظهر في وضع التعريف) -->
+                    <div class="define-results" id="define-results" style="display: none;">
+                        <h3 class="column-title"><i class="fa-solid fa-microscope"></i> تفكيك دلالي للحروف</h3>
+                        <div class="define-summary" id="define-summary"></div>
+                        <div class="define-letters-grid" id="define-letters-grid">
+                            <!-- تضاف ديناميكياً -->
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+
+        <!-- مؤشر التحميل -->
+        <div class="typing-indicator" id="loading-indicator" style="display: none;">
+            <span>جاري قياس التداخل الموجي في الفضاء الطوري</span>
+            <div class="dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- شريط الإدخال السفلي -->
+        <footer class="input-area">
+            <form id="analysis-form">
+                <div class="input-row">
+                    <input type="text" id="word-input" placeholder="أدخل كلمة واحدة باللغة العربية (مثال: علم)..." autocomplete="off" required>
+                    <button type="submit" id="analyze-btn" aria-label="تحليل">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span id="analyze-btn-text">قياس المجال</span>
+                    </button>
+                </div>
+                <div class="status-bar">
+                    <span id="status-text">جاهز لقياس الحقل</span>
+                    <span id="time-taken"></span>
+                </div>
+            </form>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

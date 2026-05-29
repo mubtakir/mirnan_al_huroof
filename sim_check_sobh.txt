@@ -1,0 +1,7 @@
+=== Physical Phase Similarity ===
+صبح <-> نهار: +0.5903
+صبح <-> ضوء: +0.4115
+
+=== Philosophical Semantic Similarity ===
+صبح <-> نهار: +0.2906
+صبح <-> ضوء: +0.6320
