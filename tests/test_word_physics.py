@@ -7,7 +7,7 @@ from src.physics import (
 )
 from src.semantics.arabic_semantics import CharacterSemanticEmbedding
 
-class TestCleanMirnan Al-HuroofPhysics:
+class TestCleanMirnanAlHuroofPhysics:
     def test_phase_vector_shape(self):
         v = compute_word_phase_vector("علم")
         assert v.shape == (22,), f"Base phase vector shape should be (22,), got {v.shape}"
@@ -41,3 +41,21 @@ class TestCleanMirnan Al-HuroofPhysics:
         # Verify score ascending order for repelled
         rep_scores = [score for _, score in res["repelled"]]
         assert rep_scores == sorted(rep_scores), "Repelled scores should be ascending"
+
+    def test_geometric_field_engine_results(self):
+        vocab = model.load_vocab()
+        engine = FieldEngine(vocab)
+        res = engine.find_attraction_repulsion("عدل", space_type="geometric", top_k=5)
+        
+        assert "attracted" in res and "repelled" in res
+        assert len(res["attracted"]) > 0, "Should return attracted words"
+        assert len(res["repelled"]) > 0, "Should return repelled words"
+        
+        # Verify score descending order for attracted
+        att_scores = [score for _, score in res["attracted"]]
+        assert att_scores == sorted(att_scores, reverse=True), "Attracted scores should be descending"
+
+        # Verify score ascending order for repelled
+        rep_scores = [score for _, score in res["repelled"]]
+        assert rep_scores == sorted(rep_scores), "Repelled scores should be ascending"
+

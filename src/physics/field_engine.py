@@ -180,23 +180,52 @@ class FieldEngine:
             words_list = self.words_list
             vocab = self.vocab
 
-        if space_type == "physical":
-            space_matrix_sliced = space_matrix[:, :PHYSICAL_DIM]
-            target_pv_sliced = target_pv[:PHYSICAL_DIM]
-        elif space_type == "philosophical":
-            space_matrix_sliced = space_matrix[:, PHYSICAL_DIM:]
-            target_pv_sliced = target_pv[PHYSICAL_DIM:]
+        if space_type == "geometric":
+            from src.physics.semantic_arithmetic import _get_word_mv
+            target_mv = _get_word_mv(target_word)
+            target_mv_norm = target_mv.norm()
+            if target_mv_norm < 1e-10:
+                return {"attracted": [], "repelled": []}
+                
+            # ترشيح خطي سريع لتسريع الحساب في المعاجم الضخمة
+            target_v = target_mv.v
+            target_v_norm = np.linalg.norm(target_v) + 1e-10
+            space_phys = space_matrix[:, :PHYSICAL_DIM]
+            phys_norms = np.linalg.norm(space_phys, axis=1)
+            phys_norms = np.maximum(phys_norms, 1e-10)
+            linear_sims = np.dot(space_phys, target_v) / (phys_norms * target_v_norm)
+            
+            sorted_idxs = np.argsort(linear_sims)
+            candidate_idxs = np.concatenate([sorted_idxs[:1500], sorted_idxs[-1500:]])
+            candidate_idxs = np.unique(candidate_idxs)
+            
+            similarities = np.zeros(len(words_list))
+            for idx in candidate_idxs:
+                w = words_list[idx]
+                w_clean = remove_diacritics(w)
+                if not w_clean:
+                    continue
+                w_mv = _get_word_mv(w_clean)
+                sim = (target_mv.s * w_mv.s + np.dot(target_mv.v, w_mv.v) + np.dot(target_mv.b, w_mv.b)) / (target_mv_norm * w_mv.norm() + 1e-10)
+                similarities[idx] = float(sim)
         else:
-            space_matrix_sliced = space_matrix
-            target_pv_sliced = target_pv
+            if space_type == "physical":
+                space_matrix_sliced = space_matrix[:, :PHYSICAL_DIM]
+                target_pv_sliced = target_pv[:PHYSICAL_DIM]
+            elif space_type == "philosophical":
+                space_matrix_sliced = space_matrix[:, PHYSICAL_DIM:]
+                target_pv_sliced = target_pv[PHYSICAL_DIM:]
+            else:
+                space_matrix_sliced = space_matrix
+                target_pv_sliced = target_pv
 
-        n_t = np.linalg.norm(target_pv_sliced)
-        if n_t < 1e-10:
-            return {"attracted": [], "repelled": []}
+            n_t = np.linalg.norm(target_pv_sliced)
+            if n_t < 1e-10:
+                return {"attracted": [], "repelled": []}
 
-        norms = np.linalg.norm(space_matrix_sliced, axis=1)
-        norms = np.maximum(norms, 1e-10)
-        similarities = np.dot(space_matrix_sliced, target_pv_sliced) / (norms * n_t)
+            norms = np.linalg.norm(space_matrix_sliced, axis=1)
+            norms = np.maximum(norms, 1e-10)
+            similarities = np.dot(space_matrix_sliced, target_pv_sliced) / (norms * n_t)
 
         scores = similarities.copy()
 
