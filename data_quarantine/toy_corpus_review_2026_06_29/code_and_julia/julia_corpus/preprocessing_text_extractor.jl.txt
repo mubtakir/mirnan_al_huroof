@@ -1,0 +1,144 @@
+"""
+المرحلة 1: استخراج النص الخام — TextExtractor.
+
+يستخرج النصوص من: HTML، Markdown، JSON، نصوص خام.
+يزيل: وسوم HTML، أكواد JavaScript/CSS، تنسيق Markdown، رموز تحكم.
+"""
+module TextExtractor
+
+export extract_text, strip_html_tags, strip_markdown, strip_json_text
+
+"""
+    extract_text(content::String; source::String="auto") -> String
+
+يستخرج النص النظيف من محتوى خام. source تُحدد نوع المصدر:
+- "auto": كشف تلقائي (إذا وجد <html> ← HTML، elif وجد ## ← Markdown، إلخ)
+- "html": معالجة HTML
+- "markdown": معالجة Markdown
+- "json": استخراج من JSON
+- "text": نصوص عادية (تمرير فقط)
+"""
+function extract_text(content::String; source::String="auto")
+    src = source
+    if src == "auto"
+        stripped_lower = lowercase(strip(content))[1:min(500, end)]
+        if occursin("<html", stripped_lower) || occursin("<div", stripped_lower) || occursin("<p", stripped_lower)
+            src = "html"
+        elseif occursin("```", stripped_lower) || occursin("## ", stripped_lower) || occursin("**", stripped_lower)
+            src = "markdown"
+        elseif startswith(strip(stripped_lower), "{") || startswith(strip(stripped_lower), "[")
+            src = "json"
+        else
+            src = "text"
+        end
+    end
+
+    if src == "html"
+        return strip_html_tags(content)
+    elseif src == "markdown"
+        return strip_markdown(content)
+    elseif src == "json"
+        return strip_json_text(content)
+    else
+        return content
+    end
+end
+
+"""
+    strip_html_tags(html::String) -> String
+
+ينزع وسوم HTML ويستخرج النص فقط:
+- يزيل <script>...</script> و <style>...</style> بالكامل
+- يستبدل <br> و <p> بأسطر جديدة
+- ينزع باقي الوسوم
+- يفك تشفير HTML entities: &amp; &lt; &gt; &nbsp; &#160; &quot;
+"""
+function strip_html_tags(html::String)
+    text = html
+    # إزالة كتل script و style بالكامل
+    text = replace(text, r"<script[^>]*>.*?</script>"si => "")
+    text = replace(text, r"<style[^>]*>.*?</style>"si => "")
+    # إزالة التعليقات
+    text = replace(text, r"<!--.*?-->"s => "")
+    # استبدال فواصل الأسطر
+    text = replace(text, r"<br\s*/?>"i => "\n")
+    text = replace(text, r"</?p[^>]*>"i => "\n")
+    text = replace(text, r"</?div[^>]*>"i => "\n")
+    text = replace(text, r"</?li[^>]*>"i => "\n")
+    # إزالة باقي الوسوم
+    text = replace(text, r"<[^>]+>" => "")
+    # فك ترميز HTML entities
+    text = replace(text, "&amp;" => "&")
+    text = replace(text, "&lt;" => "<")
+    text = replace(text, "&gt;" => ">")
+    text = replace(text, "&nbsp;" => " ")
+    text = replace(text, "&quot;" => "\"")
+    text = replace(text, "&#39;" => "'")
+    text = replace(text, r"&#\d+;" => "")
+    text = replace(text, r"&[a-z]+;"i => "")
+    # ضغط المسافات
+    text = replace(text, r"\n\s*\n" => "\n\n")
+    text = replace(text, r"[ \t]+" => " ")
+    return strip(text)
+end
+
+"""
+    strip_markdown(md_text::String) -> String
+
+ينزع تنسيق Markdown:
+- يزيل العناوين (## ### إلخ)
+- يزيل **bold** و *italic* (يحتفظ بالنص)
+- يزيل [links](urls) ← يحتفظ بنص الرابط فقط
+- يزيل أكواد ``` المضمنة
+- يزيل الصور ![]()
+- يزيل القوائم المرقمة والمنقطة
+"""
+function strip_markdown(md_text::String)
+    text = md_text
+    # إزالة كتل الأكواد
+    text = replace(text, r"```[^`]*```"s => "")
+    text = replace(text, r"`([^`]+)`" => s"\1")
+    # الصور قبل الروابط
+    text = replace(text, r"!\[([^\]]*)\]\([^)]+\)" => s"\1")
+    # الروابط: احتفظ بنص الرابط
+    text = replace(text, r"\[([^\]]*)\]\([^)]+\)" => s"\1")
+    # تنسيق bold/italic: احتفظ بالنص
+    text = replace(text, r"\*\*([^*]+)\*\*" => s"\1")
+    text = replace(text, r"\*([^*]+)\*" => s"\1")
+    text = replace(text, r"__([^_]+)__" => s"\1")
+    text = replace(text, r"_([^_]+)_" => s"\1")
+    # رموز العناوين
+    text = replace(text, r"^#{1,6}\s+"m => "")
+    # قوائم
+    text = replace(text, r"^\s*[-*+]\s+"m => "")
+    text = replace(text, r"^\s*\d+\.\s+"m => "")
+    # خطوط أفقية
+    text = replace(text, r"^[-*_]{3,}\s*$"m => "")
+    # اقتباسات
+    text = replace(text, r"^>\s?"m => "")
+    # جداول
+    text = replace(text, r"\|" => " ")
+    text = replace(text, r"^[-|:\s]+$"m => "")
+    return strip(text)
+end
+
+"""
+    strip_json_text(json_str::String) -> String
+
+يستخرج جميع القيم النصية من JSON.
+"""
+function strip_json_text(json_str::String)
+    # استخراج كل القيم النصية بين علامات التنصيص
+    texts = String[]
+    # نمط مبسط: كل "value" تُستخرج
+    for m in eachmatch(r"\"([^\"]{3,})\"", json_str)
+        val = m.captures[1]
+        # تجاهل المفاتيح التقنية والمسارات
+        if !occursin(r"^(http|www\.|[a-z]+://|#|/|[0-9]+$)", val) && length(val) >= 3
+            push!(texts, val)
+        end
+    end
+    return join(unique(texts), ". ")
+end
+
+end # module TextExtractor

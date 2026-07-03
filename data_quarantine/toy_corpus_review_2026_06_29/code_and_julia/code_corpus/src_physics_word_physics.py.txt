@@ -1,0 +1,388 @@
+"""Word Physics — فيزياء الكلمة في مرنان.
+
+تحويل الحروف إلى متجهات طورية عبر E = hf → m = E/c².
+تدعم: compute_word_phase_vector (22D), compute_extended_phase_vector (56D),
+compute_word_mass, compute_word_energy.
+تشمل DDE (تمدد بعدي ديناميكي) ودلالة فلسفية 16D.
+"""
+import re
+import numpy as np
+from src.physics.constants import PLANCK_H, LIGHT_SPEED_C, PHASE_DIM, ROOT_DIMS, EXTRA_DIMS, SYNTAX_DIMS, SEMANTIC_DIMS, POSITION_WEIGHTS
+from src.physics.letter_db import LetterDB
+from src.semantics.arabic_semantics import CharacterSemanticEmbedding
+
+def _resolve_symbol(word: str) -> str:
+    from src.semantics.mafahem_parser import get_concept, is_symbol
+    if is_symbol(word):
+        concept = get_concept(word)
+        if concept:
+            return concept
+    return word
+
+_semantic_embedding = None
+_config = None
+
+def _get_config():
+    global _config
+    if _config is None:
+        import os, yaml
+        project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        config_path = os.path.join(project_dir, 'config.yaml')
+        if os.path.exists(config_path):
+            try:
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    _config = yaml.safe_load(f) or {}
+            except Exception:
+                _config = {}
+        else:
+            _config = {}
+    return _config
+
+
+def get_semantic_embedding():
+    global _semantic_embedding
+    if _semantic_embedding is None:
+        _semantic_embedding = CharacterSemanticEmbedding(dim=SEMANTIC_DIMS)
+    return _semantic_embedding
+
+_NORMALIZE = str.maketrans({
+    '\u0622': '\u0627',  # آ → ا
+    '\u0623': '\u0627',  # أ → ا
+    '\u0625': '\u0627',  # إ → ا
+    '\u0624': '\u0648',  # ؤ → و
+    '\u0626': '\u064A',  # ئ → ي
+    '\u0629': '\u0647',  # ة → ه
+    '\u0649': '\u064A',  # ى → ي
+})
+
+_letter_db = None
+
+def get_letter_db():
+    global _letter_db
+    if _letter_db is None:
+        _letter_db = LetterDB()
+    return _letter_db
+
+
+def _normalize_letters(word: str) -> str:
+    return word.lower().translate(_NORMALIZE)
+
+
+def compute_word_frequency(word: str) -> float:
+    word = _resolve_symbol(word)
+    db = get_letter_db()
+    freqs = [db.get_omega_0(ch) for ch in _normalize_letters(word) if db.has(ch)]
+    if not freqs:
+        return 1.0
+    return float(np.sum(freqs))
+
+
+def compute_word_energy(word: str) -> float:
+    word = _resolve_symbol(word)
+    return PLANCK_H * compute_word_frequency(word)
+
+
+def compute_word_mass(word: str) -> float:
+    word = _resolve_symbol(word)
+    return compute_word_energy(word) / (LIGHT_SPEED_C ** 2)
+
+
+def compute_word_phase_vector(word: str, widen=1.0, pair_weight=0.0, weighted=False, method=None, vowel_modulation=None) -> np.ndarray:
+    """حساب المتجه الطوري 22D للكلمة.
+
+    Args:
+        word: الكلمة المدخلة
+        widen: عامل توسيع التباين (> 1.0 يزيد التباين)
+        pair_weight: وزن الأزواج المتجاورة لكسر تناظر التباديل (0.0 = معطل)
+        weighted: استخدام الترجيح الموضعي (فاء ×3.5، عين ×2.5، لام ×2.0 ...)
+        method: طريقة التوليف (linear, remnant, projection)
+        vowel_modulation: تفعيل تعديل الحركات بنصف قيمة حرف المد
+    """
+    word = _resolve_symbol(word)
+    cfg = _get_config().get('semantic_fusion', {})
+    
+    if method is None:
+        method = cfg.get('method', 'linear')
+    if vowel_modulation is None:
+        vowel_modulation = cfg.get('vowel_modulation', True)
+
+    if method in ("remnant", "projection"):
+        from src.physics.semantic_arithmetic import compute_compound_word_vector
+        result = compute_compound_word_vector(word, method=method)
+        if widen > 1.0:
+            result = np.sign(result) * np.abs(result) ** widen
+        return result
+
+    db = get_letter_db()
+    if vowel_modulation:
+        from src.physics.semantic_arithmetic import _get_modulated_letter_vectors
+        vectors = _get_modulated_letter_vectors(word, db)
+    else:
+        letters = _normalize_letters(word)
+        vectors = [db.get_vector(ch) for ch in letters if db.has(ch)]
+
+    if not vectors:
+        return np.zeros(PHASE_DIM)
+    n = len(vectors)
+    if n == 1:
+        result = vectors[0].copy()
+    elif weighted and n > 2:
+        weights = np.array([POSITION_WEIGHTS[i] if i < len(POSITION_WEIGHTS) else POSITION_WEIGHTS[-1]
+                           for i in range(n)])
+        vecs = np.array(vectors)
+        result = np.sum(vecs * weights[:, np.newaxis], axis=0) / np.sum(weights)
+    else:
+        result = np.mean(vectors, axis=0)
+
+    if pair_weight > 0 and n > 1:
+        pair_sum = np.zeros(PHASE_DIM)
+        for i in range(n - 1):
+            pair_sum += vectors[i] * vectors[i + 1]
+        pair_sum /= (n - 1)
+        result = result + pair_weight * pair_sum
+
+    nrm = np.linalg.norm(result)
+    if nrm > 1e-10:
+        result = result / nrm
+
+    if widen > 1.0:
+        result = np.sign(result) * np.abs(result) ** widen
+    return result
+
+
+def _compute_extra_dims(word: str) -> np.ndarray:
+    word = _resolve_symbol(word)
+    db = get_letter_db()
+    letters = _normalize_letters(word)
+    ops = []
+    for ch in letters:
+        if db.has(ch):
+            op = db.get_operator(ch)
+            if op == '+1': ops.append(1.0)
+            elif op == '-1': ops.append(-1.0)
+            else: ops.append(0.0)
+    op_score = sum(ops) / max(len(ops), 1) if ops else 0.0
+    wlen = min(len(letters) / 12.0, 1.0)
+    omega = compute_word_frequency(word)
+    freq_norm = min(omega / 15.0, 1.0)
+    energy = compute_word_energy(word)
+    energy_norm = min(energy / 15.0, 1.0)
+    op_var = np.var(ops) if len(ops) > 1 else 0.0
+    diversity = len(set(letters)) / max(len(letters), 1)
+    return np.array([op_score, wlen, freq_norm, energy_norm, op_var, diversity])
+
+
+_pragmatic_projection_matrix = None
+
+def get_pragmatic_projection_matrix():
+    global _pragmatic_projection_matrix
+    if _pragmatic_projection_matrix is None:
+        from src.physics.constants import PRAGMATIC_DIMS
+        db = get_letter_db()
+        vectors = [db.get_vector(ch) for ch in db.data if np.linalg.norm(db.get_vector(ch)) > 1e-10]
+        if len(vectors) >= PRAGMATIC_DIMS:
+            matrix = np.column_stack(vectors)
+            U, S, Vt = np.linalg.svd(matrix, full_matrices=False)
+            _pragmatic_projection_matrix = U[:, :PRAGMATIC_DIMS]
+        else:
+            _pragmatic_projection_matrix = np.eye(22, PRAGMATIC_DIMS)[:, :PRAGMATIC_DIMS]
+        _pragmatic_projection_matrix /= (np.linalg.norm(_pragmatic_projection_matrix, axis=0) + 1e-10)
+    return _pragmatic_projection_matrix
+
+_ROOT_PATTERNS = [
+    ("استفعال", [3, 4, 6]),
+    ("مستفعل", [3, 4, 5]),
+    ("استفعل", [3, 4, 5]),
+    ("انفعال", [2, 3, 5]),
+    ("افتعال", [1, 3, 5]),
+    ("مفاعيل", [1, 3, 5]),
+    ("مفاعلة", [1, 3, 4]),
+    ("مفاعل", [1, 3, 4]),
+    ("تفعيل", [1, 2, 4]),
+    ("تفاعل", [1, 3, 4]),
+    ("تفعّل", [1, 2, 4]),
+    ("مفعول", [1, 2, 4]),
+    ("فعائل", [0, 1, 4]),
+    ("فواعل", [0, 3, 4]),
+    ("أفعال", [1, 2, 4]),
+    ("إفعال", [1, 2, 4]),
+    ("أفعل", [1, 2, 3]),
+    ("مفعل", [1, 2, 3]),
+    ("فاعل", [0, 2, 3]),
+    ("فعال", [0, 1, 3]),
+    ("فعول", [0, 1, 3]),
+    ("فعيل", [0, 1, 3]),
+    ("فعلة", [0, 1, 2]),
+    ("يفعل", [1, 2, 3]),
+    ("تفعل", [1, 2, 3]),
+    ("نفعل", [1, 2, 3]),
+]
+
+_AUGMENTATION = set("سألتمونيها")
+_PREFIXES = ["و", "ف", "ب", "ل", "ك"]
+_DEF_ARTICLE = "ال"
+_ATTACHED = ["هم","هن","هما","ها","ه","ون","ين","ان","ات",
+             "كم","كن","كما","ك","تم","تن","تما","وا",
+             "نا","ني","ي","ت"]
+
+def _extract_root_light(word: str) -> list:
+    """استخراج الجذر من كلمة عربية بدون قاعدة بيانات خارجية."""
+    w = word
+    # إزالة التشكيل
+    w = ''.join(c for c in w if c not in "ًٌٍَُِّْـ")
+    # إزالة "ال"
+    if w.startswith(_DEF_ARTICLE) and len(w) > 4:
+        w = w[2:]
+    # إزالة السوابق
+    for _ in range(2):
+        for p in _PREFIXES:
+            if w.startswith(p) and len(w) > 4:
+                w = w[1:]
+                break
+    # إزالة اللواحق
+    for pr in sorted(_ATTACHED, key=len, reverse=True):
+        if w.endswith(pr) and len(w) > len(pr) + 2:
+            w = w[:-len(pr)]
+            break
+    # إزالة التاء المربوطة
+    if w.endswith("ة") and len(w) > 3:
+        w = w[:-1]
+    # مطابقة الأوزان الصرفية
+    for pat, indices in _ROOT_PATTERNS:
+        if len(w) == len(pat):
+            chars = []
+            match = True
+            for i in range(len(w)):
+                if i in indices:
+                    chars.append(w[i])
+                elif w[i] != pat[i] and w[i] in _AUGMENTATION:
+                    if pat[i] == 'ا' and w[i] in 'أإآويا':
+                        continue
+                    elif pat[i] == 'ء' and w[i] in 'ؤئء':
+                        continue
+                    else:
+                        match = False
+                        break
+                elif w[i] != pat[i]:
+                    match = False
+                    break
+            if match and len(chars) >= 3:
+                return chars[:4]
+    # تجريد حرفي: خذ أول 3-4 حروف مميزة
+    chars = []
+    seen = set()
+    for c in w:
+        if c not in _AUGMENTATION or len(chars) < 3:
+            if c not in seen or len(chars) < 3:
+                chars.append(c)
+                seen.add(c)
+        if len(chars) >= 4:
+            break
+    return chars[:4] if len(chars) >= 2 else [w[0]] if w else []
+
+
+def _compute_root_dims(word: str) -> np.ndarray:
+    """جذر الكلمة ← متجه 8D من حروف الجذر."""
+    root_chars = _extract_root_light(word)
+    if not root_chars:
+        return np.zeros(ROOT_DIMS)
+    db = get_letter_db()
+    vecs = []
+    for ch in root_chars:
+        v = db.get_vector(ch)
+        if np.linalg.norm(v) > 1e-10:
+            vecs.append(v[:2])
+        else:
+            vecs.append(np.zeros(2))
+    # إعادة تشكيل: كل حرف جذر → 2D
+    flat = np.concatenate(vecs)
+    if len(flat) < ROOT_DIMS:
+        flat = np.concatenate([flat, np.zeros(ROOT_DIMS - len(flat))])
+    else:
+        flat = flat[:ROOT_DIMS]
+    nrm = np.linalg.norm(flat)
+    if nrm > 1e-10:
+        flat /= nrm
+    return flat
+
+
+def compute_extended_phase_vector(word: str, widen=1.0, vocab=None, K=None, morpho=None, weighted=False) -> np.ndarray:
+    resolved_word = _resolve_symbol(word)
+    base = compute_word_phase_vector(resolved_word, widen=widen, weighted=weighted)
+    root = _compute_root_dims(resolved_word)
+    extra = _compute_extra_dims(resolved_word)
+    vec = np.concatenate([base, root, extra])
+    if vocab is not None and K is not None:
+        from src.physics.syntax_field import compute_syntax_vector
+        syn = compute_syntax_vector(resolved_word, vocab, K, morpho)
+        vec = np.concatenate([vec, syn])
+    else:
+        syn = np.zeros(SYNTAX_DIMS)
+        vec = np.concatenate([vec, syn])
+        
+    # إضافة التضمين الدلالي الفلسفي
+    sem_emb = get_semantic_embedding()
+    sem_vec = sem_emb.get_word_semantic_vector(resolved_word)
+    vec = np.concatenate([vec, sem_vec])
+    
+    # إضافة الفضاء القصدي (Pragmatic Dims)
+    syn_sem_concat = np.concatenate([syn, sem_vec])
+    prag_proj = get_pragmatic_projection_matrix()
+    prag_vec = np.dot(syn_sem_concat, prag_proj)
+    prag_norm = np.linalg.norm(prag_vec)
+    if prag_norm > 1e-10:
+        prag_vec /= prag_norm
+    vec = np.concatenate([vec, prag_vec])
+    
+    return vec
+
+
+def phase_similarity(v1: np.ndarray, v2: np.ndarray) -> float:
+    """حساب التشابه الطوري القياسي (Cosine Similarity) بدلاً من متوسط جيب التمام للفرق."""
+    n1 = np.linalg.norm(v1)
+    n2 = np.linalg.norm(v2)
+    if n1 < 1e-10 or n2 < 1e-10:
+        return 0.0
+    return float(np.dot(v1, v2) / (n1 * n2))
+
+
+def dress_phase_vector(word: str, context_words: list, alpha=0.3, widen=1.0) -> np.ndarray:
+    base = compute_word_phase_vector(word, widen=widen)
+    if not context_words:
+        return base
+    dress = np.zeros_like(base)
+    n = 0
+    for cw in context_words[-5:]:
+        cpv = compute_word_phase_vector(cw, widen=widen)
+        align = phase_similarity(base, cpv)
+        if align > 0.3:
+            direction = cpv / (np.linalg.norm(cpv) + 1e-10)
+            dress += align * direction
+            n += 1
+    if n > 0:
+        dress = alpha * dress / n
+    result = base + dress
+    norm = np.linalg.norm(result)
+    if norm > 1e-10:
+        result = result / norm
+    return result
+
+
+def dress_extended_phase_vector(word: str, context_words: list, alpha=0.3, widen=1.0) -> np.ndarray:
+    base = compute_extended_phase_vector(word, widen=widen)
+    if not context_words:
+        return base
+    dress = np.zeros_like(base)
+    n = 0
+    for cw in context_words[-5:]:
+        cpv = compute_extended_phase_vector(cw, widen=widen)
+        align = phase_similarity(base, cpv)
+        if align > 0.3:
+            direction = cpv / (np.linalg.norm(cpv) + 1e-10)
+            dress += align * direction
+            n += 1
+    if n > 0:
+        dress = alpha * dress / n
+    result = base + dress
+    return result
+

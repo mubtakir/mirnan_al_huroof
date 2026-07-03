@@ -1,0 +1,630 @@
+# core/advanced_inference_engine.py
+"""
+مُحرّك الاستنباط المتقدم (Advanced Inference Engine)
+للقارئ العربي في نموذج "القلم" (Al-Qalam) - الإصدار 3.0
+
+الميزات الجديدة:
+- استنباط الأزمنة والظروف الزمانية (Temporal Slots).
+- استنباط العلاقات الثنائية بين الكيانات (Binary Relations).
+- ربط الأحداث بالأماكن والأزمنة (Event Anchoring).
+- استخراج الأدوار الاجتماعية والمهنية (Social/Professional Roles).
+"""
+
+import re
+from typing import Dict, List, Optional, Tuple, Set
+from dataclasses import dataclass, field
+from datetime import datetime
+
+# ==============================================================================
+# 1. هياكل البيانات المتقدمة (Advanced Data Structures)
+# ==============================================================================
+
+@dataclass
+class TemporalInfo:
+    """معلومة زمانية مرتبطة بحدث أو كيان."""
+    expression: str          # النص الأصلي: "صباحاً"، "في العصر العباسي"
+    normalized: str          # صيغة موحدة: "morning"، "750-1258 CE"
+    type: str                # "time_of_day", "historical_period", "date", "duration"
+    precision: str           # "exact", "approximate", "range"
+
+@dataclass
+class BinaryRelation:
+    """علاقة ثنائية بين كيانين."""
+    source: str              # الكيان الأول
+    target: str              # الكيان الثاني
+    relation_type: str       # نوع العلاقة: "parent_of", "teacher_of", "owns", "located_in"
+    evidence: str            # الجملة التي استُنبطت منها
+    confidence: float        # درجة الثقة (0.0 - 1.0)
+
+@dataclass
+class Event:
+    """حدث مرتبط بزمان ومكان وفاعل."""
+    description: str
+    actor: Optional[str] = None
+    location: Optional[str] = None
+    time: Optional[TemporalInfo] = None
+    participants: List[str] = field(default_factory=list)
+
+@dataclass
+class EntityKnowledge:
+    """نسخة متطورة من معرفة الكيان."""
+    name: str
+    # --- طبقات المعرفة ---
+    attributes: List[str] = field(default_factory=list)       # كريم، شجاع
+    capabilities: List[str] = field(default_factory=list)     # يعمل، يصنع
+    roles: List[str] = field(default_factory=list)            # طبيب، قاضي، أب
+    workplace: Optional[str] = None                           # مستشفى، محكمة
+    locations: List[str] = field(default_factory=list)        # كل الأماكن
+    time_slots: List[TemporalInfo] = field(default_factory=list)  # الأزمنة المرتبطة
+    events: List[Event] = field(default_factory=list)         # الأحداث المرتبطة
+    relations_as_source: List[BinaryRelation] = field(default_factory=list)  # علاقات هو طرف أول فيها
+    relations_as_target: List[BinaryRelation] = field(default_factory=list)  # علاقات هو طرف ثانٍ فيها
+    inferred_relations: List[str] = field(default_factory=list)  # علاقات مستنبطة نصية
+
+# ==============================================================================
+# 2. 	 الأنماط المتقدمة (Advanced Patterns Library)
+# ==============================================================================
+
+class AdvancedDiscoursePattern:
+    """نمط خطابي متقدم مع دعم الاستخراج المنظم."""
+    def __init__(self, name: str, regex_pattern: str, inference_type: str, 
+                 sub_type: str = "", confidence: float = 0.9):
+        self.name = name
+        self.regex = re.compile(regex_pattern, re.IGNORECASE | re.VERBOSE)
+        self.inference_type = inference_type
+        self.sub_type = sub_type
+        self.confidence = confidence
+    
+    def extract(self, sentence: str) -> Optional[Dict]:
+        """محاولة مطابقة النمط مع الجملة."""
+        match = self.regex.search(sentence)
+        if match:
+            result = match.groupdict()
+            result['_pattern_name'] = self.name
+            result['_confidence'] = self.confidence
+            return result
+        return None
+
+# --- أنماط الزمان (Temporal Patterns) ---
+TEMPORAL_PATTERNS = [
+    # وقت من اليوم
+    AdvancedDiscoursePattern(
+        "وقت_اليوم_1",
+        r"(?:في\s+)?(?P<time>الصباح|المساء|الظهر|العصر|الليل|الفجر|الغروب)",
+        "temporal", "time_of_day", 0.95
+    ),
+    AdvancedDiscoursePattern(
+        "وقت_اليوم_2",
+        r"(?P<time>صباحاً|مساءً|ظهراً|عصراً|ليلاً|فجراً|غروباً)",
+        "temporal", "time_of_day", 0.95
+    ),
+    # حقبة تاريخية
+    AdvancedDiscoursePattern(
+        "حقبة_تاريخية_1",
+        r"(?:في|خلال|إبان)\s+(?:ال)?(?P<time>العصر\s+(?:العباسي|الأموي|العثماني|الجاهلي|الإسلامي|الحديث|القديم|الوسيط))",
+        "temporal", "historical_period", 0.85
+    ),
+    AdvancedDiscoursePattern(
+        "حقبة_تاريخية_2",
+        r"(?:في|خلال|سنة|عام)\s+(?P<time>\d{1,4}\s*(?:هـ|ق\.م|م)?)",
+        "temporal", "date", 0.90
+    ),
+    # مدة زمنية
+    AdvancedDiscoursePattern(
+        "مدة_زمنية_1",
+        r"(?:لمدة|مدة|طوال|طيلة)\s+(?P<time>[\u0621-\u063A\u0641-\u064A\s]+?(?:يوم|شهر|سنة|عام|أسبوع|قرن|دهر))",
+        "temporal", "duration", 0.85
+    ),
+    # ظرف زمان مع فعل
+    AdvancedDiscoursePattern(
+        "ظرف_زمان_فعل",
+        r"(?:عندما|حين|لما|إذ|بينما)\s+(?P<time>[\u0621-\u063A\u0641-\u064A\s]+?)\s+(?P<entity>[\u0621-\u063A\u0641-\u064A\s]+?)\s+(?P<action>ي[\u0621-\u063A\u0641-\u064A]+)",
+        "temporal", "event_time", 0.80
+    ),
+]
+
+# --- أنماط العلاقات (Relational Patterns) ---
+RELATIONAL_PATTERNS = [
+    # علاقة القرابة
+    AdvancedDiscoursePattern(
+        "قرابة_1",
+        r"(?P<entity1>[\u0621-\u063A\u0641-\u064A]+)\s+(?:هو|كان|يكون)\s+(?:ابن|أخو|أبو|عم|خال|جد|زوج|ابن\s+عم)\s+(?P<entity2>[\u0621-\u063A\u0641-\u064A]+)",
+        "relational", "kinship", 0.90
+    ),
+    AdvancedDiscoursePattern(
+        "قرابة_2",
+        r"(?P<entity2>[\u0621-\u063A\u0641-\u064A]+)\s+(?:ابن|أخو|أبو|عم|خال|جد|زوج)\s+(?P<entity1>[\u0621-\u063A\u0641-\u064A]+)",
+        "relational", "kinship", 0.85
+    ),
+    # علاقة التلمذة والتعليم
+    AdvancedDiscoursePattern(
+        "تعليم_1",
+        r"(?:تعلم|درس|تتلمذ)\s+(?P<entity1>[\u0621-\u063A\u0641-\u064A]+)\s+(?:على\s+يد|عند)\s+(?P<entity2>[\u0621-\u063A\u0641-\u064A]+)",
+        "relational", "teacher_student", 0.85
+    ),
+    AdvancedDiscoursePattern(
+        "تعليم_2",
+        r"(?P<entity2>[\u0621-\u063A\u0641-\u064A]+)\s+(?:علم|درب|لقن)\s+(?P<entity1>[\u0621-\u063A\u0641-\u064A]+)",
+        "relational", "teacher_student", 0.85
+    ),
+    # علاقة الملكية
+    AdvancedDiscoursePattern(
+        "ملكية_1",
+        r"(?P<entity1>[\u0621-\u063A\u0641-\u064A]+)\s+(?:يملك|يمتلك|لديه|عنده|له)\s+(?P<entity2>[\u0621-\u063A\u0641-\u064A]+(?:ة|ات)?)",
+        "relational", "ownership", 0.80
+    ),
+    # علاقة الصداقة والعداوة
+    AdvancedDiscoursePattern(
+        "صداقة_1",
+        r"(?P<entity1>[\u0621-\u063A\u0641-\u064A]+)\s+(?:صديق|صاحب|رفيق|جليس)\s+(?P<entity2>[\u0621-\u063A\u0641-\u064A]+)",
+        "relational", "friendship", 0.80
+    ),
+    AdvancedDiscoursePattern(
+        "عداوة_1",
+        r"(?P<entity1>[\u0621-\u063A\u0641-\u064A]+)\s+(?:عدو|خصم|غريم)\s+(?P<entity2>[\u0621-\u063A\u0641-\u064A]+)",
+        "relational", "enmity", 0.80
+    ),
+    # علاقة الموقع
+    AdvancedDiscoursePattern(
+        "موقع_1",
+        r"(?P<entity1>[\u0621-\u063A\u0641-\u064A]+)\s+(?:في|داخل|بـ)\s+(?P<entity2>[\u0621-\u063A\u0641-\u064A]+(?:ة|ات)?(?:ه|ها)?)",
+        "relational", "located_in", 0.75
+    ),
+]
+
+# --- أنماط الأدوار والمهن (Role Patterns) ---
+ROLE_PATTERNS = [
+    AdvancedDiscoursePattern(
+        "دور_مهني_1",
+        r"(?P<entity>[\u0621-\u063A\u0641-\u064A]+)\s+(?:هو|كان|يكون)\s+(?:ال)?(?P<role>طبيب|مهندس|قاض|معلم|تاجر|نجار|حداد|خياط|فلاح|صياد|كاتب|شاعر|فقيه|قارئ)",
+        "role", "professional", 0.90
+    ),
+    AdvancedDiscoursePattern(
+        "دور_مهني_2",
+        r"(?:ال)?(?P<role>طبيب|مهندس|قاض|معلم|تاجر|نجار)\s+(?P<entity>[\u0621-\u063A\u0641-\u064A]+)",
+        "role", "professional", 0.85
+    ),
+    AdvancedDiscoursePattern(
+        "دور_اجتماعي_1",
+        r"(?P<entity>[\u0621-\u063A\u0641-\u064A]+)\s+(?:هو|كان|يكون)\s+(?:ال)?(?P<role>أمير|وزير|ملك|خليفة|قائد|زعيم|شيخ|أستاذ)",
+        "role", "social", 0.90
+    ),
+]
+
+# ==============================================================================
+# 3. قاعدة المعرفة المتقدمة (Advanced Knowledge Base)
+# ==============================================================================
+
+class AdvancedKnowledgeBase:
+    """قاعدة معرفة متطورة تدعم كل أنواع الاستنباط."""
+    
+    def __init__(self):
+        self.entities: Dict[str, EntityKnowledge] = {}
+        self.events: List[Event] = []
+        self.relations: List[BinaryRelation] = []
+        self.temporal_expressions: List[TemporalInfo] = []
+        self.inference_log: List[Dict] = []
+    
+    def _clean_name(self, name: str) -> str:
+        """تنظيف وتوحيد أسماء الكيانات."""
+        if not name:
+            return ""
+        name = name.strip()
+        # إزالة أل التعريف للتوحيد
+        if name.startswith("ال") and len(name) > 3:
+            name = name[2:]
+        return name
+    
+    def get_or_create_entity(self, name: str) -> EntityKnowledge:
+        """استرجاع كيان أو إنشاؤه."""
+        clean = self._clean_name(name)
+        if clean not in self.entities:
+            self.entities[clean] = EntityKnowledge(name=name.strip())
+        return self.entities[clean]
+    
+    # === دوال إضافة المعرفة الجديدة ===
+    
+    def add_temporal_info(self, entity_name: str, temporal: TemporalInfo, pattern_name: str):
+        """إضافة معلومة زمانية لكيان."""
+        entity = self.get_or_create_entity(entity_name)
+        if temporal not in entity.time_slots:
+            entity.time_slots.append(temporal)
+            self.inference_log.append({
+                "type": "temporal",
+                "entity": self._clean_name(entity_name),
+                "value": temporal.expression,
+                "normalized": temporal.normalized,
+                "pattern": pattern_name
+            })
+    
+    def add_relation(self, source: str, target: str, relation_type: str, 
+                     evidence: str, confidence: float):
+        """إضافة علاقة ثنائية بين كيانين."""
+        source_clean = self._clean_name(source)
+        target_clean = self._clean_name(target)
+        
+        relation = BinaryRelation(
+            source=source_clean,
+            target=target_clean,
+            relation_type=relation_type,
+            evidence=evidence,
+            confidence=confidence
+        )
+        
+        self.relations.append(relation)
+        
+        # ربط الكيانين بالعلاقة
+        source_entity = self.get_or_create_entity(source)
+        target_entity = self.get_or_create_entity(target)
+        source_entity.relations_as_source.append(relation)
+        target_entity.relations_as_target.append(relation)
+        
+        self.inference_log.append({
+            "type": "relation",
+            "source": source_clean,
+            "target": target_clean,
+            "relation": relation_type,
+            "confidence": confidence,
+            "evidence": evidence
+        })
+    
+    def add_role(self, entity_name: str, role: str, pattern_name: str):
+        """إضافة دور أو مهنة لكيان."""
+        entity = self.get_or_create_entity(entity_name)
+        role_clean = role.strip()
+        if role_clean not in entity.roles:
+            entity.roles.append(role_clean)
+            self.inference_log.append({
+                "type": "role",
+                "entity": self._clean_name(entity_name),
+                "value": role_clean,
+                "pattern": pattern_name
+            })
+    
+    def add_event(self, event: Event):
+        """إضافة حدث مع ارتباطاته."""
+        self.events.append(event)
+        if event.actor:
+            actor = self.get_or_create_entity(event.actor)
+            actor.events.append(event)
+    
+    # === دوال الاستعلام والعرض ===
+    
+    def get_entity_relations(self, entity_name: str) -> List[BinaryRelation]:
+        """استرجاع كل علاقات كيان معين."""
+        clean = self._clean_name(entity_name)
+        entity = self.entities.get(clean)
+        if entity:
+            return entity.relations_as_source + entity.relations_as_target
+        return []
+    
+    def get_entities_with_attribute(self, attribute: str) -> List[str]:
+        """استرجاع الكيانات التي تمتلك صفة معينة."""
+        result = []
+        for name, entity in self.entities.items():
+            if attribute in entity.attributes:
+                result.append(name)
+        return result
+    
+    def find_relations_between(self, entity1: str, entity2: str) -> List[BinaryRelation]:
+        """البحث عن علاقات مباشرة بين كيانين."""
+        c1, c2 = self._clean_name(entity1), self._clean_name(entity2)
+        result = []
+        for rel in self.relations:
+            if (rel.source == c1 and rel.target == c2) or \
+               (rel.source == c2 and rel.target == c1):
+                result.append(rel)
+        return result
+    
+    def display_entity_profile(self, entity_name: str) -> str:
+        """عرض ملف كامل لكيان معين."""
+        clean = self._clean_name(entity_name)
+        entity = self.entities.get(clean)
+        if not entity:
+            return f"⚠️ الكيان '{entity_name}' غير موجود في القاعدة."
+        
+        lines = []
+        lines.append(f"\n{'='*50}")
+        lines.append(f"📋 ملف الكيان: {entity.name}")
+        lines.append(f"{'='*50}")
+        
+        if entity.attributes:
+            lines.append(f"  🏷️  الصفات: {', '.join(entity.attributes)}")
+        if entity.roles:
+            lines.append(f"  👔 الأدوار: {', '.join(entity.roles)}")
+        if entity.capabilities:
+            lines.append(f"  ⚡ القدرات: {', '.join(entity.capabilities)}")
+        if entity.workplace:
+            lines.append(f"  🏢 مكان العمل: {entity.workplace}")
+        if entity.locations:
+            lines.append(f"  📍 الأماكن: {', '.join(entity.locations)}")
+        if entity.time_slots:
+            times = [t.expression for t in entity.time_slots]
+            lines.append(f"  🕐 الأزمنة: {', '.join(times)}")
+        
+        # العلاقات
+        all_rels = entity.relations_as_source + entity.relations_as_target
+        if all_rels:
+            lines.append(f"  🔗 العلاقات ({len(all_rels)}):")
+            for rel in all_rels:
+                if rel.source == clean:
+                    lines.append(f"     → {rel.relation_type}: {rel.target} (ثقة: {rel.confidence:.0%})")
+                else:
+                    lines.append(f"     ← {rel.relation_type}: {rel.source} (ثقة: {rel.confidence:.0%})")
+        
+        # العلاقات المستنبطة
+        if entity.inferred_relations:
+            lines.append(f"  💡 استنباطات:")
+            for inf in entity.inferred_relations:
+                lines.append(f"     • {inf}")
+        
+        return '\n'.join(lines)
+    
+    def display_full_report(self) -> str:
+        """عرض تقرير كامل عن القاعدة المعرفية."""
+        lines = []
+        lines.append("\n" + "="*60)
+        lines.append("📚 تقرير قاعدة المعرفة المتقدمة")
+        lines.append("="*60)
+        
+        lines.append(f"\n🔢 إحصائيات:")
+        lines.append(f"   • عدد الكيانات: {len(self.entities)}")
+        lines.append(f"   • عدد العلاقات: {len(self.relations)}")
+        lines.append(f"   • عدد الأحداث: {len(self.events)}")
+        lines.append(f"   • عدد الاستنباطات: {len(self.inference_log)}")
+        
+        # عرض أبرز الكيانات
+        lines.append(f"\n🌟 أبرز الكيانات:")
+        for name, entity in sorted(self.entities.items(), 
+                                   key=lambda x: len(x[1].attributes) + len(x[1].relations_as_source), 
+                                   reverse=True)[:5]:
+            attr_count = len(entity.attributes)
+            rel_count = len(entity.relations_as_source) + len(entity.relations_as_target)
+            lines.append(f"   • {entity.name} ({attr_count} صفات, {rel_count} علاقات)")
+        
+        # عرض أنواع العلاقات
+        if self.relations:
+            rel_types = set(r.relation_type for r in self.relations)
+            lines.append(f"\n🔗 أنواع العلاقات المكتشفة:")
+            for rt in sorted(rel_types):
+                count = sum(1 for r in self.relations if r.relation_type == rt)
+                lines.append(f"   • {rt}: {count}")
+        
+        # عرض الكيانات حسب الدور
+        roles_map: Dict[str, List[str]] = {}
+        for name, entity in self.entities.items():
+            for role in entity.roles:
+                if role not in roles_map:
+                    roles_map[role] = []
+                roles_map[role].append(entity.name)
+        
+        if roles_map:
+            lines.append(f"\n👔 الكيانات حسب الأدوار:")
+            for role, entities in sorted(roles_map.items()):
+                lines.append(f"   • {role}: {', '.join(entities)}")
+        
+        return '\n'.join(lines)
+
+# ==============================================================================
+# 4. المحرك المتقدم (Advanced Inference Engine)
+# ==============================================================================
+
+class AdvancedInferenceEngine:
+    """المحرك الرئيسي الذي يدمج كل أنواع الاستنباط."""
+    
+    def __init__(self):
+        self.kb = AdvancedKnowledgeBase()
+        self.all_patterns = (TEMPORAL_PATTERNS + RELATIONAL_PATTERNS + ROLE_PATTERNS)
+    
+    def _normalize_temporal(self, expression: str, t_type: str) -> TemporalInfo:
+        """تطبيع التعبير الزماني إلى صيغة موحدة."""
+        normalized = expression
+        
+        if t_type == "time_of_day":
+            time_map = {
+                "الصباح": "morning", "صباحاً": "morning",
+                "المساء": "evening", "مساءً": "evening",
+                "الليل": "night", "ليلاً": "night",
+                "الظهر": "noon", "ظهراً": "noon",
+                "العصر": "afternoon", "عصراً": "afternoon",
+                "الفجر": "dawn", "فجراً": "dawn",
+            }
+            normalized = time_map.get(expression, expression)
+        
+        elif t_type == "historical_period":
+            period_map = {
+                "العصر العباسي": "Abbasid Era (750-1258 CE)",
+                "العصر الأموي": "Umayyad Era (661-750 CE)",
+                "العصر العثماني": "Ottoman Era (1299-1922 CE)",
+                "العصر الجاهلي": "Pre-Islamic Era",
+            }
+            normalized = period_map.get(expression, expression)
+        
+        return TemporalInfo(
+            expression=expression,
+            normalized=normalized,
+            type=t_type,
+            precision="approximate"
+        )
+    
+    def _map_relation_type(self, sub_type: str) -> str:
+        """تحويل نوع العلاقة الفرعي إلى نوع موحد."""
+        mapping = {
+            "kinship": "قرابة",
+            "teacher_student": "تعليم",
+            "ownership": "ملكية",
+            "friendship": "صداقة",
+            "enmity": "عداوة",
+            "located_in": "موقع",
+        }
+        return mapping.get(sub_type, sub_type)
+    
+    def analyze_sentence(self, sentence: str) -> List[Dict]:
+        """تحليل جملة واحدة بكل الأنماط المتاحة."""
+        sentence = sentence.strip()
+        results = []
+        
+        for pattern in self.all_patterns:
+            extracted = pattern.extract(sentence)
+            if not extracted:
+                continue
+            
+            result = {
+                "sentence": sentence,
+                "pattern": pattern.name,
+                "type": pattern.inference_type,
+                "sub_type": pattern.sub_type,
+                "confidence": pattern.confidence,
+            }
+            
+            # === تطبيق الاستنباط حسب النوع ===
+            
+            if pattern.inference_type == "temporal":
+                time_expr = extracted.get('time', '')
+                if time_expr:
+                    temporal_info = self._normalize_temporal(time_expr, pattern.sub_type)
+                    entity = extracted.get('entity', 'الراوي')
+                    if entity:
+                        self.kb.add_temporal_info(entity, temporal_info, pattern.name)
+                    result["action"] = f"زمن: '{time_expr}' ({temporal_info.normalized})"
+            
+            elif pattern.inference_type == "relational":
+                entity1 = extracted.get('entity1', '')
+                entity2 = extracted.get('entity2', '')
+                if entity1 and entity2:
+                    rel_type = self._map_relation_type(pattern.sub_type)
+                    self.kb.add_relation(entity1, entity2, rel_type, 
+                                         sentence, pattern.confidence)
+                    result["action"] = f"علاقة {rel_type}: {entity1} ←→ {entity2}"
+            
+            elif pattern.inference_type == "role":
+                entity = extracted.get('entity', '')
+                role = extracted.get('role', '')
+                if entity and role:
+                    self.kb.add_role(entity, role, pattern.name)
+                    result["action"] = f"دور: '{entity}' هو '{role}'"
+            
+            results.append(result)
+        
+        return results
+    
+    def analyze_sentences(self, sentences: List[str]) -> AdvancedKnowledgeBase:
+        """تحليل قائمة جمل كاملة."""
+        print("🔄 جارٍ تحليل الجمل (الزمان، العلاقات، الأدوار)...\n")
+        
+        for i, sentence in enumerate(sentences, 1):
+            print(f"  [{i}] 📝 {sentence}")
+            results = self.analyze_sentence(sentence)
+            if results:
+                for res in results:
+                    icon = {"temporal": "🕐", "relational": "🔗", "role": "👔"}.get(res['type'], "📌")
+                    print(f"       {icon} [{res['sub_type']}] {res['action']} (ثقة: {res['confidence']:.0%})")
+            else:
+                print(f"       ⚠️ لا يوجد استنباط متقدم.")
+        
+        return self.kb
+
+# ==============================================================================
+# 5. واجهة الاستخدام الموحدة (Unified Interface)
+# ==============================================================================
+
+# استيراد المحركات الأساسية والمتقدمة معاً
+try:
+    from core.contextual_inference_engine import InferenceEngine as BasicInferenceEngine
+    from core.discourse_segmenter import segment_to_list
+except ImportError:
+    BasicInferenceEngine = None
+    
+    def segment_to_list(text: str) -> List[str]:
+        sentences = re.split(r'(?<=[.!؟])\s+', text)
+        return [s.strip() for s in sentences if s.strip()]
+
+def deep_understand(text: str, use_advanced: bool = True) -> AdvancedKnowledgeBase:
+    """
+    واجهة الفهم العميق الكامل:
+    1. تفكيك النص إلى جمل.
+    2. استنباط أساسي (صفات، قدرات، أماكن).
+    3. استنباط متقدم (أزمنة، علاقات، أدوار).
+    """
+    print("\n" + "="*60)
+    print("🧠 نظام الفهم العميق - نموذج القلم 3.0")
+    print("="*60)
+    
+    # الخطوة 1: التفكيك
+    print("\n✂️ تفكيك النص...")
+    sentences = segment_to_list(text)
+    print(f"   ✅ {len(sentences)} جملة\n")
+    
+    # الخطوة 2: الاستنباط الأساسي (إذا كان متاحاً)
+    if BasicInferenceEngine:
+        print("📦 تشغيل الاستنباط الأساسي (صفات، قدرات، أماكن)...")
+        basic_engine = BasicInferenceEngine()
+        # نستخدم نفس قاعدة المعرفة المتقدمة
+        for sentence in sentences:
+            basic_engine.analyze_sentence(sentence)
+        print("   ✅ اكتمل الاستنباط الأساسي\n")
+    
+    # الخطوة 3: الاستنباط المتقدم
+    if use_advanced:
+        print("🚀 تشغيل الاستنباط المتقدم (أزمنة، علاقات، أدوار)...")
+        advanced_engine = AdvancedInferenceEngine()
+        kb = advanced_engine.analyze_sentences(sentences)
+    else:
+        kb = AdvancedKnowledgeBase()
+    
+    # الخطوة 4: عرض التقرير
+    print(kb.display_full_report())
+    
+    return kb
+
+# ==============================================================================
+# 6. اختبار ذاتي شامل (Comprehensive Self-Test)
+# ==============================================================================
+if __name__ == "__main__":
+    test_text = """
+    يظهر من هذا أن الرجل كريم.
+    يتضح من كلامه أن الولد شجاع.
+    ولما كان الرجل يعمل في 	.
+    عندما كان الطبيب يعالج في المستشفى صباحاً.
+    مما يدل على أن التاجر أمين.
+    حين كان النجار يصنع في الورشة.
+    الحقيقة أن القاضي عادل.
+    هذا يعني أن المعلم صبور.
+    تعلم الفتى على يد الأستاذ في العصر العباسي.
+    الأمير هو ابن الملك.
+    زيد صديق عمرو.
+    الطبيب يملك عيادة.
+    """
+    
+    print("\n" + "="*60)
+    print("📜 النص الأصلي للاختبار:")
+    print("="*60)
+    print(test_text.strip())
+    
+    # تشغيل الفهم العميق
+    kb = deep_understand(test_text)
+    
+    # عرض ملفات كيانات محددة
+    print("\n" + "="*60)
+    print("🔍 ملفات كيانات مختارة:")
+    print("="*60)
+    
+    for entity_name in ["الطبيب", "الملك", "الرجل", "الفتى"]:
+        print(kb.display_entity_profile(entity_name))
+    
+    # اختبار الاستعلامات
+    print("\n" + "="*60)
+    print("🔎 اختبار الاستعلامات:")
+    print("="*60)
+    
+    print("\n• الكيانات التي تمتلك صفة 'كريم':")
+    print(f"  → {kb.get_entities_with_attribute('كريم')}")
+    
+    print("\n• العلاقات بين 'الفتى' و'الأستاذ':")
+    rels = kb.find_relations_between("الفتى", "الأستاذ")
+    for r in rels:
+        print(f"  → {r.relation_type}: {r.source} ←→ {r.target} (ثقة: {r.confidence:.0%})")
+    
+    print("\n• سجل الاستنباطات الكامل:")
+    for i, log in enumerate(kb.inference_log, 1):
+        print(f"  {i}. [{log.get('type', '?')}] {log}")

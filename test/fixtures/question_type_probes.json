@@ -1,0 +1,116 @@
+{
+  "planner_probes": [
+    {
+      "type": "هل",
+      "prompt": "هل العدل يحفظ السلام؟",
+      "intent": "yesno",
+      "contains": ["العدل", "السلام"]
+    },
+    {
+      "type": "لماذا",
+      "prompt": "لماذا يزيد العلم الفهم؟",
+      "intent": "causal",
+      "contains": ["العلم", "الفهم"]
+    },
+    {
+      "type": "كيف",
+      "prompt": "كيف يزيل السلام الخوف؟",
+      "intent": "mechanism",
+      "contains": ["السلام", "الخوف"]
+    },
+    {
+      "type": "ما معنى",
+      "prompt": "ما معنى السلام؟",
+      "intent": "definition",
+      "contains": []
+    },
+    {
+      "type": "ما الفرق",
+      "prompt": "ما الفرق بين السلام والخوف؟",
+      "intent": "difference",
+      "contains": ["السلام", "الخوف"]
+    },
+    {
+      "type": "أين",
+      "prompt": "أين موضع السلام؟",
+      "intent": "spatial",
+      "contains": ["السلام"]
+    },
+    {
+      "type": "متى",
+      "prompt": "متى يظهر الفهم؟",
+      "intent": "temporal",
+      "contains": ["الفهم"]
+    },
+    {
+      "type": "إذا",
+      "prompt": "إذا زاد العلم زاد الفهم",
+      "intent": "conditional",
+      "contains": ["العلم", "الفهم"]
+    },
+    {
+      "type": "كلما",
+      "prompt": "كلما زاد العلم زاد الفهم",
+      "intent": "conditional",
+      "contains": ["العلم", "الفهم"]
+    }
+  ],
+  "generation_probes": [
+    {
+      "type": "هل",
+      "prompt": "هل العدل يحفظ السلام؟",
+      "polarity": "positive",
+      "required": ["العدل", "السلام"],
+      "forbidden": ["وعليكم"]
+    },
+    {
+      "type": "هل",
+      "prompt": "هل السلام يحفظ العدل؟",
+      "polarity": "negative",
+      "required": ["السلام", "العدل"],
+      "forbidden": ["وعليكم"]
+    },
+    {
+      "type": "لماذا",
+      "prompt": "لماذا يزيد العلم الفهم؟",
+      "mode": "explain",
+      "required": ["العلم", "الفهم"],
+      "forbidden": ["نعم،", "لا،"]
+    },
+    {
+      "type": "كيف",
+      "prompt": "كيف يزيل السلام الخوف؟",
+      "mode": "explain",
+      "required": ["السلام", "الخوف"],
+      "forbidden": ["وعليكم"]
+    },
+    {
+      "type": "ما الفرق",
+      "prompt": "ما الفرق بين السلام والخوف؟",
+      "mode": "contrast",
+      "required": ["السلام", "الخوف"],
+      "forbidden": ["وعليكم"]
+    },
+    {
+      "type": "ما الفرق",
+      "prompt": "ما الفرق بين العدل والرحمة؟",
+      "mode": "contrast",
+      "required": ["العدل", "الرحمة"],
+      "forbidden": ["وعليكم"]
+    },
+    {
+      "type": "ما الفرق",
+      "prompt": "ما الفرق بين العلم والفهم؟",
+      "mode": "contrast",
+      "required": ["العلم", "الفهم"],
+      "forbidden": ["ضياء يكشف", "النور", "وعليكم"]
+    },
+    {
+      "type": "ما معنى",
+      "prompt": "ما معنى السلام؟",
+      "mode": "definition",
+      "required": ["السلام"],
+      "forbidden": ["وعليكم"]
+    }
+  ]
+}

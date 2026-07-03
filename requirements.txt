@@ -1,5 +1,0 @@
-numpy
-fastapi
-uvicorn
-pydantic
-pytest

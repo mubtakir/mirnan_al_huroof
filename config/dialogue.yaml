@@ -1,0 +1,16 @@
+# ═══ المعاملات الحوارية ═══
+scoring_weights:
+  dialogue: 3.0
+  dialogue_gravity: 2.5
+  dialogue_spectral: 2.0
+  intent_align: 3.0
+  associative_plan: 3.5
+  entity_align: 2.0
+  plan_fidelity: 3.0
+  architect: 3.0
+  trajectory: 1.5
+  hierarchical: 1.5
+  intent_landscape: 1.5
+  trace: 0.8
+  ram_plan: 1.5
+  relational: 1.0

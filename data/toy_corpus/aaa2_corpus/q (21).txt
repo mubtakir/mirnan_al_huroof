@@ -1,0 +1,236 @@
+Instruction: اكتب دالة لـ جمع رقمين.
+
+Response: model.learnlogicconcept("Add", {"run": "def run(a, b): return a + b"})
+Instruction: تعلم مفهوم جديد اسمه 'روبوت'.
+
+Response: model.learn_concept("Robot", ["Terminator"])
+Instruction: Write a function to check if even.
+
+Response: model.learnlogicconcept("IsEven", {"run": "def run(n): return n % 2 == 0"})
+Instruction: علم الذكاء الاصطناعي أن 'Blue' هو نوع من لون.
+
+Response: model.learn_concept("Color", ["Blue"])
+Instruction: Learn a new concept called 'Planet'.
+
+Response: model.learn_concept("Planet", ["Venus"])
+Instruction: علم الذكاء الاصطناعي أن 'Search' هو نوع من خوارزمية.
+
+Response: model.learn_concept("Algorithm", ["Search"])
+Instruction: Write a function to greet user.
+
+Response: model.learnlogicconcept("Greet", {"run": "def run(name): return f'Hello {name}'"})
+Instruction: New Memory: Fruit -> Orange
+Response: model.learn_concept("Fruit", ["Orange"])
+Instruction: تعلم مفهوم جديد اسمه 'خوارزمية'.
+
+Instruction: Teach the AI that 'Anger' is a Emotion.
+
+Response: model.learn_concept("Emotion", ["Anger"])
+Response: model.learn_concept("Planet", ["Mars"])
+Response: model.learn_concept("Robot", ["R2D2"])
+Instruction: Teach the AI that 'Red' is a Color.
+
+Response: model.learn_concept("Color", ["Red"])
+Instruction: Write a function to add two numbers.
+
+Instruction: عرف مفهموم كوكب بمثال Mars.
+
+Instruction: Learn a new concept called 'Robot'.
+
+Instruction: عرف مفهموم لون بمثال Red.
+
+Instruction: New Memory: Emotion -> Anger
+Instruction: ذاكرة جديدة: خوارزمية -> Search
+Response: model.learn_concept("Algorithm", ["Sort"])
+Instruction: تعلم مفهوم جديد اسمه 'لون'.
+
+Instruction: ذاكرة جديدة: روبوت -> R2D2
+Instruction: Teach the AI that 'Banana' is a Fruit.
+
+Response: model.learn_concept("Fruit", ["Banana"])
+Instruction: عرف مفهموم لون بمثال Blue.
+
+Instruction: اكتب دالة لـ الترحيب بالمستخدم.
+
+Instruction: Teach the AI that 'Apple' is a Fruit.
+
+Response: model.learn_concept("Fruit", ["Apple"])
+Instruction: عرف مفهموم شعور بمثال Happiness.
+
+Response: model.learn_concept("Emotion", ["Happiness"])
+Instruction: عرف مفهموم فاكهة بمثال Orange.
+
+Instruction: New Memory: Planet -> Earth
+Response: model.learn_concept("Planet", ["Earth"])
+Instruction: علم الذكاء الاصطناعي أن 'Sort' هو نوع من خوارزمية.
+
+Response: model.learn_concept("Color", ["Green"])
+Instruction: علم الذكاء الاصطناعي أن 'R2D2' هو نوع من روبوت.
+
+Instruction: ذاكرة جديدة: فاكهة -> Banana
+Instruction: ذاكرة جديدة: فاكهة -> Apple
+Instruction: Teach the AI that 'Green' is a Color.
+
+Response: model.learn_concept("Robot", ["Wall-E"])
+Instruction: تعلم مفهوم جديد اسمه 'كوكب'.
+
+Instruction: Teach the AI that 'Happiness' is a Emotion.
+
+Instruction: ذاكرة جديدة: لون -> Blue
+Instruction: Teach the AI that 'R2D2' is a Robot.
+
+Instruction: اكتب دالة لـ التحقق من الزوجي.
+
+Instruction: علم الذكاء الاصطناعي أن 'Apple' هو نوع من فاكهة.
+
+Instruction: Define Planet with example Venus.
+
+Instruction: ذاكرة جديدة: خوارزمية -> BFS
+Response: model.learn_concept("Algorithm", ["BFS"])
+Instruction: ذاكرة جديدة: فاكهة -> Orange
+Instruction: Define Emotion with example Sadness.
+
+Response: model.learn_concept("Emotion", ["Sadness"])
+Instruction: ذاكرة جديدة: خوارزمية -> Sort
+Instruction: Teach the AI that 'Wall-E' is a Robot.
+
+Instruction: Learn a new concept called 'Emotion'.
+
+Instruction: Define Color with example Red.
+
+Instruction: Learn a new concept called 'Color'.
+
+Instruction: عرف مفهموم خوارزمية بمثال Sort.
+
+Instruction: علم الذكاء الاصطناعي أن 'Banana' هو نوع من فاكهة.
+
+Instruction: Define Algorithm with example BFS.
+
+Instruction: New Memory: Robot -> Wall-E
+Instruction: Learn a new concept called 'Algorithm'.
+
+Instruction: New Memory: Planet -> Venus
+Instruction: New Memory: Emotion -> Sadness
+Instruction: عرف مفهموم خوارزمية بمثال Search.
+
+Instruction: عرف مفهموم روبوت بمثال Wall-E.
+
+Instruction: علم الذكاء الاصطناعي أن 'Terminator' هو نوع من روبوت.
+
+Instruction: Define Algorithm with example Search.
+
+Instruction: New Memory: Algorithm -> Search
+Instruction: عرف مفهموم كوكب بمثال Earth.
+
+Instruction: New Memory: Color -> Green
+Instruction: Learn a new concept called 'Fruit'.
+
+Instruction: علم الذكاء الاصطناعي أن 'Wall-E' هو نوع من روبوت.
+
+Instruction: ذاكرة جديدة: كوكب -> Mars
+Instruction: تعلم مفهوم جديد اسمه 'فاكهة'.
+
+Instruction: عرف مفهموم شعور بمثال Anger.
+
+Instruction: Teach the AI that 'Mars' is a Planet.
+
+Instruction: علم الذكاء الاصطناعي أن 'Anger' هو نوع من شعور.
+
+Instruction: New Memory: Robot -> R2D2
+Instruction: ذاكرة جديدة: كوكب -> Earth
+Instruction: New Memory: Algorithm -> BFS
+Instruction: تعلم مفهوم جديد اسمه 'شعور'.
+
+Instruction: علم الذكاء الاصطناعي أن 'Earth' هو نوع من كوكب.
+
+Instruction: ذاكرة جديدة: روبوت -> Terminator
+Instruction: Define Emotion with example Anger.
+
+Instruction: Teach the AI that 'Blue' is a Color.
+
+Instruction: Define Planet with example Mars.
+
+Instruction: New Memory: Fruit -> Apple
+Instruction: ذاكرة جديدة: شعور -> Anger
+Instruction: Define Color with example Blue.
+
+Instruction: ذاكرة جديدة: لون -> Red
+Instruction: ذاكرة جديدة: شعور -> Happiness
+Instruction: عرف مفهموم فاكهة بمثال Banana.
+
+Instruction: علم الذكاء الاصطناعي أن 'BFS' هو نوع من خوارزمية.
+
+Instruction: علم الذكاء الاصطناعي أن 'Happiness' هو نوع من شعور.
+
+Instruction: عرف مفهموم خوارزمية بمثال BFS.
+
+Instruction: Define Color with example Green.
+
+Instruction: Define Robot with example Terminator.
+
+Instruction: Define Robot with example Wall-E.
+
+Instruction: Teach the AI that 'Venus' is a Planet.
+
+Instruction: عرف مفهموم روبوت بمثال Terminator.
+
+Instruction: Define Planet with example Earth.
+
+Instruction: عرف مفهموم روبوت بمثال R2D2.
+
+Instruction: Teach the AI that 'Search' is a Algorithm.
+
+Instruction: New Memory: Fruit -> Banana
+Instruction: Define Fruit with example Orange.
+
+Instruction: Define Robot with example R2D2.
+
+Instruction: New Memory: Color -> Red
+Instruction: ذاكرة جديدة: كوكب -> Venus
+Instruction: Define Fruit with example Apple.
+
+Instruction: Define Fruit with example Banana.
+
+Instruction: عرف مفهموم كوكب بمثال Venus.
+
+Instruction: Define Algorithm with example Sort.
+
+Instruction: New Memory: Algorithm -> Sort
+Instruction: Teach the AI that 'Earth' is a Planet.
+
+Instruction: Teach the AI that 'Sort' is a Algorithm.
+
+Instruction: علم الذكاء الاصطناعي أن 'Sadness' هو نوع من شعور.
+
+Instruction: Teach the AI that 'Sadness' is a Emotion.
+
+Instruction: علم الذكاء الاصطناعي أن 'Red' هو نوع من لون.
+
+Instruction: ذاكرة جديدة: شعور -> Sadness
+Instruction: عرف مفهموم فاكهة بمثال Apple.
+
+Instruction: ذاكرة جديدة: لون -> Green
+Instruction: New Memory: Robot -> Terminator
+Instruction: Teach the AI that 'Terminator' is a Robot.
+
+Instruction: علم الذكاء الاصطناعي أن 'Green' هو نوع من لون.
+
+Instruction: Teach the AI that 'BFS' is a Algorithm.
+
+Instruction: Define Emotion with example Happiness.
+
+Instruction: عرف مفهموم شعور بمثال Sadness.
+
+Instruction: عرف مفهموم لون بمثال Green.
+
+Instruction: ذاكرة جديدة: روبوت -> Wall-E
+Instruction: New Memory: Emotion -> Happiness
+Instruction: علم الذكاء الاصطناعي أن 'Orange' هو نوع من فاكهة.
+
+Instruction: علم الذكاء الاصطناعي أن 'Venus' هو نوع من كوكب.
+
+Instruction: Teach the AI that 'Orange' is a Fruit.
+
+Instruction: New Memory: Color -> Blue
+Instruction: New Memory: Planet -> Mars
+Instruction: علم الذكاء الاصطناعي أن 'Mars' هو نوع من كوكب.

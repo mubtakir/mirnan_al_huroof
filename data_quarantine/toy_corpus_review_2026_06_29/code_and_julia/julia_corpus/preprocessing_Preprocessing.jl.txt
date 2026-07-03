@@ -1,0 +1,236 @@
+"""
+طبقة المعالجة المسبقة — Preprocessing Pipeline.
+
+خط أنابيب من 5 مراحل لتحويل النصوص الخام (إنترنت، موسوعات، PDF...)
+إلى نصوص نظيفة جاهزة لتدريب مرنان.
+
+المراحل:
+  1. TextExtractor    — استخراج النص من HTML/Markdown/JSON
+  2. LanguageFilter   — كشف وتصفية اللغة
+  3. Normalizer       — تطبيع الحروف والمسافات
+  4. Segmenter        — تقطيع إلى جمل
+  5. QualityFilter    — فلترة الجودة وإزالة المكررات
+"""
+module Preprocessing
+
+include("text_extractor.jl")
+include("language_filter.jl")
+include("normalizer.jl")
+include("segmenter.jl")
+include("quality_filter.jl")
+
+using .TextExtractor
+using .LanguageFilter
+using .Normalizer
+using .Segmenter
+using .QualityFilter
+
+export PipelineConfig, PipelineStats,
+       run_pipeline, run_pipeline_file, run_pipeline_directory,
+       process_raw_text
+
+"""
+    PipelineConfig
+
+إعدادات خط المعالجة.
+"""
+Base.@kwdef mutable struct PipelineConfig
+    # اللغة المستهدفة
+    target_lang::String = "arabic"     # "arabic", "english", "both"
+
+    # تطبيع
+    strip_diacritics::Bool = false     # إزالة التشكيل؟
+    collapse_spaces::Bool = true       # ضغط المسافات؟
+
+    # تقطيع
+    min_sentence_words::Int = 5        # الحد الأدنى للجملة
+    max_sentence_words::Int = 200      # الحد الأقصى للجملة
+    granularity::String = "sentence"   # "sentence" | "paragraph" | "line"
+
+    # فلترة
+    enable_quality_filter::Bool = true
+    enable_deduplication::Bool = true
+    dedup_threshold::Float64 = 0.85
+
+    # تقارير
+    verbose::Bool = true
+end
+
+"""
+    PipelineStats
+
+إحصائيات التشغيل.
+"""
+Base.@kwdef mutable struct PipelineStats
+    input_texts::Int = 0
+    extracted_texts::Int = 0
+    lang_passed::Int = 0
+    lang_rejected::Int = 0
+    sentences_generated::Int = 0
+    quality_passed::Int = 0
+    quality_stats::Dict{String,Int} = Dict{String,Int}()
+    duplicates_removed::Int = 0
+    final_texts::Int = 0
+    total_time::Float64 = 0.0
+end
+
+"""
+    run_pipeline(raw_texts::Vector{String}; config::PipelineConfig=PipelineConfig()) -> (Vector{String}, PipelineStats)
+
+يشغّل خط المعالجة الكامل على مجموعة نصوص خام.
+"""
+function run_pipeline(raw_texts::Vector{String}; config::PipelineConfig=PipelineConfig())
+    t_start = time()
+    stats = PipelineStats()
+    stats.input_texts = length(raw_texts)
+
+    # ─── المرحلة 1: استخراج النص ───
+    config.verbose && println("  [1/5] استخراج النص...")
+    extracted = String[]
+    for raw in raw_texts
+        text = extract_text(raw; source="auto")
+        stripped = strip(text)
+        isempty(stripped) || push!(extracted, stripped)
+    end
+    stats.extracted_texts = length(extracted)
+    config.verbose && println("    ✓ $(length(extracted)) نص مستخرج")
+
+    # ─── المرحلة 2: فلترة اللغة ───
+    config.verbose && println("  [2/5] فلترة اللغة ($(config.target_lang))...")
+    lang_target = config.target_lang in ("ar", "arabic") ? "arabic" :
+                  config.target_lang in ("en", "english") ? "english" : "both"
+    lang_filtered = filter_by_language(extracted; target=lang_target, threshold=0.5)
+    stats.lang_passed = length(lang_filtered)
+    stats.lang_rejected = length(extracted) - length(lang_filtered)
+    config.verbose && println("    ✓ $(length(lang_filtered)) نص عربي ($(stats.lang_rejected) رُفض)")
+
+    # ─── المرحلة 3: تطبيع ───
+    config.verbose && println("  [3/5] تطبيع النصوص...")
+    normalized = String[]
+    for text in lang_filtered
+        norm = normalize_text(text; strip_diacritics=config.strip_diacritics)
+        stripped = strip(norm)
+        isempty(stripped) || push!(normalized, stripped)
+    end
+    config.verbose && println("    ✓ $(length(normalized)) نص معيَّر")
+
+    # ─── المرحلة 4: تقطيع ───
+    config.verbose && println("  [4/5] تقطيع إلى جمل...")
+    sentences = String[]
+    for text in normalized
+        segs = segment_sentences(text; lang=config.target_lang,
+                                  min_words=config.min_sentence_words,
+                                  max_words=config.max_sentence_words)
+        append!(sentences, segs)
+    end
+    stats.sentences_generated = length(sentences)
+    config.verbose && println("    ✓ $(length(sentences)) جملة")
+
+    # ─── المرحلة 5: فلترة الجودة ───
+    if config.enable_quality_filter
+        config.verbose && println("  [5/5] فلترة الجودة...")
+        passed, qstats = filter_quality(sentences)
+        stats.quality_passed = length(passed)
+        stats.quality_stats = qstats
+        config.verbose && println("    ✓ $(length(passed)) جملة اجتازت الفلتر")
+        if config.verbose
+            for (reason, count) in qstats
+                count > 0 && reason != QUALITY_PASS && println("      - $reason: $count")
+            end
+        end
+        final_texts = passed
+    else
+        final_texts = sentences
+    end
+
+    # ─── إزالة المكررات ───
+    if config.enable_deduplication
+        config.verbose && println("  [Bonus] إزالة المكررات...")
+        n_before = length(final_texts)
+        final_texts = deduplicate_texts(final_texts; threshold=config.dedup_threshold)
+        stats.duplicates_removed = n_before - length(final_texts)
+        config.verbose && println("    ✓ $(length(final_texts)) فريد ($(stats.duplicates_removed) مكرر)")
+    end
+
+    stats.final_texts = length(final_texts)
+    stats.total_time = round(time() - t_start; digits=2)
+
+    config.verbose && println("  ══ اكتمل في $(stats.total_time)s: $(stats.input_texts) → $(stats.final_texts) جملة نظيفة")
+
+    return final_texts, stats
+end
+
+"""
+    run_pipeline_file(file_path::String; config::PipelineConfig=PipelineConfig()) -> (Vector{String}, PipelineStats)
+
+يشغّل الخط على ملف واحد (قد يحتوي نصوصاً متعددة، كل سطر = نص).
+"""
+function run_pipeline_file(file_path::String; config::PipelineConfig=PipelineConfig())
+    isfile(file_path) || return String[], PipelineStats()
+    content = read(file_path, String)
+    # إذا كان الملف JSON، اعتبره مصدراً واحداً
+    if startswith(strip(content), "{") || startswith(strip(content), "[")
+        raw_texts = [content]
+    else
+        raw_texts = [content]
+    end
+    return run_pipeline(raw_texts; config=config)
+end
+
+"""
+    run_pipeline_directory(dir_path::String; config::PipelineConfig=PipelineConfig(),
+                           save_dir::String="") -> (Vector{String}, PipelineStats)
+
+يشغّل الخط على كل الملفات النصية في مجلد (وفرعية).
+إذا حُدد save_dir، تُحفظ النواتج النظيفة.
+
+يرجع (كل الجمل, الإحصائيات).
+"""
+function run_pipeline_directory(dir_path::String; config::PipelineConfig=PipelineConfig(),
+                                 save_dir::String="")
+    !isdir(dir_path) && return String[], PipelineStats()
+
+    # جمع كل الملفات
+    raw_texts = String[]
+    for (root, dirs, files) in walkdir(dir_path)
+        for f in files
+            ext = lowercase(splitext(f)[2])
+            ext in [".txt", ".md", ".html", ".htm", ".csv", ".tsv", ".json", ""] || continue
+            path = joinpath(root, f)
+            try
+                push!(raw_texts, read(path, String))
+            catch e
+                @warn "فشل قراءة: $path — $e"
+            end
+        end
+    end
+
+    final_texts, stats = run_pipeline(raw_texts; config=config)
+
+    # حفظ النواتج إن طلب
+    if !isempty(save_dir)
+        mkpath(save_dir)
+        out_path = joinpath(save_dir, "cleaned_corpus.txt")
+        open(out_path, "w") do io
+            for text in final_texts
+                println(io, text)
+                println(io)  # سطر فارغ بين الجمل
+            end
+        end
+        config.verbose && println("  💾 حُفظت $(length(final_texts)) جملة إلى $out_path")
+    end
+
+    return final_texts, stats
+end
+
+"""
+    process_raw_text(raw_text::String; config::PipelineConfig=PipelineConfig()) -> String
+
+اختصار: معالجة نص خام واحد → نص نظيف واحد (أو فارغ إذا رُفض).
+"""
+function process_raw_text(raw_text::String; config::PipelineConfig=PipelineConfig())
+    texts, _ = run_pipeline([raw_text]; config=config)
+    return isempty(texts) ? "" : texts[1]
+end
+
+end # module Preprocessing

@@ -1,0 +1,831 @@
+{
+  "duration_seconds": 128.828,
+  "generated_at": "2026-06-20T20:09:01.629",
+  "model_dir": "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\model",
+  "results": [
+    {
+      "accepted": true,
+      "category": "تعريفي",
+      "elapsed_seconds": 53.96600008010864,
+      "id": 1,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "الحكمة هي وضع الشيء في موضعه الصحيح.",
+      "prompt": "ما معنى الحكمة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.832589968436736,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.04500007629394531,
+      "id": 2,
+      "issues": [],
+      "output": "العلم هو ان يعرف الانسان الحقايق.",
+      "prompt": "ما هو العلم؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8384605464037198,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 7.226000070571899,
+      "id": 3,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "من هو المعلم؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.1979999542236328,
+      "id": 4,
+      "issues": [],
+      "output": "الفضيلة هي جوهر الحكمه، ومن يوت الحكمه فقد اوتي خيرا كثيرا ونورا مبينا.",
+      "prompt": "ما هي الفضيلة؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8881297726507669,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.559999942779541,
+      "id": 5,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "تضحيه، احترام، تفاهم، وقبول للاخر بكل ما فيه.",
+      "prompt": "ما هو المعنى الحقيقي للحرية؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.006000041961669922,
+      "id": 6,
+      "issues": [],
+      "output": "العدالة هي الغايه الاسمي لكل نظام قانوني.",
+      "prompt": "ما هي العدالة؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8732862154301996,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.00800013542175293,
+      "id": 7,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "الانسان له جسد مادي وله روح ربانيه.",
+      "prompt": "ما هو الإنسان؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.06399989128112793,
+      "id": 8,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "العمل الجاد، التعلم المستمر، العلاقات الجيده، والصبر.",
+      "prompt": "ما معنى الحياة؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "كيفي",
+      "elapsed_seconds": 5.0,
+      "id": 9,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "موقع الرابطه السوريه لحقوق الانسان سوريون.",
+      "prompt": "كيف يتعلم الإنسان؟",
+      "reason_code": "G5",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "كيفي",
+      "elapsed_seconds": 0.25,
+      "id": 10,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "يحول الصوت الي اشارات كهرومغناطيسيه تنقل عبر الابراج الي هاتف المستقبل. لماذا ننام؟ النوم ضروري لاستعاده طاقه الجسم، تثبيت الذاكره، وتجديد الخلايا. سوال: اذكر انواع الصلاه جواب: الصلوات الخمس: الفجر، الظهر، العصر، المغرب، العشاء. وهناك صلوات اخري كالجمعه والعيدين.",
+      "prompt": "كيف يعمل القلب؟",
+      "reason_code": "G5",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "كيفي",
+      "elapsed_seconds": 0.3000001907348633,
+      "id": 11,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "تقبل انك بشر تخطي، تعلم من الماضي، اعتبر الدرس، وابدا صفحه جديده. ما هو سر السعاده الزوجيه؟ الحب، الاحترام، التقدير، المفاجات الصغيره، والصبر علي تقلبات الحياه معا. سوال: كيف اكون صديقا وفيا؟ جواب: كن موجودا وقت الشده، احفظ الاسرار، ادعم صديقك، ولا تتحدث عنه بسوء في غيابه.",
+      "prompt": "كيف ننام؟",
+      "reason_code": "G5",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "كيفي",
+      "elapsed_seconds": 4.971999883651733,
+      "id": 12,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "نور عقلك بالمعرفه ليضيء طريقك في الحياه.",
+      "prompt": "كيف تتكون المعرفة؟",
+      "reason_code": "G5",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 5.351999998092651,
+      "id": 13,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "الرجوع الي الصواب يضبط ايقاع الحياه بعد اضطراب السير في منحنيات الخطا.",
+      "prompt": "كيف نقرر الصواب من الخطأ؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.8782459435684202,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 5.394999980926514,
+      "id": 14,
+      "issues": [],
+      "output": "الضوء ينتقل باسرع سرعه في الكون.",
+      "prompt": "كيف ينتقل الضوء؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8662884813158505,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 5.541000127792358,
+      "id": 15,
+      "issues": [],
+      "output": "الجواب سيكون العالم مظلما جدا ❄❄❄ ولن تنمو النباتات ولن تستطيع الحيوانات العيش.",
+      "prompt": "كيف تنمو النباتات؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8620865020872058,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "سببي",
+      "elapsed_seconds": 0.127000093460083,
+      "id": 16,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "النوم ضروري لاستعاده طاقه الجسم، تثبيت الذاكره، وتجديد الخلايا.",
+      "prompt": "لماذا ننام؟",
+      "reason_code": "G5",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "سببي",
+      "elapsed_seconds": 0.2389998435974121,
+      "id": 17,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "المدرسه مثل صاله العاب رياضيه لعقلك. انت تتعلم كيف تفكر وتحل المشاكل، وليس مجرد حفظ معلومات. كما تتعلم كيف تصادق الاخرين وتعمل ضمن فريق. كل ماده تدرسها تفتح لك بابا جديدا لتفهم العالم وتكتشف ما تحب ان تكونه في المستقبل.",
+      "prompt": "لماذا نحتاج إلى العلم؟",
+      "reason_code": "G5",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.15199995040893555,
+      "id": 18,
+      "issues": [],
+      "output": "إذا زاد الجهل، ماذا يحدث؟، لأن الشرط يفتح طريق النتيجة ويربط السبب بأثره.",
+      "prompt": "إذا زاد الجهل، ماذا يحدث؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8832065111509526,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.03800010681152344,
+      "id": 19,
+      "issues": [],
+      "output": "إذا تعلم الإنسان، ماذا يحدث؟، لأن الشرط يفتح طريق النتيجة ويربط السبب بأثره.",
+      "prompt": "إذا تعلم الإنسان، ماذا يحدث؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8813907917841957,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "سببي",
+      "elapsed_seconds": 8.15999984741211,
+      "id": 20,
+      "issues": [
+        "list_like_output",
+        "missing_prompt_anchor"
+      ],
+      "output": "انت الضغط الحراره السرعه الغاز الشر الدقه القوه الجاذبيه البناء",
+      "prompt": "لماذا نتعلم من أخطائنا؟",
+      "reason_code": "G5",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "سببي",
+      "elapsed_seconds": 5.3460001945495605,
+      "id": 21,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "الفرق بين الحقيقه والخيال.",
+      "prompt": "لماذا نبحث عن الحقيقة؟",
+      "reason_code": "G5",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.02500009536743164,
+      "id": 22,
+      "issues": [],
+      "output": "إذا أشرقت الشمس، ماذا يحدث؟، لأن الشرط يفتح طريق النتيجة ويربط السبب بأثره.",
+      "prompt": "إذا أشرقت الشمس، ماذا يحدث؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8885344074637596,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "وصفي",
+      "elapsed_seconds": 0.08699989318847656,
+      "id": 23,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "انا بخير شكرا لك.",
+      "prompt": "كيف هو الطقس اليوم؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 4.827000141143799,
+      "id": 24,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "لكن اريدك ان ترتب امورك فان لم تتحسن المواصلات فلتغادر منزلك ابكر.",
+      "prompt": "صف منزلك.",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.8356637059112444,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 5.264999866485596,
+      "id": 25,
+      "issues": [],
+      "output": "تبدو السماء زرقاء بسبب ظاهره تسمي تشتت رايلي.",
+      "prompt": "كيف تبدو السماء صافية؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8623080386163462,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 5.559000015258789,
+      "id": 26,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "اعددت لكم اليوم طبق المنسف المفضل لديكم علي الطريقه التقليديه.",
+      "prompt": "صف معلمك المفضل.",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.8722442234902439,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "وصفي",
+      "elapsed_seconds": 0.1360001564025879,
+      "id": 27,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "السعاده قرار. قدر ما تملك، احب من حولك، وافعل ما يرضي الله.",
+      "prompt": "كيف هو شعور السعادة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 5.054999828338623,
+      "id": 28,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "في الربيع التالي انتقل الفرنسيون الي مقاطعتي بينه انه وفيو يين.",
+      "prompt": "صف الحديقة في الربيع.",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.8759667663421195,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 0.08899998664855957,
+      "id": 29,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "انا بخير، شكرا لسوالك. كيف يمكنني خدمتك؟",
+      "prompt": "كيف حالك؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "حواري",
+      "elapsed_seconds": 0.42100000381469727,
+      "id": 30,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "أرى أن موضوع القراءة نافع إذا ارتبط بـالفهم، لأنه يساعد على توسيع الفهم. لكنه يحتاج إلى التجربة حتى لا يبقى حكماً عاماً بلا ميزان.",
+      "prompt": "ما هو رأيك في القراءة؟",
+      "reason_code": "",
+      "repair_target": "prompt_alignment",
+      "score": 0.8661076796419702,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 2.1059999465942383,
+      "id": 31,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "نعم، أحب التعلم لأنه يفتح الفهم.",
+      "prompt": "هل تحب التعلم؟",
+      "reason_code": "",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 0.11100006103515625,
+      "id": 32,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "العمل الجاد، التعلم المستمر، العلاقات الجيده، والصبر.",
+      "prompt": "ما أجمل شيء في الحياة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 0.04799985885620117,
+      "id": 33,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "انا بخير، شكرا لسوالك. كيف يمكنني خدمتك؟",
+      "prompt": "كيف تقضي يومك؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 0.04699993133544922,
+      "id": 34,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "هل ياتي صاحب الحال نكره؟ الاصل ان صاحب الحال معرفه.",
+      "prompt": "هل تؤمن بالمعرفة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.03099989891052246,
+      "id": 35,
+      "issues": [],
+      "output": "مجموع 12 + 34 هو 46.\n1. تحديد العملية: جمع.\n2. حساب 12 + 34.\n3. التحقق بإعادة الحساب.\nالتحقق: 12 + 34 = 46.\nمؤكد: نعم.",
+      "prompt": "ما هو 12 + 34؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8152322030899749,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.04700016975402832,
+      "id": 36,
+      "issues": [],
+      "output": "مساحة المربع هي 25.\n1. نحدد طول الضلع.\n2. نضرب الضلع في نفسه.\nالتحقق: 5 * 5 = 25.\nمؤكد: نعم.",
+      "prompt": "احسب مساحة مربع طول ضلعه 5.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8297336604156669,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.016000032424926758,
+      "id": 37,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "ناتج الضرب 6 * 7 هو 42.\n1. تحديد العملية: ضرب.\n2. حساب 6 * 7.\n3. التحقق بإعادة الحساب.\nالتحقق: 6 * 7 = 42.\nمؤكد: نعم.",
+      "prompt": "ما هو حاصل ضرب 6 × 7؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.823002021466699,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.014999866485595703,
+      "id": 38,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "الباقي هو 7.\n1. نحدد الكمية الأصلية.\n2. نطرح الكمية المستخدمة.\nالتحقق: 10 - 3 = 7.\nمؤكد: نعم.",
+      "prompt": "إذا كان لديك 10 تفاحات وأكلت 3، كم تبقى؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.810349077504515,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.01699995994567871,
+      "id": 39,
+      "issues": [],
+      "output": "جذر العدد هو 4.\n1. نحدد العدد تحت الجذر.\n2. نبحث عن عدد مربعه يساويه.\nالتحقق: 4 * 4 = 16.\nمؤكد: نعم.",
+      "prompt": "ما هو جذر 16؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.842870225967336,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.0,
+      "id": 40,
+      "issues": [],
+      "output": "ناتج الطرح 20 - 7 هو 13.\n1. تحديد العملية: طرح.\n2. حساب 20 - 7.\n3. التحقق بإعادة الحساب.\nالتحقق: 20 - 7 = 13.\nمؤكد: نعم.",
+      "prompt": "ما هو 20 - 7؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8306696544564529,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "برمجي",
+      "elapsed_seconds": 0.04999995231628418,
+      "id": 41,
+      "issues": [],
+      "output": "def add(a, b):\n    return a + b",
+      "prompt": "اكتب دالة تجمع عددين في بايثون.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.869685,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "برمجي",
+      "elapsed_seconds": 0.006000041961669922,
+      "id": 42,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "for i in range(1, 11):\n    print(i)",
+      "prompt": "اكتب حلقة تكرار تطبع الأعداد من 1 إلى 10.",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "برمجي",
+      "elapsed_seconds": 0.015000104904174805,
+      "id": 43,
+      "issues": [
+        "weak_phase_coherence",
+        "weak_prompt_anchor"
+      ],
+      "output": "if number > 10:\n    print(number)",
+      "prompt": "اكتب شرطا يتحقق إذا كان الرقم أكبر من 10.",
+      "reason_code": "G6",
+      "repair_target": "coherence",
+      "score": 0.6885833072833986,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "برمجي",
+      "elapsed_seconds": 0.005000114440917969,
+      "id": 44,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "x = 1",
+      "prompt": "كيف تعرف متغيرا في جوليا؟",
+      "reason_code": "G6",
+      "repair_target": "coherence",
+      "score": 0.44,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "برمجي",
+      "elapsed_seconds": 0.010000228881835938,
+      "id": 45,
+      "issues": [],
+      "output": "def max_two(a, b):\n    return a if a > b else b",
+      "prompt": "اكتب دالة ترجع أكبر عددين.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8676054545454546,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "رأي",
+      "elapsed_seconds": 0.2969999313354492,
+      "id": 46,
+      "issues": [],
+      "output": "أرى أن موضوع الذكاء الاصطناعي نافع إذا ارتبط بـالفهم، لأنه يساعد على توسيع الفهم. لكنه يحتاج إلى التجربة حتى لا يبقى حكماً عاماً بلا ميزان.",
+      "prompt": "ما رأيك في الذكاء الاصطناعي؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8758197621316455,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "رأي",
+      "elapsed_seconds": 0.2109999656677246,
+      "id": 47,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "أرى أن موضوع العلم نافع إذا ارتبط بـالفهم، لأنه يساعد على توسيع الفهم. لكنه يحتاج إلى التجربة حتى لا يبقى حكماً عاماً بلا ميزان.",
+      "prompt": "هل العلم مفيد دائما؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.8592236756824023,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "رأي",
+      "elapsed_seconds": 0.15399980545043945,
+      "id": 48,
+      "issues": [],
+      "output": "أرى أن موضوع القراءة والكتابة نافع إذا ارتبط بـالفهم، لأنه يساعد على توسيع الفهم. لكنه يحتاج إلى التجربة حتى لا يبقى حكماً عاماً بلا ميزان.",
+      "prompt": "ما رأيك في القراءة والكتابة؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8763007515092904,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "رأي",
+      "elapsed_seconds": 0.06399989128112793,
+      "id": 49,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "أرى أن موضوع التعلم نافع إذا ارتبط بـالفهم، لأنه يساعد على توسيع الفهم. لكنه يحتاج إلى التجربة حتى لا يبقى حكماً عاماً بلا ميزان.",
+      "prompt": "هل التعلم واجب على الجميع؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.8598577634634333,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "رأي",
+      "elapsed_seconds": 0.34800004959106445,
+      "id": 50,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "أرى أن موضوع المعرفة نافع إذا ارتبط بـالفهم، لأنه يساعد على توسيع الفهم. لكنه يحتاج إلى التجربة حتى لا يبقى حكماً عاماً بلا ميزان.",
+      "prompt": "ما رأيك في أهمية المعرفة في الحياة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.8581222728973161,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    }
+  ],
+  "summary": {
+    "برمجي": {
+      "acceptable": 0,
+      "failed": 0,
+      "success": 5,
+      "total": 5
+    },
+    "تعريفي": {
+      "acceptable": 0,
+      "failed": 4,
+      "success": 4,
+      "total": 8
+    },
+    "حسابي": {
+      "acceptable": 0,
+      "failed": 0,
+      "success": 6,
+      "total": 6
+    },
+    "حواري": {
+      "acceptable": 0,
+      "failed": 4,
+      "success": 2,
+      "total": 6
+    },
+    "رأي": {
+      "acceptable": 0,
+      "failed": 0,
+      "success": 5,
+      "total": 5
+    },
+    "سببي": {
+      "acceptable": 0,
+      "failed": 4,
+      "success": 3,
+      "total": 7
+    },
+    "كيفي": {
+      "acceptable": 0,
+      "failed": 4,
+      "success": 3,
+      "total": 7
+    },
+    "وصفي": {
+      "acceptable": 0,
+      "failed": 2,
+      "success": 4,
+      "total": 6
+    }
+  },
+  "totals": {
+    "acceptable": 0,
+    "failed": 18,
+    "success": 32,
+    "total": 50
+  }
+}

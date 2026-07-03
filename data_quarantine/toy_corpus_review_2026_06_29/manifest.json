@@ -1,0 +1,86 @@
+﻿[
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\code_corpus",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\code_and_julia\\code_corpus",
+        "Reason":  "كود وتجارب برمجية؛ يفصل عن التدريب اللغوي الطبيعي",
+        "Files":  104,
+        "Bytes":  1035752
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\julia_corpus",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\code_and_julia\\julia_corpus",
+        "Reason":  "نصوص/كود جوليا؛ يفصل عن التدريب اللغوي الطبيعي",
+        "Files":  114,
+        "Bytes":  698297
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\bbb1_clean_txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\generic_clean_txt\\bbb1_clean_txt",
+        "Reason":  "نصوص عامة كثيرة نسبياً وغير موجهة لمرنان؛ تعاد لاحقاً بعد انتقاء أدق",
+        "Files":  110,
+        "Bytes":  2748532
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa0_mafahem\\english_code_corpus.txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\nonarabic_or_code_files\\english_code_corpus.txt",
+        "Reason":  "ملف إنجليزي/كودي داخل قسم المفاهيم",
+        "Files":  1,
+        "Bytes":  4669
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa2_corpus\\q (15).txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\oversized_aaa2\\q (15).txt",
+        "Reason":  "ملف ضخم يطغى على التوازن الداخلي لـ toy_corpus",
+        "Files":  1,
+        "Bytes":  638182
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa2_corpus\\q (16).txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\oversized_aaa2\\q (16).txt",
+        "Reason":  "ملف ضخم يطغى على التوازن الداخلي لـ toy_corpus",
+        "Files":  1,
+        "Bytes":  837239
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa2_corpus\\q (17).txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\oversized_aaa2\\q (17).txt",
+        "Reason":  "ملف ضخم يطغى على التوازن الداخلي لـ toy_corpus",
+        "Files":  1,
+        "Bytes":  1029901
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa2_corpus\\q (48).txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\oversized_aaa2\\q (48).txt",
+        "Reason":  "ملف ضخم يطغى على التوازن الداخلي لـ toy_corpus",
+        "Files":  1,
+        "Bytes":  1160288
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa2_corpus\\q (49).txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\oversized_aaa2\\q (49).txt",
+        "Reason":  "ملف ضخم يطغى على التوازن الداخلي لـ toy_corpus",
+        "Files":  1,
+        "Bytes":  1382706
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa2_corpus\\q (51).txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\oversized_aaa2\\q (51).txt",
+        "Reason":  "ملف ضخم يطغى على التوازن الداخلي لـ toy_corpus",
+        "Files":  1,
+        "Bytes":  1644301
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa2_corpus\\q (70)_quran.txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\oversized_aaa2\\q (70)_quran.txt",
+        "Reason":  "ملف ضخم يطغى على التوازن الداخلي لـ toy_corpus",
+        "Files":  1,
+        "Bytes":  1334263
+    },
+    {
+        "Source":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data\\toy_corpus\\aaa2_corpus\\q (71)_quran.txt",
+        "Destination":  "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\data_quarantine\\toy_corpus_review_2026_06_29\\oversized_aaa2\\q (71)_quran.txt",
+        "Reason":  "ملف ضخم يطغى على التوازن الداخلي لـ toy_corpus",
+        "Files":  1,
+        "Bytes":  1334524
+    }
+]

@@ -1,0 +1,37 @@
+module TerminalExecutor
+
+export TerminalExecutor, execute_command
+
+struct TerminalExecutor
+    workspace_root::String
+end
+
+function execute_command(term::TerminalExecutor, cmd_str::String)::String
+    shell = Sys.iswindows() ? ["powershell", "-ExecutionPolicy", "Bypass", "-Command"] : ["bash", "-c"]
+    full_cmd = Cmd([shell..., cmd_str], dir=term.workspace_root)
+    
+    out_buf = IOBuffer()
+    err_buf = IOBuffer()
+    
+    try
+        proc = run(pipeline(full_cmd, stdout=out_buf, stderr=err_buf), wait=true)
+        output = String(take!(out_buf))
+        errors = String(take!(err_buf))
+        
+        result = output
+        if !isempty(errors)
+            result *= "\n[STDERR]\n" * errors
+        end
+        return isempty(result) ? "[SUCCESS] Command completed with no output." : result
+    catch e
+        output = String(take!(out_buf))
+        errors = String(take!(err_buf))
+        result = output
+        if !isempty(errors)
+            result *= "\n[STDERR]\n" * errors
+        end
+        return "[ERROR] Command execution failed: $e\nOutput:\n" * result
+    end
+end
+
+end # module TerminalExecutor

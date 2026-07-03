@@ -1,0 +1,277 @@
+"""
+SymbolicMathEngine — محرك الرياضيات الرمزي الفيزيائي.
+
+يعامل الأعداد والعمليات الرياضية كمتجهات طورية.
+كل عدد = متجه فريد. كل عملية = تحويل هندسي (عامل التواء T).
+
+بدل `eval()` الخطير: تحويلات كليفورد آمنة تعمل داخل فضاء الطور.
+
+المبادئ:
+  - v(42) ≠ مجرد رقم — بل متجه في 10000D
+  - T_plus   = عامل الالتواء للجمع
+  - T_mult   = عامل الالتواء للضرب
+  - T_sqrt   = عامل الالتواء للجذر
+  - حل مسألة = سلسلة تحويلات: T₃ ∘ T₂ ∘ T₁ ∘ v(مدخل) → v(مخرج)
+"""
+module SymbolicMathEngineModule
+
+using LinearAlgebra
+using ..Constants: TOTAL_DIM, PHASE_DIM
+using ..WordPhysics: compute_word_phase_vector
+using ..CliffordMath: Multivector22, from_vector
+
+export SymbolicMathEngine, MathOperation, MathPattern,
+       encode_number, encode_operation, solve_arithmetic,
+       learn_math_pattern!, generate_math_explanation
+
+# ═══════════ أنواع الرياضيات ═══════════
+
+"""
+    MathOperation
+
+عملية رياضية = اسم + متجه طوري + عامل التواء (إن وُجد).
+"""
+mutable struct MathOperation
+    name::String               # "+", "*", "sqrt", "sin"...
+    symbol::String             # الرمز
+    arabic_name::String        # الاسم العربي
+    pv::Vector{Float64}        # المتجه الطوري للعملية
+    twistor::Any               # عامل الالتواء (إن تعلمناه)
+end
+
+"""
+    MathPattern
+
+نمط رياضي متعلم = مثال: "2 + 3 = 5" مع T المحسوب.
+"""
+struct MathPattern
+    input::Vector{Float64}     # متجه المدخلات
+    operation::String          # اسم العملية
+    output::Vector{Float64}    # متجه الناتج
+    twistor::Any               # T = v_output / v_input
+end
+
+"""
+    SymbolicMathEngine
+
+محرك الرياضيات الرمزي.
+"""
+mutable struct SymbolicMathEngine
+    operations::Dict{String,MathOperation}    # اسم العملية → تعريفها
+    patterns::Vector{MathPattern}             # أنماط متعلمة
+    number_cache::Dict{Int,Vector{Float64}}   # تخزين متجهات الأعداد
+    arabic_to_op::Dict{String,String}         # كلمة عربية → اسم عملية
+    active::Bool
+end
+
+function SymbolicMathEngine()
+    eng = SymbolicMathEngine(Dict{String,MathOperation}(),
+                              MathPattern[],
+                              Dict{Int,Vector{Float64}}(),
+                              Dict{String,String}(),
+                              true)
+    _init_operations!(eng)
+    return eng
+end
+
+"""
+    _init_operations!(engine)
+
+يهيئ العمليات الرياضية الأساسية.
+"""
+function _init_operations!(eng::SymbolicMathEngine)
+    ops = [
+        ("add", "+", "زائد", "جمع", "مجموع", "اضف"),
+        ("subtract", "-", "ناقص", "طرح", "فرق", "انقص"),
+        ("multiply", "*", "ضرب", "مضروب", "جداء", "في"),
+        ("divide", "/", "قسمة", "مقسوم", "على", "تقسيم"),
+        ("power", "^", "أس", "قوة", "مرفوع", "تربيع"),
+        ("sqrt", "√", "جذر", "تربيعي", "تحت الجذر"),
+        ("mod", "%", "باقي", "قسمة", "متبقي"),
+        ("abs", "|x|", "مطلق", "قيمة مطلقة"),
+        ("factorial", "!", "مضروب", "عاملي", "توافيق"),
+        ("sin", "sin", "جيب", "جا", "مثلثي"),
+        ("cos", "cos", "جيب تمام", "جتا", "تساوي"),
+        ("log", "log", "لوغاريتم", "لو", "أساس"),
+        ("mean", "μ", "متوسط", "معدل", "وسط"),
+        ("sum", "Σ", "مجموع", "جمع", "إجمالي"),
+    ]
+    for (name, symbol, arabic, aliases...) in ops
+        pv = try
+            Float64.(compute_word_phase_vector(arabic))
+        catch
+            zeros(Float64, PHASE_DIM)
+        end
+        op = MathOperation(name, symbol, arabic, pv, nothing)
+        eng.operations[name] = op
+        # سجل الكلمات العربية
+        eng.arabic_to_op[arabic] = name
+        for alias in aliases
+            eng.arabic_to_op[alias] = name
+        end
+    end
+end
+
+"""
+    encode_number(engine, n::Int) -> Vector{Float64}
+
+يحول عدداً إلى متجه طوري. كل عدد له متجه فريد (بذرة خاصة).
+"""
+function encode_number(eng::SymbolicMathEngine, n::Int)
+    if haskey(eng.number_cache, n)
+        return eng.number_cache[n]
+    end
+    # بذرة فريدة لكل عدد
+    seed = abs(n) * 7 + (n < 0 ? 13 : 0)
+    rng = MersenneTwister(seed)
+    pv = rand(rng, [-1.0, 1.0], PHASE_DIM)
+    nrm = norm(pv)
+    nrm > 1e-10 && (pv ./= nrm)
+    eng.number_cache[n] = pv
+    return pv
+end
+
+"""
+    encode_operation(engine, word::String) -> (String, Vector{Float64})
+
+يحول كلمة عربية إلى عملية رياضية + متجهها.
+مثال: "زائد" → ("add", v(+))
+      "جمع"  → ("add", v(+))
+"""
+function encode_operation(eng::SymbolicMathEngine, word::String)
+    op_name = get(eng.arabic_to_op, word, nothing)
+    if op_name !== nothing && haskey(eng.operations, op_name)
+        return op_name, eng.operations[op_name].pv
+    end
+    return "unknown", zeros(Float64, PHASE_DIM)
+end
+
+"""
+    learn_math_pattern!(engine, input1::Int, op_name::String, input2::Int, result::Int)
+
+يتعلم نمطاً رياضياً: يحسب T = v(result) / (v(a) + v(b))
+ويخزنه للاستدلال المستقبلي.
+
+مثال: learn_math_pattern!(eng, 2, "add", 3, 5)
+"""
+function learn_math_pattern!(eng::SymbolicMathEngine, a::Int, op::String,
+                              b::Int, result::Int)
+    pv_a = encode_number(eng, a)
+    pv_b = encode_number(eng, b)
+    pv_r = encode_number(eng, result)
+
+    # متجه العملية = متوسط الدخلين
+    input_pv = (pv_a + pv_b) / 2
+    nrm = norm(input_pv)
+    nrm > 1e-10 && (input_pv ./= nrm)
+
+    # T = v_output / v_input (قسمة كليفورد)
+    mv_in = from_vector(input_pv[1:22])
+    mv_out = from_vector(pv_r[1:22])
+    T = try mv_out / mv_in catch; nothing end
+
+    pat = MathPattern(input_pv, op, pv_r, T)
+    push!(eng.patterns, pat)
+
+    # حدِّث عامل الالتواء للعملية
+    if haskey(eng.operations, op)
+        eng.operations[op].twistor = T
+    end
+end
+
+"""
+    solve_arithmetic(engine, a::Int, op_word::String, b::Int) -> (Int, Float64)
+
+يحل مسألة حسابية: يجد الناتج الأقرب لـ T_op ∘ v(مدخل).
+
+يرجع (أفضل تخمين, درجة الثقة).
+
+مثال: solve_arithmetic(eng, 2, "زائد", 3) → (5, 0.92)
+"""
+function solve_arithmetic(eng::SymbolicMathEngine, a::Int, op_word::String, b::Int)
+    op_name, _ = encode_operation(eng, op_word)
+    if op_name == "unknown"
+        # جرب البحث في الأنماط عن أقرب عملية
+        return _solve_from_patterns(eng, a, b)
+    end
+
+    pv_a = encode_number(eng, a)
+    pv_b = encode_number(eng, b)
+    input_pv = (pv_a + pv_b) / 2
+
+    # استخدم عامل الالتواء للعملية إن وُجد
+    T = haskey(eng.operations, op_name) ? eng.operations[op_name].twistor : nothing
+
+    if T !== nothing
+        mv_in = from_vector(input_pv[1:22])
+        mv_pred = try T * mv_in catch; from_vector(input_pv[1:22]) end
+        pred_v = mv_pred.v
+    else
+        # بدون T: استخدم أقرب نمط
+        return _solve_from_patterns(eng, a, b)
+    end
+
+    # ابحث عن أقرب عدد في الذاكرة
+    best_n = 0; best_sim = 0.0
+    for (n, npv) in eng.number_cache
+        if length(eng.number_cache) > 50 && !(-1000 <= n <= 1000)
+            continue
+        end
+        d = min(length(npv), length(pred_v))
+        sim = max(0.0, dot(view(npv, 1:d), view(pred_v, 1:d)) /
+                       (norm(view(npv, 1:d)) * norm(view(pred_v, 1:d)) + 1e-10))
+        if sim > best_sim
+            best_sim = sim
+            best_n = n
+        end
+    end
+
+    return (best_n, best_sim)
+end
+
+function _solve_from_patterns(eng::SymbolicMathEngine, a::Int, b::Int)
+    pv_a = encode_number(eng, a)
+    pv_b = encode_number(eng, b)
+    input_pv = (pv_a + pv_b) / 2
+
+    best_n = 0; best_sim = 0.0
+    for pat in eng.patterns
+        sim = max(0.0, dot(input_pv, pat.input) /
+                       (norm(input_pv) * norm(pat.input) + 1e-10))
+        if sim > best_sim
+            # البحث عن أقرب عدد لـ pat.output
+            for (n, npv) in eng.number_cache
+                d = min(length(npv), length(pat.output))
+                out_sim = max(0.0, dot(view(npv, 1:d), view(pat.output, 1:d)) /
+                                   (norm(view(npv, 1:d)) * norm(view(pat.output, 1:d)) + 1e-10))
+                if out_sim > best_sim
+                    best_sim = out_sim
+                    best_n = n
+                end
+            end
+        end
+    end
+    return (best_n, best_sim)
+end
+
+"""
+    generate_math_explanation(engine, a::Int, op::String, b::Int, result::Int) -> String
+
+يولد شرحاً عربياً لحل مسألة رياضية.
+"""
+function generate_math_explanation(eng::SymbolicMathEngine, a::Int, op_word::String,
+                                   b::Int, result::Int)
+    op_name, _ = encode_operation(eng, op_word)
+    op_info = get(eng.operations, op_name, nothing)
+
+    symbol = op_info !== nothing ? op_info.symbol : "?"
+    arabic = op_info !== nothing ? op_info.arabic_name : op_word
+
+    return "$a $symbol $b = $result\n" *
+           "العملية: $arabic ($op_name)\n" *
+           "المدخلات: $a و $b\n" *
+           "الناتج: $result\n" *
+           "الأنماط المتعلمة: $(length(eng.patterns))"
+end
+
+end # module SymbolicMathEngineModule

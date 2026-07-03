@@ -1,0 +1,178 @@
+def defines a function that encapsulates logic.
+
+return gives back the computed value from a function.
+
+class creates a blueprint for an object.
+
+import brings external modules into the current namespace.
+
+for loops iterate over a sequence of items.
+
+if statements evaluate a condition to branch logic.
+
+while loops repeat as long as a condition is true.
+
+print outputs text to the standard console.
+
+variable stores a mutable value in memory.
+
+yield produces a generator sequence lazily.
+
+try catches exceptions and errors gracefully.
+
+async enables non blocking concurrent execution.
+
+await pauses execution until a promise resolves.
+
+pass does nothing and acts as a placeholder.
+
+break exits the current loop prematurely.
+
+continue skips the rest of the loop and starts the next iteration.
+
+global declares a variable in the global scope.
+
+lambda creates an anonymous inline function.
+
+with automatically manages resources and context.
+
+True represents a positive boolean truth value.
+
+False represents a negative boolean logic value.
+
+None indicates the absence of a value.
+
+self refers to the current instance of a class.
+
+string holds a sequence of characters.
+
+integer represents a whole numerical value.
+
+float handles decimal numbers with fractional parts.
+
+boolean evaluates to true or false.
+
+array stores an ordered collection of elements.
+
+dictionary maps unique keys to values.
+
+Real Code Examples to anchor logical syntax in Phase Vectors
+def binary_search(array, target):
+ left = 0
+ right = len(array) - 1
+ while left pivot]
+ return quicksort(left) + middle + quicksort(right)
+import asyncio
+async def fetch_data(url):
+ print("Fetching from", url)
+ await asyncio.sleep(1)
+ return {"data": "content", "status": 200}
+async def main_pipeline():
+ urls = ["api/users", "api/posts", "api/comments"]
+ tasks = [fetch_data(url) for url in urls]
+ results = await asyncio.gather(*tasks)
+ for result in results:
+ print("Received payload:", result)
+class Graph:
+ def init(self):
+ self.nodes = {}
+ 
+ def add_edge(self, source, destination):
+ if source not in self.nodes:
+ self.nodes[source] = []
+ self.nodes[source].append(destination)
+ 
+ def breadthfirstsearch(self, start_node):
+ visited = set()
+ queue = [start_node]
+ visited.add(start_node)
+ 
+ while queue:
+ current = queue.pop(0)
+ print("Visiting node:", current)
+ for neighbor in self.nodes.get(current, []):
+ if neighbor not in visited:
+ visited.add(neighbor)
+ queue.append(neighbor)
+def fibonacci_memo(n, cache=None):
+ if cache is None:
+ cache = {}
+ if n in cache:
+ return cache[n]
+ if n <= 1:
+ return n
+ cache[n] = fibonaccimemo(n - 1, cache) + fibonaccimemo(n - 2, cache)
+ return cache[n]
+from functools import wraps
+import time
+def timing_decorator(func):
+ @wraps(func)
+ def wrapper(args, *kwargs):
+ start_time = time.time()
+ result = func(args, *kwargs)
+ end_time = time.time()
+ print("Execution time:", endtime - starttime)
+ return result
+ return wrapper
+@timing_decorator
+def complexcomputation(matrixsize):
+ matrix = [[i * j for j in range(matrixsize)] for i in range(matrixsize)]
+ return sum(sum(row) for row in matrix)
+Depth First Search Implementation
+def depthfirstsearch(graph, start, visited=None):
+ if visited is None:
+ visited = set()
+ visited.add(start)
+ print("DFS visiting:", start)
+ for neighbor in graph.get(start, []):
+ if neighbor not in visited:
+ depthfirstsearch(graph, neighbor, visited)
+ return visited
+Merge Sort Algorithm
+def merge_sort(arr):
+ if len(arr) <= 1:
+ return arr
+ mid = len(arr) // 2
+ left = merge_sort(arr[:mid])
+ right = merge_sort(arr[mid:])
+ 
+ merged = []
+ i = j = 0
+ while i < len(left) and j < len(right):
+ if left[i] <= right[j]:
+ merged.append(left[i])
+ i += 1
+ else:
+ merged.append(right[j])
+ j += 1
+ merged.extend(left[i:])
+ merged.extend(right[j:])
+ return merged
+Simple Neural Network Forward Pass
+import numpy as np
+class SimpleNN:
+ def init(self, inputsize, hiddensize, output_size):
+ self.W1 = np.random.randn(inputsize, hiddensize)
+ self.b1 = np.zeros(hidden_size)
+ self.W2 = np.random.randn(hiddensize, outputsize)
+ self.b2 = np.zeros(output_size)
+ 
+ def relu(self, x):
+ return np.maximum(0, x)
+ 
+ def forward(self, X):
+ z1 = np.dot(X, self.W1) + self.b1
+ a1 = self.relu(z1)
+ z2 = np.dot(a1, self.W2) + self.b2
+ return z2
+Matrix Multiplication Native
+def matmul(A, B):
+ rows_A = len(A)
+ cols_A = len(A[0])
+ cols_B = len(B[0])
+ C = [[0 for in range(colsB)] for in range(rowsA)]
+ for i in range(rows_A):
+ for j in range(cols_B):
+ for k in range(cols_A):
+ Ci += Ai * Bk
+ return C

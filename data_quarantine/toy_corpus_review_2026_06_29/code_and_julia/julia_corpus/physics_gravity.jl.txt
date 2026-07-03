@@ -1,0 +1,36 @@
+"""
+الجاذبية الدلالية — Semantic Gravity.
+
+F = G · m₁ · m₂ / r²
+في فضاء الطور: القوة موجهة من i إلى j.
+"""
+module GravityEngine
+
+using LinearAlgebra
+using ..Constants: GRAVITY_G
+
+export gravitational_force
+
+"""
+    gravitational_force(m_i::Float64, v_i::AbstractVector,
+                        m_j::Float64, v_j::AbstractVector,
+                        distance::Float64) -> Vector{Float64}
+
+حساب قوة الجاذبية بين كلمتين في فضاء الطور.
+
+F = G · m₁ · m₂ · (vⱼ - vᵢ) / (r² · |vⱼ - vᵢ|)
+"""
+function gravitational_force(m_i::Real, v_i::AbstractVector,
+                             m_j::Real, v_j::AbstractVector,
+                             distance::Real)
+    r_sq = max(distance^2, 0.01)
+    magnitude = GRAVITY_G * m_i * m_j / r_sq
+    delta = v_j - v_i
+    nrm = norm(delta)
+    if nrm < 1e-12
+        return zeros(Float64, length(v_i))
+    end
+    return magnitude .* delta ./ nrm
+end
+
+end # module GravityEngine

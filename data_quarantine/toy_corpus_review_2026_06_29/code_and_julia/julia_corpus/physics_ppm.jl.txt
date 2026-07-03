@@ -1,0 +1,130 @@
+"""
+حقل تعديل الطور بالأمر — PPM (Prompt Phase Modulation).
+
+حقل طوري خارجي مؤقت يزيح توازن التوليد حسب أمثلة الأمر، ويضمحل تلقائياً.
+محاكاة فيزيائية لـ In-Context Learning / Few-Shot.
+"""
+module PPM
+
+using LinearAlgebra, Statistics
+using ..Constants: TOTAL_DIM
+using ..WordPhysics: compute_extended_phase_vector
+
+export PromptField, score, absorb!, step!, reset!, modulate
+
+"""
+    PromptField
+
+حقل طوري خارجي يضمحل — يمتص أنماط الأمر ويعدل التوليد.
+
+الحقول:
+- `decay_rate`: سرعة اضمحلال الحقل
+- `strength`: شدة التأثير
+- `field`: متجه الحقل الحالي
+- `active`: هل الحقل نشط؟
+"""
+mutable struct PromptField
+    decay_rate::Float64
+    strength::Float64
+    max_examples::Int
+    field::Vector{Float64}
+    active::Bool
+    pv_cache::Dict{String,Vector{Float64}}
+    example_count::Int
+
+    function PromptField(; decay_rate::Float64=0.1, strength::Float64=1.0, max_examples::Int=10)
+        return new(decay_rate, strength, max_examples,
+                   zeros(Float64, TOTAL_DIM), false,
+                   Dict{String,Vector{Float64}}(), 0)
+    end
+end
+
+function _get_pv(pf::PromptField, word::AbstractString)
+    w_str = String(word)
+    if !haskey(pf.pv_cache, w_str)
+        pf.pv_cache[w_str] = Float64.(compute_extended_phase_vector(w_str))
+    end
+    return pf.pv_cache[w_str]
+end
+
+"""
+    absorb!(pf::PromptField, prompt::String; examples=nothing)
+
+امتصاص الأمر والأمثلة كحقل خارجي.
+"""
+function absorb!(pf::PromptField, prompt::String; examples::Union{Vector{String},Nothing}=nothing)
+    sources = examples === nothing ? [prompt] : examples
+
+    pvs = Vector{Float64}[]
+    for src in sources
+        for word in split(src)
+            pv = _get_pv(pf, word)
+            push!(pvs, pv)
+        end
+    end
+
+    if !isempty(pvs)
+        pv_mat = reduce(hcat, pvs)'
+        pf.field .= pf.strength .* vec(mean(pv_mat; dims=1))
+        pf.active = true
+        pf.example_count = min(length(sources), pf.max_examples)
+    end
+end
+
+"""
+    modulate(pf::PromptField, candidate_pv) -> Vector{Float64}
+
+تعديل طور المرشح حسب الحقل الخارجي.
+"""
+function modulate(pf::PromptField, candidate_pv::AbstractVector)
+    if !pf.active
+        return Float64.(candidate_pv)
+    end
+    return Float64.(candidate_pv) .+ pf.field .* 0.15
+end
+
+"""
+    score(pf::PromptField, w_pv) -> Float64
+
+درجة التوافق بين المرشح والحقل.
+"""
+function score(pf::PromptField, w_pv::AbstractVector)
+    if !pf.active || norm(pf.field) < 1e-10
+        return 0.0
+    end
+    w_norm = norm(w_pv)
+    f_norm = norm(pf.field)
+    if w_norm < 1e-10 || f_norm < 1e-10
+        return 0.0
+    end
+    cos_val = dot(w_pv, pf.field) / (w_norm * f_norm)
+    return max(0.0, cos_val)
+end
+
+"""
+    step!(pf::PromptField)
+
+اضمحلال الحقل بعد كل خطوة توليد.
+"""
+function step!(pf::PromptField)
+    if pf.active
+        pf.field .*= (1.0 - pf.decay_rate)
+        if norm(pf.field) < 0.01
+            pf.field .= 0.0
+            pf.active = false
+        end
+    end
+end
+
+"""
+    reset!(pf::PromptField)
+
+إعادة تعيين الحقل.
+"""
+function reset!(pf::PromptField)
+    pf.field .= 0.0
+    pf.active = false
+    pf.example_count = 0
+end
+
+end # module PPM

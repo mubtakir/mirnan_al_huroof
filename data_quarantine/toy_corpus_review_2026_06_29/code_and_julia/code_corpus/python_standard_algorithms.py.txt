@@ -1,0 +1,181 @@
+# -*- coding: utf-8 -*-
+"""
+Python Standard Algorithms and Library Usages
+This file contains standard Python algorithms (searching, sorting) and common library usages
+to enrich the Mirnan K_code training matrix.
+"""
+
+import os
+import json
+import math
+import datetime
+
+# ==========================================
+# 1. Searching Algorithms
+# ==========================================
+
+def linear_search(arr, target):
+    """Perform a linear search on a list."""
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i
+    return -1
+
+
+def binary_search(arr, target):
+    """Perform a binary search on a sorted list."""
+    low = 0
+    high = len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        guess = arr[mid]
+        if guess == target:
+            return mid
+        if guess > target:
+            high = mid - 1
+        else:
+            low = mid + 1
+    return -1
+
+# ==========================================
+# 2. Sorting Algorithms
+# ==========================================
+
+def bubble_sort(arr):
+    """Sort an array using the bubble sort algorithm."""
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+
+def selection_sort(arr):
+    """Sort an array using the selection sort algorithm."""
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+
+
+def insertion_sort(arr):
+    """Sort an array using the insertion sort algorithm."""
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and key < arr[j]:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+
+
+def merge_sort(arr):
+    """Sort an array using the merge sort algorithm."""
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+        
+        merge_sort(L)
+        merge_sort(R)
+        
+        i = j = k = 0
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+            
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+            
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+    return arr
+
+
+def quick_sort(arr):
+    """Sort an array using the quick sort algorithm."""
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+# ==========================================
+# 3. Standard Library Usages
+# ==========================================
+
+def handle_json_data():
+    """Demonstrate reading and writing JSON data."""
+    data = {
+        "name": "Mirnan",
+        "version": 8.0,
+        "features": ["Clifford Algebra", "N-Body Gravity", "LC Resonance"],
+        "active": True
+    }
+    
+    # Serialize to string
+    json_str = json.dumps(data, indent=4)
+    print("Serialized JSON:", json_str)
+    
+    # Deserialize back
+    parsed = json.loads(json_str)
+    return parsed
+
+
+def file_system_operations(directory, file_name, content):
+    """Demonstrate common OS and file operations."""
+    # Build path
+    full_path = os.path.join(directory, file_name)
+    
+    # Create directory if it does not exist
+    if not os.path.exists(directory):
+        os.makedirs(directory, exist_ok=True)
+        
+    # Write to file
+    with open(full_path, "w", encoding="utf-8") as f:
+        f.write(content)
+        
+    # Read from file
+    if os.path.exists(full_path):
+        with open(full_path, "r", encoding="utf-8") as f:
+            read_content = f.read()
+        return read_content
+    return ""
+
+
+def mathematical_calculations(x, y):
+    """Perform common mathematical computations."""
+    hypotenuse = math.sqrt(x**2 + y**2)
+    sine_val = math.sin(x)
+    cosine_val = math.cos(y)
+    power_val = math.pow(x, 2)
+    return {
+        "hypotenuse": hypotenuse,
+        "sin_x": sine_val,
+        "cos_y": cosine_val,
+        "x_squared": power_val
+    }
+
+
+def format_current_time():
+    """Format and return current date and time."""
+    now = datetime.datetime.now()
+    formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+    return formatted

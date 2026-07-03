@@ -1,0 +1,247 @@
+"""
+وحدة الدلالة العربية — Arabic Semantics (Character Semantic Embedding + Root Extraction).
+يدعم:
+- Sparse 29D: مجموعات صوتية/شكلية/دلالية + حقول متضادة + حركات (phonetic group activation + bigram)
+- Sinusoidal: تضمين جيبي كلاسيكي
+"""
+module Semantics
+using LinearAlgebra
+export CharacterSemanticEmbedding, ArabicRootExtractor, NUM_ARABIC_LETTERS,
+       LETTER_DEFINITIONS, decompose_word_definition
+
+const ARABIC_LETTERS=["ء","ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"]
+const NUM_ARABIC_LETTERS=length(ARABIC_LETTERS)
+
+const PHONETIC_GROUPS=Dict(
+    "guttural"=>Set(["ء","ا","ه","ح","ع","غ","خ"]), "palatal"=>Set(["ش","ج","ي"]),
+    "velar"=>Set(["ك","ق"]), "dental"=>Set(["ت","د","ط"]), "interdental"=>Set(["ث","ذ","ظ"]),
+    "sibilant"=>Set(["س","ص","ز"]), "liquid"=>Set(["ن","ل","ر"]), "labial"=>Set(["ب","ف","م","و"]))
+const SHAPE_GROUPS=Dict(
+    "ba_ta_tha"=>Set(["ب","ت","ث"]), "jeem_ha_kha"=>Set(["ج","ح","خ"]),
+    "dal_thal"=>Set(["د","ذ"]), "ra_zay"=>Set(["ر","ز"]), "seen_sheen"=>Set(["س","ش"]),
+    "sad_dad"=>Set(["ص","ض"]), "ta_dha"=>Set(["ط","ظ"]), "ayn_ghayn"=>Set(["ع","غ"]),
+    "fa_qaf"=>Set(["ف","ق"]), "kaf_lam"=>Set(["ك","ل"]))
+
+const LETTER_DEFINITIONS=Dict("ء"=>"مفاجأة","ا"=>"رفعة","ب"=>"نقل","ت"=>"بناء","ث"=>"تشتت","ج"=>"جمع","ح"=>"حياة","خ"=>"خبيئة","د"=>"إثبات","ذ"=>"نفور","ر"=>"تدفق","ز"=>"انزياح","س"=>"سريان","ش"=>"تفرع","ص"=>"مراقبة","ض"=>"ضغط","ط"=>"طرق","ظ"=>"إيهام","ع"=>"مدافعة","غ"=>"غياب","ف"=>"انفجار","ق"=>"دقة","ك"=>"عطاء","ل"=>"إلمام","م"=>"فهم","ن"=>"تبيين","ه"=>"جهد","و"=>"تقدم","ي"=>"توجع")
+
+const _NORMALIZE_MAP_SEM = Dict(
+    'آ' => 'ا', 'أ' => 'ا', 'إ' => 'ا',
+    'ؤ' => 'و', 'ئ' => 'ي', 'ة' => 'ه', 'ى' => 'ي',
+)
+
+function decompose_word_definition(word::String)
+    cleaned=Char[]
+    for ch in word; cp=Int(ch); 0x064b<=cp<=0x0652&&continue; 0x0621<=cp<=0x064a&&push!(cleaned,ch); end
+    return [(string(c),get(LETTER_DEFINITIONS,string(c),"؟")) for c in cleaned]
+end
+
+# ═══ CharacterSemanticEmbedding ═══
+mutable struct CharacterSemanticEmbedding
+    dim::Int; mode::String; letter_vectors::Dict{String,Vector{Float64}}
+    haraka_vectors::Dict{Int,Vector{Float64}}; shadda_code::Int; cache::Dict{String,Vector{Float64}}
+end
+function CharacterSemanticEmbedding(;dim::Int=NUM_ARABIC_LETTERS)
+    emb=CharacterSemanticEmbedding(dim,"sinusoidal",Dict(),Dict(),0x0651,Dict())
+    if dim==29; emb.mode="sparse"; _build_sparse!(emb)
+    else; emb.mode="sinusoidal"; end
+    return emb
+end
+
+const SPARSE_HARAKA_STRENGTH = 0.12
+const SPARSE_POSITION_WEIGHTS = [3.5, 2.5, 2.0, 1.5, 1.2, 1.0, 0.8, 0.6, 0.4, 0.3]
+
+function _build_sparse!(emb::CharacterSemanticEmbedding)
+    n=emb.dim; emb.letter_vectors=Dict()
+    letter_to_idx = Dict{String,Int}()
+    for (i, ch) in enumerate(ARABIC_LETTERS)
+        letter_to_idx[ch] = i
+    end
+
+    for ch in ARABIC_LETTERS
+        vec=zeros(n); idx=findfirst(x->x==ch,ARABIC_LETTERS)
+        idx===nothing && continue; vec[idx]=1.0
+        pg_a=""; for (k,v) in PHONETIC_GROUPS; ch in v && (pg_a=k); end
+        sg_a=""; for (k,v) in SHAPE_GROUPS; ch in v && (sg_a=k); end
+        for (j,ch2) in enumerate(ARABIC_LETTERS)
+            ch==ch2 && continue; j>n && continue
+            pg_b=""; for (k,v) in PHONETIC_GROUPS; ch2 in v && (pg_b=k); end; pg_a==pg_b && (vec[j]+=0.3)
+            sg_b=""; for (k,v) in SHAPE_GROUPS; ch2 in v && (sg_b=k); end; sg_a==sg_b && (vec[j]+=0.25)
+        end; emb.letter_vectors[ch]=vec
+    end
+
+    fatha_letters = ["ا","ه","ح","و","ر","ن"]
+    fatha_vec = zeros(n)
+    for ch in fatha_letters
+        haskey(letter_to_idx, ch) && (fatha_vec[letter_to_idx[ch]] = 1.0)
+    end
+    fatha_norm = norm(fatha_vec)
+    fatha_norm > 1e-10 && (fatha_vec ./= fatha_norm)
+
+    damma_letters = ["م","ق","ض","ب","ج","ل"]
+    damma_vec = zeros(n)
+    for ch in damma_letters
+        haskey(letter_to_idx, ch) && (damma_vec[letter_to_idx[ch]] = 1.0)
+    end
+    damma_norm = norm(damma_vec)
+    damma_norm > 1e-10 && (damma_vec ./= damma_norm)
+
+    kasra_letters = ["ي","ع","غ","خ","ذ","ظ"]
+    kasra_vec = zeros(n)
+    for ch in kasra_letters
+        haskey(letter_to_idx, ch) && (kasra_vec[letter_to_idx[ch]] = 1.0)
+    end
+    kasra_norm = norm(kasra_vec)
+    kasra_norm > 1e-10 && (kasra_vec ./= kasra_norm)
+
+    emb.haraka_vectors = Dict(
+        0x064E => fatha_vec,   # فتحة
+        0x064F => damma_vec,    # ضمة
+        0x0650 => kasra_vec,    # كسرة
+        0x064B => fatha_vec,   # تنوين فتح
+        0x064C => damma_vec,    # تنوين ضم
+        0x064D => kasra_vec,   # تنوين كسر
+    )
+    emb.shadda_code = 0x0651
+end
+
+function get_character_vector(emb::CharacterSemanticEmbedding, char::String)
+    haskey(emb.cache,char) && return emb.cache[char]
+    v=if emb.mode=="sparse"; get(emb.letter_vectors,char,zeros(emb.dim))
+    else; idx=findfirst(x->x==char[1],ARABIC_LETTERS); idx===nothing ? zeros(emb.dim) : begin
+        v2=zeros(emb.dim); for i=1:emb.dim; freq=(idx+1)*pi/28; v2[i]=i%2==0 ? sin(freq*(i+1)) : cos(freq*(i+1)); end
+        nrm=norm(v2); nrm>1e-10 ? v2./nrm : v2; end
+    end; emb.cache[char]=v; return v
+end
+
+function _parse_arabic_with_harakat(emb::CharacterSemanticEmbedding, word::String)
+    result = Tuple{String, Vector{Int}}[]
+    current_letter = ""
+    current_harakat = Int[]
+    for ch in word
+        cp = Int(ch)
+        if (0x0621 <= cp <= 0x064A && cp != 0x0640) || haskey(_NORMALIZE_MAP_SEM, ch)
+            norm_ch = string(get(_NORMALIZE_MAP_SEM, ch, ch))
+            if !isempty(current_letter)
+                push!(result, (current_letter, current_harakat))
+            end
+            current_letter = norm_ch
+            current_harakat = Int[]
+        elseif 0x064B <= cp <= 0x0652
+            if !isempty(current_letter)
+                push!(current_harakat, cp)
+            end
+        end
+    end
+    if !isempty(current_letter)
+        push!(result, (current_letter, current_harakat))
+    end
+    return result
+end
+
+function _get_position_weight(emb::CharacterSemanticEmbedding, pos::Int, len::Int)
+    pos < length(SPARSE_POSITION_WEIGHTS) ? SPARSE_POSITION_WEIGHTS[pos+1] : SPARSE_POSITION_WEIGHTS[end]
+end
+
+function get_word_semantic_vector(emb::CharacterSemanticEmbedding, word::String)
+    if emb.mode == "sparse"
+        return _get_word_semantic_sparse(emb, word)
+    end
+    pvs=Vector{Float64}[]
+    for c in word; v=get_character_vector(emb,string(c)); norm(v)>1e-10 && push!(pvs,v); end
+    isempty(pvs) && return zeros(emb.dim); return sum(pvs)./max(norm(sum(pvs)),1e-10)
+end
+
+function _get_word_semantic_sparse(emb::CharacterSemanticEmbedding, word::String)
+    parsed = _parse_arabic_with_harakat(emb, word)
+    n = length(parsed)
+
+    if n <= 2
+        vectors = Vector{Float64}[]
+        for (letter, harakat) in parsed
+            vec = get_character_vector(emb, letter)
+            if norm(vec) > 1e-10
+                for h in harakat
+                    if h == emb.shadda_code
+                        vec = vec .* 1.12
+                    elseif haskey(emb.haraka_vectors, h)
+                        vec = vec .+ emb.haraka_vectors[h] .* SPARSE_HARAKA_STRENGTH
+                    end
+                end
+                push!(vectors, vec)
+            end
+        end
+        isempty(vectors) && return zeros(emb.dim)
+        return sum(vectors)
+    end
+
+    unigram_vectors = Vector{Float64}[]
+    bigram_vectors = Vector{Float64}[]
+    modulated_vecs = Vector{Float64}[]
+
+    for (i, (letter, harakat)) in enumerate(parsed)
+        vec = copy(get_character_vector(emb, letter))
+        if norm(vec) > 1e-10
+            for h in harakat
+                if h == emb.shadda_code
+                    vec .*= 1.12
+                elseif haskey(emb.haraka_vectors, h)
+                    vec .+= emb.haraka_vectors[h] .* SPARSE_HARAKA_STRENGTH
+                end
+            end
+            push!(modulated_vecs, copy(vec))
+            w = _get_position_weight(emb, i-1, n)
+            push!(unigram_vectors, vec .* w)
+        end
+    end
+
+    for i in 1:length(modulated_vecs)-1
+        v1 = modulated_vecs[i]
+        v2 = modulated_vecs[i+1]
+        if norm(v1) > 1e-10 && norm(v2) > 1e-10
+            bg = (v1 .+ v2) ./ 2.0
+            push!(bigram_vectors, bg .* 0.45)
+        end
+    end
+
+    all_vectors = vcat(unigram_vectors, bigram_vectors)
+    isempty(all_vectors) && return zeros(emb.dim)
+    return sum(all_vectors)
+end
+
+# ═══ ArabicRootExtractor ═══
+mutable struct ArabicRootExtractor
+    roots::Set{String}; patterns::Vector{Tuple{String,Vector{Int}}}; cache::Dict{String,String}
+end
+function ArabicRootExtractor()
+    pats=[("استفعال",[4,5,7]),("انفعال",[3,4,6]),("افتعال",[2,4,6]),("مفاعيل",[2,4,6]),
+          ("تفعيل",[2,3,5]),("تفاعل",[2,4,5]),("تفعل",[2,3,5]),("مفعول",[2,3,5]),
+          ("فاعل",[1,3,4]),("فعال",[1,2,4]),("فعول",[1,2,4]),("فعيل",[1,2,4]),
+          ("أفعل",[2,3,4]),("مفعل",[2,3,4]),("يفعل",[2,3,4]),("تفعل",[2,3,4]),("نفعل",[2,3,4])]
+    ArabicRootExtractor(Set{String}(),pats,Dict{String,String}())
+end
+
+function extract(re::ArabicRootExtractor, word::String)
+    haskey(re.cache,word) && return re.cache[word]
+    w=filter(c->c∉('ً','ٌ','ٍ','َ','ُ','ِ','ّ','ْ','ـ'),word)
+    w=map(c->get(Dict('آ'=>'ا','أ'=>'ا','إ'=>'ا','ؤ'=>'و','ئ'=>'ي','ة'=>'ه','ى'=>'ي'),c,c),w) |> String
+    if startswith(w,"ال")&&length(w)>4; w=w[3:end]; end
+    for _ in 1:2; for p in ["و","ف","ب","ل","ك"]; startswith(w,p)&&length(w)>4&&(w=w[2:end];break); end; end
+    for pr in sort(["هم","هن","هما","ها","ه","ون","ين","ان","ات","كم","كن","كما","ك","تم","تن","تما","وا","نا","ني","ي","ت"];by=length,rev=true)
+        endswith(w,pr)&&length(w)>length(pr)+2&&(w=w[1:end-length(pr)];break); end
+    if endswith(w,"ه")&&length(w)>3; w=w[1:end-1]; end
+    aug=Set("سألتمونيها")
+    for (pat,idx) in re.patterns
+        length(w)!=length(pat) && continue
+        chars=Char[]; ok=true
+        for i in 1:length(w)
+            if i in idx; push!(chars,w[i])
+            elseif w[i]!=pat[i]&&w[i] in aug
+                if pat[i]=='ا'&&w[i] in ('أ','إ','آ','و','ي','ا'); continue
+                elseif pat[i]=='ء'&&w[i] in ('ؤ','ئ','ء'); continue; end; ok=false; break
+            elseif w[i]!=pat[i]; ok=false; break; end
+        end
+        if ok&&length(chars)>=3; root=join(chars[1:3]); re.cache[word]=root; return root; end
+    end
+    root=join(unique(w)[1:min(3,length(unique(w)))]); re.cache[word]=root; return root
+end
+end

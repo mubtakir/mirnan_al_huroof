@@ -1,0 +1,131 @@
+"""
+المرحلة 2: كشف اللغة وتصفيتها — LanguageFilter.
+
+يكتشف لغة النص (عربي/إنجليزي/مختلط/غير ذلك)
+ويصفّي النصوص غير المرغوبة حسب اللغة المستهدفة.
+"""
+module LanguageFilter
+
+export detect_language, filter_by_language, is_arabic_text, is_english_text,
+       LANGUAGE_AR, LANGUAGE_EN, LANGUAGE_MIXED, LANGUAGE_OTHER
+
+const LANGUAGE_AR    = "arabic"
+const LANGUAGE_EN    = "english"
+const LANGUAGE_MIXED = "mixed"
+const LANGUAGE_OTHER = "other"
+
+# نطاقات Unicode العربية (تشمل الفارسية والأردية جزئياً)
+const _ARABIC_RANGES = [
+    (0x0600, 0x06FF),   # Arabic
+    (0x0750, 0x077F),   # Arabic Supplement
+    (0x08A0, 0x08FF),   # Arabic Extended-A
+    (0xFB50, 0xFDFF),   # Arabic Presentation Forms-A
+    (0xFE70, 0xFEFF),   # Arabic Presentation Forms-B
+]
+# علامات الترقيم العربية
+const _ARABIC_PUNCT = Set([0x060C, 0x061B, 0x061F, 0x066A, 0x066B, 0x066C, 0x066D])
+
+function _is_arabic_char(c::Char)::Bool
+    code = UInt32(c)
+    code in _ARABIC_PUNCT && return true
+    for (lo, hi) in _ARABIC_RANGES
+        if lo <= code <= hi
+            return true
+        end
+    end
+    return false
+end
+
+function _is_english_char(c::Char)::Bool
+    return ('a' <= c <= 'z') || ('A' <= c <= 'Z')
+end
+
+"""
+    detect_language(text::String; threshold::Float64=0.5) -> String
+
+يكتشف لغة النص. يرجع إحدى القيم:
+- LANGUAGE_AR ("arabic")
+- LANGUAGE_EN ("english")
+- LANGUAGE_MIXED ("mixed")
+- LANGUAGE_OTHER ("other")
+
+threshold: النسبة الدنيا للأحرف لتُصنف اللغة (افتراضي 0.5 = 50%)
+"""
+function detect_language(text::String; threshold::Float64=0.5)
+    ar_count = 0
+    en_count = 0
+    total_chars = 0
+
+    for c in text
+        if _is_arabic_char(c)
+            ar_count += 1
+            total_chars += 1
+        elseif _is_english_char(c)
+            en_count += 1
+            total_chars += 1
+        elseif !isspace(c) && !isdigit(c) && !ispunct(c)
+            total_chars += 1  # حرف من لغة أخرى
+        end
+    end
+
+    if total_chars == 0
+        return LANGUAGE_OTHER
+    end
+
+    ar_ratio = ar_count / total_chars
+    en_ratio = en_count / total_chars
+
+    if ar_ratio >= threshold
+        return LANGUAGE_AR
+    elseif en_ratio >= threshold
+        return LANGUAGE_EN
+    elseif ar_ratio > 0.2 && en_ratio > 0.2
+        return LANGUAGE_MIXED
+    else
+        return LANGUAGE_OTHER
+    end
+end
+
+"""
+    filter_by_language(texts::Vector{String}; target::String="arabic",
+                       threshold::Float64=0.5) -> Vector{String}
+
+يصفي النصوص حسب اللغة المستهدفة. يقبل:
+- target="arabic" أو "ar"
+- target="english" أو "en"
+- target="both" أو "mixed" (يقبل عربي + إنجليزي + مختلط)
+"""
+function filter_by_language(texts::Vector{String}; target::String="arabic",
+                             threshold::Float64=0.5)
+    filtered = String[]
+    for text in texts
+        lang = detect_language(text; threshold=threshold)
+        if target in ("both", "mixed")
+            lang in (LANGUAGE_AR, LANGUAGE_EN, LANGUAGE_MIXED) || continue
+        elseif target in ("arabic", "ar")
+            lang == LANGUAGE_AR || continue
+        elseif target in ("english", "en")
+            lang == LANGUAGE_EN || continue
+        end
+        push!(filtered, text)
+    end
+    return filtered
+end
+
+"""
+    is_arabic_text(text::String; threshold::Float64=0.4) -> Bool
+
+اختصار: هل النص عربي؟
+"""
+is_arabic_text(text::String; threshold::Float64=0.4) =
+    detect_language(text; threshold=threshold) == LANGUAGE_AR
+
+"""
+    is_english_text(text::String; threshold::Float64=0.4) -> Bool
+
+اختصار: هل النص إنجليزي؟
+"""
+is_english_text(text::String; threshold::Float64=0.4) =
+    detect_language(text; threshold=threshold) == LANGUAGE_EN
+
+end # module LanguageFilter

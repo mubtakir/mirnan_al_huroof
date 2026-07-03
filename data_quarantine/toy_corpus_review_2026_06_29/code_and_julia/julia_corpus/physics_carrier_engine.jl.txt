@@ -1,0 +1,328 @@
+"""
+محرك الموجة الحاملة — CarrierWaveEngine.
+
+يدعم تدوير الأطوار للموجة الحاملة (الأسماء) وجذب أطوار الموجات المحمولة (الأفعال/الصفات/الأحوال)
+حسب تماسك الجملة في الرنين.
+"""
+module CarrierWave
+
+using LinearAlgebra, SparseArrays, FFTW
+using ..WordPhysics: compute_word_frequency, compute_word_phase_vector
+using ..MorphoPhasic: analyze_morpho
+using ..ResonantChain: sentence_coherence
+
+export CarrierWaveEngine, rotate_phase, train_carrier_coupling!, score_candidate_via_carrier
+
+mutable struct CarrierWaveEngine
+    bandwidth::Float64
+    min_strength::Float64
+    carrier_spectra::Dict{Int,Dict{Int,Float64}}
+    carrier_freqs::Dict{Int,Float64}
+    mod_frequencies::Dict{Int,Float64}
+    is_built::Bool
+    freq_cache::Dict{String,Float64}
+end
+
+CarrierWaveEngine(; bandwidth=0.15, min_strength=0.01) =
+    CarrierWaveEngine(bandwidth, min_strength, Dict(), Dict(), Dict(), false, Dict())
+
+const _fft_plan = Ref{Any}(nothing)
+const _ifft_plan = Ref{Any}(nothing)
+
+function _get_plans()
+    if _fft_plan[] === nothing
+        _fft_plan[] = plan_fft(zeros(ComplexF64, 9958))
+        _ifft_plan[] = plan_ifft(zeros(ComplexF64, 9958))
+    end
+    return _fft_plan[], _ifft_plan[]
+end
+
+function rotate_phase(v::Vector{Float64}, theta::Float64)
+    v_out = copy(v)
+    u = ComplexF64.(v[1:9958])
+    p_fft, p_ifft = _get_plans()
+    U = p_fft * u
+    N = length(u)
+    mid = N ÷ 2
+    # Apply phase shift preserving conjugate symmetry
+    for k in 2:mid
+        U[k] *= exp(im * theta)
+        U[N - k + 2] *= exp(-im * theta)
+    end
+    # DC and Nyquist are left unchanged
+    u_shifted = real(p_ifft * U)
+    v_out[1:9958] .= u_shifted
+    nrm = norm(v_out[1:9958])
+    if nrm > 1e-10
+        v_out[1:9958] ./= nrm
+    end
+    return v_out
+end
+
+"""
+    train_carrier_coupling!(cwe::CarrierWaveEngine, corpus_sentences, vocab, id2word, morpho, resonant_chain, pv_cache, pv_fn, mass_fn; max_sentences=5000, eta=0.1)
+
+تدريب وتعديل أطوار متجهات المفردات عبر الجذب الطوري بين الموجات الحاملة (الأسماء) والمحمولة (الأفعال/الصفات/الأحوال).
+"""
+function train_carrier_coupling!(cwe::CarrierWaveEngine, corpus_sentences::Vector{Vector{Int32}},
+                                 vocab::Dict{String,Int}, id2word::Dict{Int,String},
+                                 morpho, resonant_chain, pv_cache::Dict{String,Vector{Float64}},
+                                 pv_fn, mass_fn; max_sentences::Int=5000, eta::Float64=0.1,
+                                 epochs::Int=15)
+    
+    println("⟳ [CarrierWave] Filtering sentences and identifying active vocabulary...")
+    flush(stdout)
+    
+    # 1. تصفية الجمل وتحديد الكلمات النشطة (تخطي الجمل الطويلة جداً التي تمثل مسارد وقوائم)
+    filtered_sentences = Vector{Int32}[]
+    active_words = Set{String}()
+    for id_seq in corpus_sentences
+        length(filtered_sentences) >= max_sentences && break
+        length(id_seq) > 100 && continue # تخطي القوائم غير المهيكلة الطويلة جداً
+        push!(filtered_sentences, id_seq)
+        for wid in id_seq
+            w = get(id2word, Int(wid), "")
+            if !isempty(w)
+                push!(active_words, w)
+            end
+        end
+    end
+    active_words_vec = collect(active_words)
+    
+    println("⟳ [CarrierWave] Starting phase coupling training on $(length(filtered_sentences)) sentences for $epochs epochs...")
+    println("  - Analyzing morphology for $(length(active_words_vec)) active words...")
+    flush(stdout)
+    
+    word_types = Dict{String,String}()
+    for word in active_words_vec
+        try
+            morph = analyze_morpho(morpho, word)
+            word_types[word] = morph["type"] # "اسم", "فعل", "صفة", "حال", "أداة"
+        catch
+            word_types[word] = "اسم"
+        end
+    end
+    
+    # 2. حساب تحويل هيلبرت للكلمات النشطة مسبقاً لتفادي حسابات FFT في كل حلقة
+    println("  - Precomputing Hilbert transforms for active words...")
+    flush(stdout)
+    hilbert_cache = Dict{String,Tuple{Vector{Float64},Float64,Float64}}()
+    
+    p_fft = plan_fft(zeros(ComplexF64, 9958))
+    p_ifft = plan_ifft(zeros(ComplexF64, 9958))
+    mid = 9958 ÷ 2
+    H_buf = zeros(ComplexF64, 9958)
+    
+    for word in active_words_vec
+        v = pv_fn(word)
+        u = ComplexF64.(view(v, 1:9958))
+        U = p_fft * u
+        fill!(H_buf, 0.0)
+        for k in 2:mid
+            H_buf[k] = -im * U[k]
+            H_buf[9958 - k + 2] = im * U[9958 - k + 2]
+        end
+        hat_u = real(p_ifft * H_buf)
+        hilbert_cache[word] = (hat_u, real(U[1]), real(U[mid+1]))
+    end
+
+    # دالة الدوران السريع باستخدام هيلبرت
+    function rotate_phase_fast!(v_out::Vector{Float64}, v_in::Vector{Float64}, theta::Float64, word::String)
+        hat_u, dc_val, nyq_val = hilbert_cache[word]
+        N = 9958
+        c = cos(theta)
+        s = sin(theta)
+        dc_corr = (dc_val / N) * (1.0 - c)
+        nyq_factor = (nyq_val / N) * (1.0 - c)
+        
+        for n in 1:N
+            sign = (n % 2 == 1) ? 1.0 : -1.0
+            v_out[n] = v_in[n] * c - hat_u[n] * s + dc_corr + nyq_factor * sign
+        end
+        
+        v_out[9959:end] .= v_in[9959:end]
+        
+        nrm = norm(view(v_out, 1:9958))
+        if nrm > 1e-10
+            v_out[1:9958] ./= nrm
+        end
+    end
+
+    # عامل مميز للأفعال (إزاحة طورية ثابتة قدرها π/2 لجعلها متعامدة تماماً على الأسماء)
+    phi_verb = π / 2.0
+    n_trained = 0
+    
+    # حجز متجهات لتفادي التخصيص المتكرر داخل الحلقة
+    accum_vectors = Dict{String,Vector{Float64}}()
+    for w in active_words
+        accum_vectors[w] = zeros(9958)
+    end
+    
+    # 3. حلقة التدريب الرئيسية عبر الدورات (Epochs)
+    println("  - Running phase coupling loop...")
+    flush(stdout)
+    
+    for epoch in 1:epochs
+        epoch_trained = 0
+        for (s_idx, id_seq) in enumerate(filtered_sentences)
+            # تحويل المعرفات إلى كلمات
+            words = String[]
+            for wid in id_seq
+                w = get(id2word, Int(wid), "")
+                if !isempty(w)
+                    push!(words, w)
+                end
+            end
+            length(words) < 2 && continue
+            
+            # استرجاع الكتل والاقترانات لبناء تماسك الجملة
+            masses = Float64[]
+            sentence_pvs = Vector{Float64}[]
+            for w in words
+                push!(masses, mass_fn(w))
+                push!(sentence_pvs, get(pv_cache, w, pv_fn(w)))
+            end
+            
+            gamma = sentence_coherence(resonant_chain, masses, sentence_pvs)
+            gamma < 1e-6 && continue # خفض العتبة لتمكين الجمل البدئية غير المتماسكة من التدرب
+            
+            # فرز الحوامل والمرافقات
+            carriers = Int[]
+            companions = Int[]
+            for (i, w) in enumerate(words)
+                w_type = get(word_types, w, "اسم")
+                if w_type == "اسم"
+                    push!(carriers, i)
+                elseif w_type in ("فعل", "صفة", "حال")
+                    push!(companions, i)
+                end
+            end
+            
+            (isempty(carriers) || isempty(companions)) && continue
+            
+            # زاوية طور التماسك
+            theta_c = gamma * π
+            
+            # أ. تدوير أطوار الأسماء الحاملة والأفعال
+            unique_sentence_words = unique(words)
+            for w in unique_sentence_words
+                v_curr = get(pv_cache, w, pv_fn(w))
+                w_type = get(word_types, w, "")
+                
+                if w_type == "اسم"
+                    v_new = copy(v_curr)
+                    rotate_phase_fast!(v_new, v_curr, theta_c, w)
+                    pv_cache[w] = v_new
+                elseif w_type == "فعل"
+                    v_new = copy(v_curr)
+                    rotate_phase_fast!(v_new, v_curr, phi_verb, w)
+                    pv_cache[w] = v_new
+                end
+            end
+            
+            # ب. جذب طوري متبادل مجمع مع نافذة مسافة محلية 15 (أسرع وتفادي للحسابات غير الضرورية)
+            for w in unique_sentence_words
+                fill!(accum_vectors[w], 0.0)
+            end
+            
+            # تحديث مراجع المتجهات المحدثة بالدوران
+            for i in 1:length(words)
+                sentence_pvs[i] = get(pv_cache, words[i], pv_fn(words[i]))
+            end
+            
+            for i_c in carriers
+                w_carrier = words[i_c]
+                v_carrier = sentence_pvs[i_c]
+                
+                # البحث عن المرافقات في حدود مسافة 15 فقط
+                idx_start = searchsortedfirst(companions, i_c - 15)
+                idx_end = searchsortedlast(companions, i_c + 15)
+                
+                for idx in idx_start:idx_end
+                    j_comp = companions[idx]
+                    w_comp = words[j_comp]
+                    v_comp = sentence_pvs[j_comp]
+                    
+                    d = abs(i_c - j_comp)
+                    w_dist = 1.0 / (1.0 + d * 0.15)
+                    eta_c = eta * gamma * w_dist
+                    
+                    # استخدام axpy! الخالي من التخصيص لجمع التحديثات
+                    # جذب مرافقات الاسم نحو الأسماء
+                    axpy!(eta_c, view(v_carrier, 1:9958), accum_vectors[w_comp])
+                    
+                    # جذب الأسماء نحو مرافقاتها
+                    axpy!(eta_c, view(v_comp, 1:9958), accum_vectors[w_carrier])
+                end
+            end
+            
+            # تحديث أطوار الكلمات وتطبيعها مرة واحدة لكل جملة
+            for w in unique_sentence_words
+                acc = accum_vectors[w]
+                if norm(acc) > 1e-10
+                    v = copy(get(pv_cache, w, pv_fn(w)))
+                    v[1:9958] .+= acc
+                    nrm = norm(view(v, 1:9958))
+                    if nrm > 1e-10
+                        v[1:9958] ./= nrm
+                    end
+                    pv_cache[w] = v
+                end
+            end
+            
+            epoch_trained += 1
+        end
+        n_trained = epoch_trained
+        if epochs > 1
+            println("    - Epoch $epoch / $epochs completed ($epoch_trained sentences)")
+            flush(stdout)
+        end
+    end
+    
+    cwe.is_built = true
+    println("✓ [CarrierWave] Phase coupling completed for $n_trained sentences. Cached $(length(pv_cache)) vectors in memory.")
+    flush(stdout)
+end
+
+"""
+    score_candidate_via_carrier(cwe::CarrierWaveEngine, candidate_word, context_words, gen, pv_fn) -> Float64
+
+قياس التوافق والجاذبية الطورية الطيفية بين الكلمة المرشحة والموجات الحاملة (الأسماء) الموجودة في السياق.
+"""
+function score_candidate_via_carrier(cwe::CarrierWaveEngine, candidate_word::String,
+                                     context_words::Vector{String}, gen, pv_fn)
+    if isempty(context_words)
+        return 0.0
+    end
+    
+    # تحديد الأسماء في نافذة السياق
+    ctx = context_words[max(1, end-min(6, length(context_words))):end]
+    carriers = String[]
+    for w in ctx
+        w == candidate_word && continue
+        morph = analyze_morpho(gen.morpho, w)
+        if morph["type"] == "اسم"
+            push!(carriers, w)
+        end
+    end
+    
+    isempty(carriers) && return 0.0
+    
+    cand_pv = pv_fn(candidate_word)
+    cand_norm = norm(cand_pv[1:9958])
+    cand_norm < 1e-10 && return 0.0
+    
+    best_sim = 0.0
+    for c_word in carriers
+        c_pv = pv_fn(c_word)
+        c_norm = norm(c_pv[1:9958])
+        c_norm < 1e-10 && continue
+        # حساب التشابه الطوري على النطاق الطيفي الأساسي 9958D
+        sim = dot(cand_pv[1:9958], c_pv[1:9958]) / (cand_norm * c_norm + 1e-10)
+        best_sim = max(best_sim, max(0.0, sim))
+    end
+    
+    return best_sim
+end
+
+end # module CarrierWave

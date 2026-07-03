@@ -1,0 +1,45 @@
+"""GrammarField — حقل نحوي على مستوى bigram."""
+module GrammarField
+using LinearAlgebra
+using ..Constants: PHASE_DIM
+
+export SyntaxField
+
+mutable struct SyntaxField
+    dim::Int
+    bigram_count::Dict{Tuple{String,String},Int}
+    cat_transition::Dict{Tuple{Int,Int},Int}
+    cat_count::Dict{Int,Int}
+end
+SyntaxField(; dim=PHASE_DIM) = SyntaxField(dim, Dict(), Dict(), Dict())
+
+function observe!(sf::SyntaxField, words::Vector{String})
+    for i in 1:(length(words)-1)
+        pair = (words[i], words[i+1])
+        sf.bigram_count[pair] = get(sf.bigram_count, pair, 0) + 1
+        src_cat = _classify_word(words[i])
+        dst_cat = _classify_word(words[i+1])
+        sf.cat_transition[(src_cat, dst_cat)] = get(sf.cat_transition, (src_cat, dst_cat), 0) + 1
+        sf.cat_count[src_cat] = get(sf.cat_count, src_cat, 0) + 1
+    end
+end
+
+function _classify_word(word::String)
+    prepositions = Set(["في","من","على","إلى","عن","مع","بين","ب","ل","ك"])
+    conjunctions = Set(["و","ف","ثم","أو","بل","لكن","حتى"])
+    verbs_starts = Set(["ي","ت","ن","أ"])
+    w = strip(word)
+    w in prepositions && return 1
+    w in conjunctions && return 2
+    !isempty(w) && w[1] in verbs_starts && length(w) >= 2 && return 3
+    return 4
+end
+
+function finalize!(sf::SyntaxField, vocab=nothing)
+    # Normalize category transitions
+    for ((c1, c2), cnt) in sf.cat_transition
+        total = get(sf.cat_count, c1, 1)
+        sf.cat_transition[(c1,c2)] = cnt / total
+    end
+end
+end

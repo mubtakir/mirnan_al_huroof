@@ -1,0 +1,41 @@
+"""SyntaxMonitor — مراقب نحوي (R_history, drift, alarms)."""
+module SyntaxMonitorModule
+using LinearAlgebra, Statistics
+using ..SyntaxFieldFull: expected_syntax, compute_syntax_vector
+
+export SyntaxMonitor
+
+mutable struct SyntaxMonitor
+    vocab::Dict; K::AbstractMatrix; window::Int; alarm_R::Float64
+    labels::Vector{String}; R_history::Vector{Float64}; dim_drifts::Vector{Vector{Float64}}; alarms::Vector{Dict}
+end
+SyntaxMonitor(vocab, K; window=5, alarm_R=0.85) = SyntaxMonitor(vocab, K, window, alarm_R, ["فعل","اسم","ح.جر","أداة","عطف","كان"], Float64[], Vector{Float64}[], Dict[])
+
+function step!(sm::SyntaxMonitor, prev_word::String, chosen_word::String, w_pv=nothing, syn_align=0.0)
+    exp = expected_syntax(prev_word, sm.vocab, sm.K)
+    w2v = compute_syntax_vector(chosen_word)
+    ne, nw = norm(exp), norm(w2v)
+    if ne < 1e-10 || nw < 1e-10
+        push!(sm.R_history, 0.0)
+    else
+        u, v = w2v./nw, exp./ne
+        per_dim = cos.(u .- v)
+        R = mean(per_dim)
+        push!(sm.R_history, R)
+        push!(sm.dim_drifts, 1.0 .- per_dim)
+        if R < sm.alarm_R
+            rebel = argmax(1.0 .- per_dim)
+            push!(sm.alarms, Dict("step"=>length(sm.R_history),"prev"=>prev_word,"chosen"=>chosen_word,"R"=>R,"rebel_dim"=>rebel,"rebel_label"=>sm.labels[rebel]))
+        end
+    end
+end
+
+function report(sm::SyntaxMonitor)
+    isempty(sm.R_history) && return Dict("verdict"=>"فارغ","R_mean"=>0.0)
+    R = Float64.(sm.R_history)
+    Rm = mean(R)
+    verdict = Rm >= 0.85 ? "متماسك" : Rm >= 0.75 ? "منزلق" : "حرج"
+    return Dict("verdict"=>verdict, "R_mean"=>Rm, "R_min"=>minimum(R), "n_steps"=>length(R), "drift_events"=>length(sm.alarms))
+end
+end
+

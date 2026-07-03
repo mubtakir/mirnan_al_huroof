@@ -1,0 +1,187 @@
+"""
+المرحلة 4: تقطيع الجمل — Segmenter.
+
+يقسّم النصوص الطويلة إلى جمل مفردة مناسبة لتدريب مرنان.
+يدعم العربية والإنجليزية بقواعد مختلفة.
+"""
+module Segmenter
+
+export segment_sentences, segment_arabic, segment_english,
+       segment_paragraphs, MIN_SENTENCE_WORDS, MAX_SENTENCE_WORDS
+
+const MIN_SENTENCE_WORDS = 5
+const MAX_SENTENCE_WORDS = 200
+
+# علامات نهاية الجملة في العربية
+const _AR_SENTENCE_ENDS = Set(['.', '!', '؟', '\n'])
+
+# اختصارات لا تُنهي الجملة (عربية)
+const _AR_ABBREV = Set(["د", "أ", "م", "س", "ص", "ع", "ت", "هـ", "ا", "ج"])
+
+# اختصارات لا تُنهي الجملة (إنجليزية)
+const _EN_ABBREV = Set([
+    "mr", "mrs", "ms", "dr", "prof", "sr", "jr", "st", "ave",
+    "dept", "univ", "etc", "eg", "ie", "vs", "inc", "ltd", "co",
+    "jan", "feb", "mar", "apr", "jun", "jul", "aug", "sep", "oct", "nov", "dec",
+])
+
+"""
+    segment_sentences(text::String; lang::String="auto",
+                      min_words::Int=MIN_SENTENCE_WORDS,
+                      max_words::Int=MAX_SENTENCE_WORDS) -> Vector{String}
+
+يقسّم النص إلى جمل. يدعم العربية والإنجليزية.
+"""
+function segment_sentences(text::String; lang::String="auto",
+                            min_words::Int=MIN_SENTENCE_WORDS,
+                            max_words::Int=MAX_SENTENCE_WORDS)
+    isempty(strip(text)) && return String[]
+
+    if lang == "auto"
+        # كشف سريع: إذا كان > 40% أحرف عربية ← عربي
+        ar_count = count(c -> ('\u0600' <= c <= '\u06FF'), text)
+        total = length(text)
+        lang = (total > 0 && ar_count / total > 0.3) ? "arabic" : "english"
+    end
+
+    if lang == "arabic"
+        return segment_arabic(text; min_words=min_words, max_words=max_words)
+    else
+        return segment_english(text; min_words=min_words, max_words=max_words)
+    end
+end
+
+"""
+    segment_arabic(text::String; min_words, max_words) -> Vector{String}
+
+تقطيع الجمل العربية. يعتمد على:
+- فواصل النهاية: . ! ؟ \n
+- لا يقطع عند الاختصارات (د. أ. إلخ)
+- يدمج الجمل القصيرة جداً مع سابقتها
+- يقسم الجمل الطويلة جداً (>max_words) عند الفواصل
+"""
+function segment_arabic(text::String; min_words::Int=MIN_SENTENCE_WORDS,
+                         max_words::Int=MAX_SENTENCE_WORDS)
+    # الخطوة 1: تقطيع أولي عند علامات النهاية + الأسطر
+    raw_sentences = String[]
+    current = Char[]
+    for c in text
+        push!(current, c)
+        if c in _AR_SENTENCE_ENDS
+            sent = strip(String(current))
+            if !isempty(sent)
+                push!(raw_sentences, sent)
+            end
+            empty!(current)
+        end
+    end
+    # الجملة الأخيرة
+    sent = strip(String(current))
+    isempty(sent) || push!(raw_sentences, sent)
+
+    # الخطوة 2: دمج الجمل القصيرة جداً مع سابقتها
+    merged = String[]
+    for sent in raw_sentences
+        wc = length(split(sent))
+        if wc < min_words && !isempty(merged)
+            merged[end] = merged[end] * " " * sent
+        else
+            push!(merged, sent)
+        end
+    end
+
+    # الخطوة 3: تقسيم الجمل الطويلة جداً
+    final = String[]
+    for sent in merged
+        words = split(sent)
+        if length(words) <= max_words
+            push!(final, sent)
+        else
+            # تقسيم عند الفواصل والواو
+            chunks = _split_long_sentence(sent, max_words)
+            append!(final, chunks)
+        end
+    end
+
+    # الخطوة 4: فلترة الجمل القصيرة جداً بعد التقسيم
+    return filter(s -> length(split(s)) >= min_words, final)
+end
+
+"""
+    _split_long_sentence(sent::String, max_words::Int) -> Vector{String}
+
+يقسم جملة طويلة عند مواقع طبيعية: الفواصل، الواو، ثم.
+"""
+function _split_long_sentence(sent::String, max_words::Int)
+    words = split(sent)
+    length(words) <= max_words && return [sent]
+
+    chunks = String[]
+    i = 1
+    while i <= length(words)
+        end_i = min(i + max_words - 1, length(words))
+        # البحث عن أفضل نقطة قطع: فاصلة، واو العطف، أو منتصف النافذة
+        best_split = end_i
+        for j in i:min(end_i, length(words))
+            w = words[j]
+            if endswith(w, "،") || endswith(w, ",") || w == "و" || w == "ثم"
+                best_split = j
+                break
+            end
+        end
+        # إذا لم نجد نقطة قطع جيدة، استخدم منتصف النافذة
+        if best_split == end_i && end_i > i + max_words ÷ 2
+            best_split = i + max_words ÷ 2
+        end
+        chunk = join(words[i:best_split], " ")
+        push!(chunks, chunk)
+        i = best_split + 1
+    end
+    return chunks
+end
+
+"""
+    segment_english(text::String; min_words, max_words) -> Vector{String}
+
+تقطيع الجمل الإنجليزية.
+"""
+function segment_english(text::String; min_words::Int=MIN_SENTENCE_WORDS,
+                          max_words::Int=MAX_SENTENCE_WORDS)
+    # تقطيع عند .!?
+    raw = split(text, r"(?<=[.!?])\s+(?=[A-Z])")
+    sentences = String[]
+    for part in raw
+        s = strip(part)
+        isempty(s) && continue
+        push!(sentences, s)
+    end
+
+    # دمج القصيرة
+    merged = String[]
+    for sent in sentences
+        wc = length(split(sent))
+        if wc < min_words && !isempty(merged)
+            merged[end] = merged[end] * " " * sent
+        else
+            push!(merged, sent)
+        end
+    end
+
+    return filter(s -> length(split(s)) >= min_words, merged)
+end
+
+"""
+    segment_paragraphs(text::String) -> Vector{String}
+
+يقسّم النص إلى فقرات (أسطر فارغة تفصلها).
+"""
+function segment_paragraphs(text::String)
+    paras = String[]
+    for p in split(text, r"\n\s*\n")
+        para = strip(p)
+        isempty(para) || push!(paras, para)
+    end
+    return paras
+end
+
+end # module Segmenter

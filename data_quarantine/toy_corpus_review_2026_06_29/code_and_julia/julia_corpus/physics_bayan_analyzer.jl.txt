@@ -1,0 +1,511 @@
+"""
+BayanAnalyzer — محلل البيان الداخلي لمرنان (المرحلة الأولى)
+==============================================================
+
+يحلل النص العربي ويستخرج منه:
+  1. الكيانات (أسماء، أشخاص، أماكن، أزمنة)
+  2. الأفعال والعلاقات
+  3. بنية الحدث (فاعل ← فعل ← مفعول)
+  4. السيناريو كاستعلام بيان داخلي
+
+يعمل فوق K_sem الموجود في مرنان — لا يحتاج أي بيانات خارجية.
+"""
+module BayanAnalyzer
+
+using LinearAlgebra, Statistics
+
+export BayanAnalysis, analyze, to_bayan_query, summarize_analysis,
+       WordRole, ENTITY, ACTION, PLACE, TIME, PROPERTY, RELATION, NEGATION, QUESTION, UNKNOWN,
+       WordToken, SceneEvent
+
+# ═══════════════════════════════════════════════════════════════
+# 1. أنواع التصنيف
+# ═══════════════════════════════════════════════════════════════
+
+@enum WordRole begin
+    ENTITY      # كيان: إنسان، حيوان، شيء
+    ACTION      # فعل: ذهب، كتب، أكل
+    PLACE       # مكان: قلعة، بيت، مدينة
+    TIME        # زمان: صباح، أمس، الآن
+    PROPERTY    # صفة: كبير، سريع، جميل
+    RELATION    # أداة ربط: في، على، من، إلى
+    NEGATION    # نفي: لا، لم، لن، ما
+    QUESTION    # استفهام: هل، ما، كيف، أين
+    UNKNOWN     # غير محدد
+end
+
+struct WordToken
+    word::String
+    role::WordRole
+    confidence::Float64   # 0.0 — 1.0
+    phase_mass::Float64   # الكتلة الطورية من مرنان
+end
+
+struct SceneEvent
+    agent::Union{String,Nothing}      # الفاعل
+    action::Union{String,Nothing}     # الفعل
+    target::Union{String,Nothing}     # المفعول / الهدف
+    place::Union{String,Nothing}      # المكان
+    time_ref::Union{String,Nothing}   # الزمان
+    negated::Bool                     # هل الحدث منفي؟
+end
+
+struct BayanAnalysis
+    original_text::String
+    tokens::Vector{WordToken}
+    events::Vector{SceneEvent}
+    query::String           # استعلام لغة البيان المولود تلقائياً
+    coherence::Float64      # مدى تماسك السيناريو (0.0 — 1.0)
+end
+
+# ═══════════════════════════════════════════════════════════════
+# 2. قواميس التصنيف (البذرة المعرفية الصغيرة)
+# ═══════════════════════════════════════════════════════════════
+
+const PLACE_SEEDS = Set([
+    "قلعة","بيت","مدينة","قرية","مسجد","كنيسة","سوق","مدرسة","جامعة",
+    "حديقة","شارع","طريق","نهر","بحر","جبل","وادي","صحراء","غابة",
+    "قصر","حصن","برج","ميدان","ساحة","مكتب","مستشفى","محطة","ميناء",
+    "مطار","فندق","مطعم","دكان","متجر","منزل","دار","ضيعة","خيمة"
+])
+
+const TIME_SEEDS = Set([
+    "صباح","مساء","ليل","نهار","فجر","ضحى","ظهر","عصر","مغرب","عشاء",
+    "أمس","اليوم","غداً","الآن","قريباً","بعيداً","دائماً","أحياناً",
+    "ساعة","دقيقة","يوم","أسبوع","شهر","سنة","عام","قرن","لحظة",
+    "بعد","قبل","حين","عندما","ليلاً","نهاراً","صباحاً","مساءً",
+    "الغسق","الفجر","الأصيل","العشية","منتصف","مطلع"
+])
+
+const ACTION_SEEDS = Set([
+    "ذهب","جاء","دخل","خرج","قال","سمع","رأى","أكل","شرب","نام",
+    "قام","جلس","مشى","ركض","وصل","غادر","فتح","أغلق","حمل","وضع",
+    "كتب","قرأ","علم","تعلم","ضرب","بنى","هدم","طار","سبح","قاتل",
+    "أراد","طلب","أمر","نهى","اشترى","باع","أعطى","أخذ","سرق","وجد",
+    "فعل","عمل","صنع","أنجز","أتمّ","بدأ","انتهى","عاد","ترك","خلّف",
+    "يريد","يذهب","يقول","يفعل","يعمل","يبني","يدخل","يخرج","يعود"
+])
+
+const ENTITY_SEEDS = Set([
+    "رجل","امرأة","طفل","ولد","بنت","شيخ","شاب","فتى","فتاة",
+    "فارس","جندي","ملك","أمير","وزير","قاضي","تاجر","فلاح","صياد",
+    "أسد","ذئب","حصان","جمل","كلب","قطة","طير","نسر","حمام",
+    "إنسان","شخص","كائن","قوم","ناس","جماعة","قبيلة","شعب",
+    "سيف","رمح","درع","كتاب","قلم","ورقة","مفتاح","خاتم","تاج"
+])
+
+const NEGATION_SEEDS = Set([
+    "لا","لم","لن","ما","ليس","لات","لو","لولا","غير","بدون","دون"
+])
+
+const QUESTION_SEEDS = Set([
+    "هل","ما","ماذا","كيف","أين","متى","من","لماذا","كم","أي","أيّ"
+])
+
+const RELATION_SEEDS = Set([
+    "في","على","من","إلى","عن","مع","بين","خلف","أمام","تحت","فوق",
+    "عند","لدى","حول","منذ","حتى","كي","لـ","بـ","لأن","إذ","حيث"
+])
+
+const PROPERTY_SEEDS = Set([
+    "كبير","صغير","طويل","قصير","سريع","بطيء","قوي","ضعيف","جميل","قبيح",
+    "ذكي","غبي","شجاع","جبان","كريم","بخيل","عادل","ظالم","طيب","شرير",
+    "قديم","جديد","ثقيل","خفيف","حار","بارد","مظلم","مضيء","صعب","سهل"
+])
+
+# ═══════════════════════════════════════════════════════════════
+# 3. دالة التصنيف الأساسية (بذرة + طور)
+# ═══════════════════════════════════════════════════════════════
+
+"""
+    classify_token(word, pv_fn, K_sem, vocab) → WordToken
+
+يصنف كلمة واحدة باستخدام:
+  أ) البذور المعرفية (فورية — O(1))
+  ب) التشابه الطوري مع كلمات بذرة التصنيف (إذا لم تُوجد في البذور)
+"""
+function classify_token(word::String, pv_fn=nothing, K_sem=nothing, vocab=nothing)::WordToken
+    # تنظيف الكلمة من التشكيل وأل التعريف
+    clean = strip_diacritics(word)
+    bare  = strip_prefix_al(clean)   # يجرب بدون أل أيضاً
+    
+    # حساب الكتلة الطورية إن أمكن
+    mass = 1.0
+    if pv_fn !== nothing
+        try
+            pv = pv_fn(word)
+            mass = sqrt(sum(x^2 for x in pv)) / length(pv)
+        catch; end
+    end
+
+    # ─── أ: بحث مباشر في البذور (مع وبدون أل) ───
+    (clean in NEGATION_SEEDS || bare in NEGATION_SEEDS)  && return WordToken(word, NEGATION,  0.99, mass)
+    (clean in QUESTION_SEEDS || bare in QUESTION_SEEDS)  && return WordToken(word, QUESTION,  0.99, mass)
+    (clean in RELATION_SEEDS || bare in RELATION_SEEDS)  && return WordToken(word, RELATION,  0.95, mass)
+    (clean in ACTION_SEEDS   || bare in ACTION_SEEDS)    && return WordToken(word, ACTION,    0.95, mass)
+    (clean in PLACE_SEEDS    || bare in PLACE_SEEDS)     && return WordToken(word, PLACE,     0.95, mass)
+    (clean in TIME_SEEDS     || bare in TIME_SEEDS)      && return WordToken(word, TIME,      0.95, mass)
+    (clean in ENTITY_SEEDS   || bare in ENTITY_SEEDS)    && return WordToken(word, ENTITY,    0.90, mass)
+    (clean in PROPERTY_SEEDS || bare in PROPERTY_SEEDS)  && return WordToken(word, PROPERTY,  0.90, mass)
+
+    # ─── ب: استدلال من K_sem (إذا توفر) ───
+    if K_sem !== nothing && vocab !== nothing
+        role, conf = infer_role_from_ksem(clean, K_sem, vocab)
+        return WordToken(word, role, conf, mass)
+    end
+
+    # ─── ج: استنتاج صرفي بسيط ───
+    role, conf = morphological_guess(clean)
+    return WordToken(word, role, conf, mass)
+end
+
+"""
+استنتاج الدور من K_sem:
+تجاور الكلمة مع كلمات البذور يكشف دورها.
+"""
+function infer_role_from_ksem(word::String, K_sem, vocab)
+    # أنماط البذور لكل تصنيف
+    seeds_by_role = [
+        (ACTION,   ["ذهب","جاء","دخل","قال","أراد","فعل"]),
+        (PLACE,    ["قلعة","بيت","مدينة","نهر","طريق"]),
+        (TIME,     ["صباح","مساء","يوم","ليل","أمس"]),
+        (ENTITY,   ["رجل","فارس","ملك","شخص","إنسان"]),
+        (PROPERTY, ["كبير","قوي","سريع","جميل","قديم"]),
+    ]
+
+    if !haskey(vocab, word); return UNKNOWN, 0.3; end
+    wid = vocab[word]
+
+    best_role = UNKNOWN
+    best_score = 0.0
+
+    for (role, seeds) in seeds_by_role
+        score = 0.0
+        count = 0
+        for s in seeds
+            if haskey(vocab, s)
+                sid = vocab[s]
+                # قيمة K_sem بين الكلمة والبذرة
+                try
+                    v = get(K_sem, (min(wid,sid), max(wid,sid)), 0.0)
+                    score += v
+                    count += 1
+                catch; end
+            end
+        end
+        avg = count > 0 ? score / count : 0.0
+        if avg > best_score
+            best_score = avg
+            best_role = role
+        end
+    end
+
+    conf = clamp(best_score * 5.0, 0.0, 0.9)
+    return best_role, conf
+end
+
+"""
+استنتاج صرفي بسيط من بنية الكلمة العربية.
+"""
+function morphological_guess(word::String)
+    length(word) < 2 && return UNKNOWN, 0.2
+
+    # أفعال مضارعة تبدأ بـ ي/ت/ن/أ
+    if startswith(word, "ي") || startswith(word, "تـ") || startswith(word, "ن")
+        length(word) >= 4 && return ACTION, 0.70
+    end
+
+    # مصادر المكان (مَفْعَل)
+    if startswith(word, "م") && length(word) >= 4
+        return PLACE, 0.50
+    end
+
+    # صفات تنتهي بـ ية/ي
+    if endswith(word, "ية") || endswith(word, "ي")
+        return PROPERTY, 0.55
+    end
+
+    # أزمنة تحتوي كلمة يوم/ليل
+    if occursin("يوم", word) || occursin("ليل", word) || occursin("صباح", word)
+        return TIME, 0.75
+    end
+
+    return UNKNOWN, 0.25
+end
+
+# ═══════════════════════════════════════════════════════════════
+# 4. استخراج الحدث (فاعل ← فعل ← مفعول)
+# ═══════════════════════════════════════════════════════════════
+
+"""
+يستخرج بنية الحدث من تسلسل الرموز.
+يتبع نمط الجملة العربية: فعل + فاعل + مفعول
+أو: فاعل + فعل + مفعول (الجملة الاسمية)
+"""
+function extract_events(tokens::Vector{WordToken})::Vector{SceneEvent}
+    events = SceneEvent[]
+    
+    agent   = nothing
+    action  = nothing
+    target  = nothing
+    place   = nothing
+    time_r  = nothing
+    negated = false
+
+    i = 1
+    while i <= length(tokens)
+        tok = tokens[i]
+
+        if tok.role == NEGATION
+            negated = true
+
+        elseif tok.role == ACTION
+            # إذا كان هناك حدث سابق — احفظه
+            if action !== nothing
+                push!(events, SceneEvent(agent, action, target, place, time_r, negated))
+                agent = nothing; target = nothing; negated = false
+            end
+            action = tok.word
+
+        elseif tok.role == ENTITY
+            if action === nothing
+                agent = tok.word      # فاعل (قبل الفعل)
+            elseif target === nothing
+                target = tok.word     # مفعول (بعد الفعل)
+            end
+
+        elseif tok.role == PLACE
+            place = tok.word
+
+        elseif tok.role == TIME
+            time_r = tok.word
+        end
+
+        i += 1
+    end
+
+    # الحدث الأخير
+    if action !== nothing || agent !== nothing
+        push!(events, SceneEvent(agent, action, target, place, time_r, negated))
+    end
+
+    return events
+end
+
+# ═══════════════════════════════════════════════════════════════
+# 5. توليد استعلام لغة البيان
+# ═══════════════════════════════════════════════════════════════
+
+"""
+يحوّل الأحداث إلى استعلام لغة البيان الداخلي.
+الناتج نص يمثل "ما يعرفه مرنان" عن المدخل قبل التوليد.
+"""
+function to_bayan_query(analysis::BayanAnalysis)::String
+    lines = String["هجين {"]
+
+    # الحقائق
+    entities_seen = Set{String}()
+    places_seen   = Set{String}()
+    for tok in analysis.tokens
+        if tok.role == ENTITY && !(tok.word in entities_seen)
+            push!(lines, "    حقيقة كيان(\"$(tok.word)\").")
+            push!(entities_seen, tok.word)
+        elseif tok.role == PLACE && !(tok.word in places_seen)
+            push!(lines, "    حقيقة مكان(\"$(tok.word)\").")
+            push!(places_seen, tok.word)
+        elseif tok.role == TIME
+            push!(lines, "    حقيقة زمان(\"$(tok.word)\").")
+        elseif tok.role == ACTION
+            push!(lines, "    حقيقة فعل(\"$(tok.word)\").")
+        end
+    end
+
+    # القواعد من الأحداث
+    for ev in analysis.events
+        if ev.agent !== nothing && ev.action !== nothing
+            if ev.target !== nothing
+                push!(lines, "    قاعدة حدث(\"$(ev.agent)\", \"$(ev.action)\", \"$(ev.target)\").")
+            else
+                push!(lines, "    قاعدة حدث(\"$(ev.agent)\", \"$(ev.action)\").")
+            end
+        end
+        if ev.place !== nothing && ev.agent !== nothing
+            push!(lines, "    قاعدة موقع(\"$(ev.agent)\", \"$(ev.place)\").")
+        end
+        if ev.negated && ev.action !== nothing
+            push!(lines, "    # ⚠ الفعل '$(ev.action)' منفي")
+        end
+    end
+
+    # الاستعلام
+    if !isempty(analysis.events)
+        ev = first(analysis.events)
+        if ev.agent !== nothing && ev.target !== nothing
+            push!(lines, "    استفسار حدث(\"$(ev.agent)\", ?فعل, \"$(ev.target)\").")
+        elseif ev.agent !== nothing && ev.place !== nothing
+            push!(lines, "    استفسار موقع(\"$(ev.agent)\", \"$(ev.place)\").")
+        end
+    end
+
+    push!(lines, "}")
+    return join(lines, "\n")
+end
+
+# ═══════════════════════════════════════════════════════════════
+# 6. حساب تماسك السيناريو
+# ═══════════════════════════════════════════════════════════════
+
+"""
+يقيس مدى تماسك السيناريو المستخرج (0.0 = فوضى، 1.0 = تام).
+"""
+function compute_coherence(tokens::Vector{WordToken}, events::Vector{SceneEvent})::Float64
+    isempty(tokens) && return 0.0
+
+    scores = Float64[]
+
+    # 1. هل يوجد على الأقل فعل أو كيان؟
+    has_action = any(t.role == ACTION for t in tokens)
+    has_entity = any(t.role == ENTITY for t in tokens)
+    push!(scores, (has_action ? 0.5 : 0.0) + (has_entity ? 0.5 : 0.0))
+
+    # 2. هل يوجد حدث مكتمل (فاعل + فعل)؟
+    for ev in events
+        completeness = 0.0
+        ev.agent  !== nothing && (completeness += 0.4)
+        ev.action !== nothing && (completeness += 0.4)
+        ev.target !== nothing && (completeness += 0.2)
+        push!(scores, completeness)
+    end
+
+    # 3. متوسط ثقة التصنيف
+    avg_conf = mean(t.confidence for t in tokens)
+    push!(scores, avg_conf)
+
+    return mean(scores)
+end
+
+# ═══════════════════════════════════════════════════════════════
+# 7. دالة التحليل الرئيسية
+# ═══════════════════════════════════════════════════════════════
+
+"""
+    analyze(text; pv_fn, K_sem, vocab) → BayanAnalysis
+
+يحلل النص العربي ويعيد تحليلاً كاملاً.
+
+المعاملات الاختيارية (إذا أُعطيت تحسّن الدقة):
+  - pv_fn: دالة compute_extended_phase_vector من مرنان
+  - K_sem: مصفوفة K_sem (Dict)
+  - vocab: قاموس vocab من مرنان
+"""
+function analyze(text::String;
+                 pv_fn=nothing,
+                 K_sem=nothing,
+                 vocab=nothing)::BayanAnalysis
+
+    # تقسيم النص إلى كلمات
+    raw_words = split(strip(text))
+    isempty(raw_words) && return BayanAnalysis(text, WordToken[], SceneEvent[], "", 0.0)
+
+    # تصنيف كل كلمة
+    tokens = WordToken[]
+    for w in raw_words
+        wstr = String(w)
+        isempty(strip(wstr)) && continue
+        tok = classify_token(wstr, pv_fn, K_sem, vocab)
+        push!(tokens, tok)
+    end
+
+    # استخراج الأحداث
+    events = extract_events(tokens)
+
+    # بناء استعلام مؤقت (يُحدَّث بعد حساب coherence)
+    analysis_tmp = BayanAnalysis(text, tokens, events, "", 0.0)
+    query = to_bayan_query(analysis_tmp)
+    coherence = compute_coherence(tokens, events)
+
+    return BayanAnalysis(text, tokens, events, query, coherence)
+end
+
+# ═══════════════════════════════════════════════════════════════
+# 8. تلخيص التحليل للعرض
+# ═══════════════════════════════════════════════════════════════
+
+"""
+يطبع ملخصاً قابلاً للقراءة للتحليل.
+"""
+function summarize_analysis(a::BayanAnalysis)
+    println("\n╔══════════════════════════════════════════╗")
+    println("║       محلل البيان الداخلي — مرنان       ║")
+    println("╚══════════════════════════════════════════╝")
+    println("📝 النص: \"$(a.original_text)\"")
+    println("📊 التماسك: $(round(a.coherence * 100; digits=1))%\n")
+
+    println("🔍 تصنيف الكلمات:")
+    role_symbols = Dict(
+        ENTITY    => "👤",
+        ACTION    => "⚡",
+        PLACE     => "📍",
+        TIME      => "🕐",
+        PROPERTY  => "✨",
+        RELATION  => "🔗",
+        NEGATION  => "❌",
+        QUESTION  => "❓",
+        UNKNOWN   => "❔",
+    )
+    for tok in a.tokens
+        sym = get(role_symbols, tok.role, "❔")
+        role_ar = role_arabic(tok.role)
+        conf_bar = "█" ^ round(Int, tok.confidence * 5)
+        println("   $(sym) $(rpad(tok.word, 15)) → $(rpad(role_ar, 8)) $(conf_bar) $(round(tok.confidence * 100; digits=0))%")
+    end
+
+    if !isempty(a.events)
+        println("\n🎬 الأحداث المستخرجة:")
+        for (i, ev) in enumerate(a.events)
+            neg = ev.negated ? "❌ " : ""
+            println("   الحدث $i: $(neg)[$(ev.agent === nothing ? "؟" : ev.agent)] ← [$(ev.action === nothing ? "؟" : ev.action)] → [$(ev.target === nothing ? "؟" : ev.target)]")
+            ev.place    !== nothing && println("          📍 المكان: $(ev.place)")
+            ev.time_ref !== nothing && println("          🕐 الزمان: $(ev.time_ref)")
+        end
+    end
+
+    println("\n📜 استعلام لغة البيان:")
+    for line in split(a.query, "\n")
+        println("   $line")
+    end
+    println()
+end
+
+# ─── دوال مساعدة ───
+
+function strip_diacritics(word::String)::String
+    diacritics = Set(['َ','ً','ُ','ٌ','ِ','ٍ','ْ','ّ','ـ','ٰ','ٔ','ٕ'])
+    return join(c for c in word if !(c in diacritics))
+end
+
+"""يزيل أل التعريف من بداية الكلمة إن وُجدت (آمن مع UTF-8)."""
+function strip_prefix_al(word::String)::String
+    if startswith(word, "ال") || startswith(word, "أل")
+        # حساب موضع ما بعد الحرفين ال بشكل آمن
+        i = firstindex(word)
+        i = nextind(word, i)  # بعد الألف
+        i = nextind(word, i)  # بعد اللام
+        return i <= lastindex(word) ? word[i:end] : word
+    end
+    return word
+end
+
+function role_arabic(role::WordRole)::String
+    role == ENTITY   && return "كيان"
+    role == ACTION   && return "فعل"
+    role == PLACE    && return "مكان"
+    role == TIME     && return "زمان"
+    role == PROPERTY && return "صفة"
+    role == RELATION && return "علاقة"
+    role == NEGATION && return "نفي"
+    role == QUESTION && return "استفهام"
+    return "مجهول"
+end
+
+end # module BayanAnalyzer

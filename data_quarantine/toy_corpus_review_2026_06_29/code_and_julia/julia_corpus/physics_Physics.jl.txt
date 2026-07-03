@@ -1,0 +1,142 @@
+"""
+مجموعة المحركات الفيزيائية لمرنان — Physics Engines for Mirnan.
+"""
+module Physics
+
+include("constants.jl")
+include("letter_db.jl")
+include("word_physics.jl")
+include("clifford_math.jl")
+# ═══ الفيزياء الأساسية ═══
+include("gravity.jl")
+include("oscillator.jl")
+include("resonant_chain.jl")
+include("heterodyne_engine.jl")
+# ═══ المحركات المتوسطة ═══
+include("entropy_gate.jl")
+include("ram_core.jl")
+include("phase_reinforcement.jl")
+# ═══ المحركات المتقدمة ═══
+include("dccf.jl")
+include("ppm.jl")
+include("amfs.jl")
+include("density_matrix.jl")
+include("causal_flow.jl")
+include("holographic_kb.jl")
+include("potential_cascade.jl")
+# ═══ الاندماج والحساب الدلالي ═══
+include("word_fusion_engine.jl")
+include("semantic_arithmetic.jl")
+# ═══ الصرف والنحو ═══
+include("weight_resonance.jl")
+include("syntax_field_full.jl")
+include("morpho_phasic.jl")
+# ═══ الموجات والطيف ═══
+include("spectral_wave_engine.jl")
+include("spectral_context.jl")
+include("word_spectrum.jl")
+# ═══ الحوار والشعر ═══
+include("dialogue_engine.jl")
+include("poetic_gravity.jl")
+# ═══ المؤثرات السياقية ═══
+include("operators.jl")
+# ═══ الذاكرات المتقدمة ═══
+include("associative_memory.jl")
+include("dialogue_memory.jl")
+include("hierarchical_memory.jl")
+include("spectral_memory.jl")
+include("intent_detector.jl")
+include("intent_landscape.jl")
+include("interaction_trace.jl")
+include("entity_register.jl")
+# ═══ المحركات الفيزيائية الإضافية ═══
+include("filament_tension.jl")
+include("carrier_engine.jl")
+include("morpho_twistor.jl")
+include("idea_engine.jl")
+include("causal_engine.jl")
+include("chaos_and_entanglement.jl")
+include("coherence_feedback.jl")
+include("concept_matrix.jl")
+include("field_engine.jl")
+include("grammar_field.jl")
+include("local_thermo_gate.jl")
+include("mizan_engine.jl")
+include("phase_evolution.jl")
+include("pragmatic_field.jl")
+include("prompt_constraint.jl")
+include("relational_k.jl")
+include("resonance_calibration.jl")
+include("rotating_anchor.jl")
+include("semantic_categories.jl")
+include("sentiment_polarity.jl")
+include("symbolic_bridge.jl")
+include("topological_invariants.jl")
+# ═══ المراقبة والتحليل ═══
+include("particles.jl")
+include("syntax_monitor.jl")
+include("syntax_phase.jl")
+include("vector_interpreter.jl")
+include("tafsir.jl")
+include("phase_cache.jl")
+# ═══ التوليد المتقدم ═══
+include("advanced_engines.jl")
+include("code_engine.jl")
+include("math_bridge.jl")
+include("response_planning.jl")
+# ═══ البنية التحتية ═══
+include("synchronize.jl")
+include("model_bundle.jl")
+include("model_io.jl")
+include("english_morpheme.jl")
+include("path_integral_reasoner.jl")
+include("beam_reasoner.jl")
+include("root_field.jl")
+include("code_phase_engine.jl")
+include("symbolic_math_engine.jl")
+# ═══ الشبكة الرنينية الطورية الهولوغرافية (PRNN) ═══
+include("prnn_core.jl")
+include("prnn_learner.jl")
+include("prnn_generator.jl")
+
+# ═══ مسرّع كرت الشاشة (اختياري — للتوليد فقط) ═══
+include("gpu_accelerator.jl")
+
+# ═══ حلقة التغذية الراجعة المغلقة (توليد ← تعلم) ═══
+include("language_feedback.jl")
+
+# ═══ الإدراك الدلالي: حرف ← كلمة ← جملة ← موضوع ═══
+include("semantic_comprehension.jl")
+
+# ═══ محلل البيان الداخلي لمرنان ═══
+include("bayan_analyzer.jl")
+
+# ═══ محرك التوليد المركزي ═══
+include("generator.jl")
+# ═══ منسق + توليد متعدد الممرات (يعتمد على Generator) ═══
+include("orchestrator.jl")
+include("multi_pass_generator.jl")
+
+# Bring core generator and physics functions into the Physics namespace
+using .Generator: MirnanGenerator, generate!, get_physics_report, gpu_init!
+using .WordPhysics: compute_word_phase_vector, compute_word_mass,
+                    compute_word_frequency, compute_word_frequency_with_irab,
+                    phase_similarity, compute_extended_phase_vector,
+                    get_irab_omega_bias, extract_irab,
+                    IRAB_OMEGA_BIAS, IRAB_MAP
+using .IdeaEngine: Idea, compute_idea_vector, match_sentence_to_idea, score_candidate_for_idea
+using .MorphoTwistor: TwistorEngine, TwistorOperator, MorphPattern,
+                      compute_twistor, apply_twistor, twistor_similarity,
+                      learn_patterns!, predict_derivation, find_morphological_pairs,
+                      score_twistor_candidate
+using .BeamReasonerModule: BeamReasoner, ReasonStep, ReasonChain,
+                            reason!, reason_steps!, explain_reasoning
+using .RootFieldModule: find_root_family, root_field_report
+using .CodePhaseEngineModule: CodePhaseEngine, CodeConcept, CodePattern,
+                               encode_concept, decode_to_code, learn_code_patterns!,
+                               generate_code_physics
+using .SymbolicMathEngineModule: SymbolicMathEngine, MathOperation, MathPattern,
+                                  encode_number, encode_operation, solve_arithmetic,
+                                  learn_math_pattern!
+
+end # module Physics

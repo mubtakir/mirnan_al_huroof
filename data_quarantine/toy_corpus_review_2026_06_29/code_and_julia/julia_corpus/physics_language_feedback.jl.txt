@@ -1,0 +1,379 @@
+"""
+LanguageFeedback — حلقة تغذية راجعة مغلقة بين التوليد والتعلم للغة الطبيعية.
+
+بعد كل توليد، تُقيّم الجملة المولَّدة فيزيائياً وتُغذّي النتيجة راجعةً إلى:
+1. المتجهات الطورية (PhaseReinforcer + PhaseEvolution)
+2. مصفوفات الاقتران K (تعزيز/إضعاف)
+3. مصفوفة الكثافة ρ (تحديث تراكمي)
+4. اقتران الموجة الحاملة (carrier coupling)
+"""
+module LanguageFeedback
+
+using LinearAlgebra, Statistics
+using ..Constants: PHASE_DIM, TOTAL_DIM, GRAVITY_G, BOLTZMANN_KB
+using ..WordPhysics: compute_word_mass, compute_word_frequency, phase_similarity
+using ..PhaseReinforcement: PhaseReinforcer, reinforce!, weaken!, decay_all!
+using ..PhaseEvolutionModule: PhaseEvolution, observe_cooccurrence!
+using ..CoherenceFeedbackModule: CoherenceFeedback
+using ..DensityMatrix: PhaseDensityMatrix, build!, resonance, get_trace
+using ..ResonanceCalibration: ResonanceCalibrator, calibrate!
+using ..CarrierWave: CarrierWaveEngine
+using ..MorphoPhasic: MorphoPhasicEngine
+using ..ResonantChain: ResonantChainRLC, sentence_coherence
+
+export LanguageFeedbackEngine, evaluate_sentence!, apply_feedback!,
+       update_density_from_generation!, reinforce_good_sentence!
+
+mutable struct LanguageFeedbackEngine
+    enabled::Bool
+    sentence_history::Vector{Dict{String,Any}}
+    avg_coherence::Float64
+    total_generations::Int
+    good_count::Int
+    poor_count::Int
+    lr::Float64
+    min_words_for_feedback::Int
+    reinforcement_threshold::Float64
+    penalty_threshold::Float64
+    calibrator::ResonanceCalibrator
+    metric_history::Dict{String,Vector{Float64}}
+    calib_interval::Int
+end
+
+function LanguageFeedbackEngine(;
+    enabled::Bool=true,
+    lr::Float64=0.05,
+    min_words_for_feedback::Int=3,
+    reinforcement_threshold::Float64=0.4,
+    penalty_threshold::Float64=0.15,
+    calib_interval::Int=10,
+)
+    return LanguageFeedbackEngine(
+        enabled, Dict{String,Any}[], 0.0, 0, 0, 0,
+        lr, min_words_for_feedback,
+        reinforcement_threshold, penalty_threshold,
+        ResonanceCalibrator(lr=0.03, min_samples=5, max_iter=3, convergence=0.002),
+        Dict{String,Vector{Float64}}(),
+        calib_interval,
+    )
+end
+
+function evaluate_sentence!(lfe::LanguageFeedbackEngine, words::Vector{String},
+                             pv_fn::Function, mass_fn::Function;
+                             resonant_chain=nothing, carrier=nothing,
+                             density_matrix=nothing, prompt_pvs=nothing)
+    n = length(words)
+    dict = Dict{String,Any}(
+        "words" => words,
+        "n_words" => n,
+        "timestamp" => time(),
+    )
+
+    # 1. Phase coherence: mean cosine similarity between consecutive words
+    if n >= 2
+        pvs = [try pv_fn(w) catch; nothing end for w in words]
+        valid_pvs = [pv for pv in pvs if pv !== nothing]
+        if length(valid_pvs) >= 2
+            seq_sims = Float64[]
+            for i in 1:length(valid_pvs)-1
+                push!(seq_sims, phase_similarity(valid_pvs[i], valid_pvs[i+1]))
+            end
+            dict["phase_coherence"] = mean(seq_sims)
+            dict["phase_std"] = length(seq_sims) > 1 ? std(seq_sims) : 0.0
+        else
+            dict["phase_coherence"] = 0.0
+        end
+    else
+        dict["phase_coherence"] = 0.0
+    end
+
+    # 2. Gravitational binding: total gravity across all word pairs → per-word average
+    if n >= 2
+        masses = Float64[]
+        valid_pvs = Vector{Float64}[]
+        for w in words
+            m = try mass_fn(w) catch; 0.0 end
+            pv = try pv_fn(w) catch; nothing end
+            if m > 1e-10 && pv !== nothing
+                push!(masses, m)
+                push!(valid_pvs, pv)
+            end
+        end
+        if length(masses) >= 2
+            total_gravity = 0.0
+            count_pairs = 0
+            for i in 1:length(masses)
+                for j in i+1:min(i+6, length(masses))
+                    d = length(valid_pvs[i])
+                    n1 = norm(view(valid_pvs[i], 1:min(d, PHASE_DIM)))
+                    n2 = norm(view(valid_pvs[j], 1:min(d, PHASE_DIM)))
+                    if n1 > 1e-10 && n2 > 1e-10
+                        dist = sqrt(max(0.0, n1^2 + n2^2 -
+                            2.0 * dot(view(valid_pvs[i], 1:min(d, PHASE_DIM)),
+                                       view(valid_pvs[j], 1:min(d, PHASE_DIM))))) + 1e-6
+                        total_gravity += GRAVITY_G * masses[i] * masses[j] / (dist^2 + 0.01)
+                        count_pairs += 1
+    # ─── 5. Auto-calibration: adjust scoring weights based on metric history ───
+    if lfe.total_generations % lfe.calib_interval == 0 && length(lfe.metric_history) >= lfe.calib_interval
+        metric_map = Dict(
+            "phase_coherence" => "align",
+            "gravity_binding" => "gravity",
+            "chain_coherence" => "resonant_chain",
+            "density_resonance" => "density_resonance",
+            "prompt_alignment" => "prompt_align",
+        )
+        ref_scores = Dict{String,Vector{Float64}}()
+        for (metric, weight_name) in metric_map
+            if haskey(lfe.metric_history, metric) && length(lfe.metric_history[metric]) >= 3
+                ref_scores[weight_name] = copy(lfe.metric_history[metric])
+            end
+        end
+        if !isempty(ref_scores) && hasproperty(gen, :scoring_weights)
+            new_W = calibrate!(lfe.calibrator, gen.scoring_weights; reference_scores=ref_scores)
+            for (k, v) in new_W
+                gen.scoring_weights[k] = v
+            end
+        end
+    end
+end
+                end
+            end
+            dict["gravity_binding"] = count_pairs > 0 ? total_gravity / count_pairs : 0.0
+        else
+            dict["gravity_binding"] = 0.0
+        end
+    else
+        dict["gravity_binding"] = 0.0
+    end
+
+    # 3. Resonant chain quality
+    if n >= 3 && resonant_chain !== nothing
+        m_seq = [try mass_fn(w) catch; 0.0 end for w in words]
+        pv_seq = [try pv_fn(w) catch; nothing end for w in words]
+        valid_idx = findall(pv -> pv !== nothing, pv_seq)
+        if length(valid_idx) >= 3
+            m_valid = m_seq[valid_idx]
+            pv_valid = pv_seq[valid_idx]
+            try
+                dict["chain_coherence"] = sentence_coherence(
+                    resonant_chain, m_valid, pv_valid)
+            catch
+                dict["chain_coherence"] = 0.0
+            end
+        else
+            dict["chain_coherence"] = 0.0
+        end
+    else
+        dict["chain_coherence"] = 0.0
+    end
+
+    # 4. Density matrix resonance
+    if density_matrix !== nothing && density_matrix.rho !== nothing && n >= 1
+        gen_pv = try pv_fn(words[end]) catch; nothing end
+        if gen_pv !== nothing
+            try
+                dict["density_resonance"] = resonance(
+                    density_matrix, gen_pv)
+            catch
+                dict["density_resonance"] = 0.0
+            end
+        else
+            dict["density_resonance"] = 0.0
+        end
+    else
+        dict["density_resonance"] = 0.0
+    end
+
+    # 5. Prompt alignment (average similarity to prompt words)
+    if prompt_pvs !== nothing && !isempty(prompt_pvs) && n >= 1
+        gen_pvs = [try pv_fn(w) catch; nothing end for w in words]
+        valid_gen = [pv for pv in gen_pvs if pv !== nothing]
+        if !isempty(valid_gen)
+            palign = 0.0; palign_n = 0
+            for gpv in valid_gen, ppv in prompt_pvs
+                palign += phase_similarity(gpv, ppv)
+                palign_n += 1
+            end
+            dict["prompt_alignment"] = palign_n > 0 ? palign / palign_n : 0.0
+        else
+            dict["prompt_alignment"] = 0.0
+        end
+    else
+        dict["prompt_alignment"] = 0.0
+    end
+
+    # 6. Aggregate quality score (weighted sum)
+    metrics = ["phase_coherence", "gravity_binding", "chain_coherence",
+               "density_resonance", "prompt_alignment"]
+    weights = [0.30, 0.25, 0.20, 0.15, 0.10]
+    quality = 0.0; total_w = 0.0
+    for (m, w) in zip(metrics, weights)
+        val = get(dict, m, 0.0)
+        if val > 0.0 || m == "phase_coherence"
+            quality += w * clamp(val, 0.0, 1.0)
+            total_w += w
+        end
+    end
+    dict["quality"] = total_w > 0.0 ? quality / total_w : 0.0
+    dict["is_good"] = dict["quality"] >= lfe.reinforcement_threshold
+    dict["is_poor"] = dict["quality"] <= lfe.penalty_threshold
+
+    push!(lfe.sentence_history, dict)
+    if length(lfe.sentence_history) > 200
+        popfirst!(lfe.sentence_history)
+    end
+
+    lfe.total_generations += 1
+    if dict["is_good"]; lfe.good_count += 1; end
+    if dict["is_poor"]; lfe.poor_count += 1; end
+    lfe.avg_coherence = (lfe.avg_coherence * (lfe.total_generations - 1) + dict["quality"]) / lfe.total_generations
+
+    return dict
+end
+
+function apply_feedback!(lfe::LanguageFeedbackEngine,
+                          gen::Any,  # MirnanGenerator
+                          eval_dict::Dict{String,Any};
+                          pv_fn::Function=w -> gen.pv_cache[haskey(gen.pv_cache, w) ? w : ""])
+    !lfe.enabled && return
+    n = get(eval_dict, "n_words", 0)
+    n < lfe.min_words_for_feedback && return
+
+    words = get(eval_dict, "words", String[])
+    quality = get(eval_dict, "quality", 0.5)
+    is_good = get(eval_dict, "is_good", false)
+    is_poor = get(eval_dict, "is_poor", false)
+
+    lr = lfe.lr
+
+    # ─── 1. PhaseReinforcer: strengthen good words, weaken poor ones ───
+    if gen.reinforcement !== nothing && n >= 2
+        for w in words
+            haskey(gen.pv_cache, w) || continue
+            pv = gen.pv_cache[w]
+            if is_good && quality >= 0.5
+                reinforce!(gen.reinforcement, w, pv; reward=quality)
+            elseif is_poor
+                weaken!(gen.reinforcement, w; penalty=0.3 * (1.0 - quality))
+            end
+        end
+        if lfe.total_generations % 5 == 0
+            decay_all!(gen.reinforcement)
+        end
+    end
+
+    # ─── 2. PhaseEvolution: Hebbian co-occurrence from successful generation ───
+    if gen.phase_evolution !== nothing && n >= 2
+        pvs = [try haskey(gen.pv_cache, w) ? gen.pv_cache[w] : nothing catch; nothing end for w in words]
+        valid_idx = findall(pv -> pv !== nothing, pvs)
+        if length(valid_idx) >= 2
+            for i in 1:length(valid_idx)-1
+                j = min(i + 1, length(valid_idx))
+                wi = words[valid_idx[i]]; wj = words[valid_idx[j]]
+                wid_i = get(gen.vocab, wi, nothing)
+                wid_j = get(gen.vocab, wj, nothing)
+                pvi = pvs[valid_idx[i]]; pvj = pvs[valid_idx[j]]
+                if is_good
+                    observe_cooccurrence!(
+                        gen.phase_evolution, pvi, pvj;
+                        w1_id=wid_i, w2_id=wid_j, distance=1)
+                elseif is_poor
+                    observe_cooccurrence!(
+                        gen.phase_evolution, pvj, pvi;
+                        w1_id=wid_i, w2_id=wid_j, distance=max(3, j-i))
+                end
+            end
+        end
+    end
+
+    # ─── 3. K-matrix reinforcement ───
+    if n >= 2
+        if is_good && gen.K_sem !== nothing
+            for i in 1:n-1
+                a = get(gen.vocab, words[i], 0)
+                b = get(gen.vocab, words[i+1], 0)
+                if a > 0 && b > 0 && a <= size(gen.K_sem, 1) && b <= size(gen.K_sem, 2)
+                    delta = lr * quality * 0.1
+                    gen.K_sem[a, b] = min(gen.K_sem[a, b] + delta, 100.0)
+                    gen.K_sem[b, a] = min(gen.K_sem[b, a] + delta * 0.5, 100.0)
+                end
+            end
+        elseif is_poor && gen.K_sem !== nothing
+            for i in 1:n-1
+                a = get(gen.vocab, words[i], 0)
+                b = get(gen.vocab, words[i+1], 0)
+                if a > 0 && b > 0 && a <= size(gen.K_sem, 1) && b <= size(gen.K_sem, 2)
+                    penalty = lr * (1.0 - quality) * 0.05
+                    gen.K_sem[a, b] = max(gen.K_sem[a, b] - penalty, 0.0)
+                end
+            end
+        end
+    end
+
+    # ─── 4. Beta/tau adjustment based on running coherence ───
+    if lfe.total_generations >= 10
+        if lfe.avg_coherence > 0.6
+            gen.beta = min(gen.beta + 0.05, 5.0)
+        elseif lfe.avg_coherence < 0.25
+            gen.beta = max(gen.beta - 0.05, 1.0)
+        end
+    end
+end
+
+function update_density_from_generation!(lfe::LanguageFeedbackEngine,
+                                          gen::Any,
+                                          generated_words::Vector{String})
+    !lfe.enabled && return
+    n = length(generated_words)
+    n < lfe.min_words_for_feedback && return
+
+    pvs = Vector{Float64}[]
+    for w in generated_words
+        if haskey(gen.pv_cache, w)
+            push!(pvs, gen.pv_cache[w])
+        end
+    end
+    isempty(pvs) && return
+
+    if gen.density_matrix.rho === nothing
+        build!(gen.density_matrix, pvs)
+    else
+        for pv in pvs[1:min(5, end)]
+            dpv = copy(pv[1:min(length(pv), gen.density_matrix.dim)])
+            nrm = norm(dpv)
+            nrm > 1e-10 && (dpv ./= nrm)
+            gen.density_matrix.rho .+= (0.2 / length(pvs)) .* (dpv * dpv')
+        end
+        tr_val = get_trace(gen.density_matrix)
+        if tr_val > 1e-10 && tr_val > 2.0
+            gen.density_matrix.rho ./= (tr_val / 1.5)
+        end
+    end
+end
+
+function reinforce_good_sentence!(lfe::LanguageFeedbackEngine,
+                                   gen::Any,
+                                   words::Vector{String},
+                                   pv_fn::Function,
+                                   mass_fn::Function)
+    !lfe.enabled && return
+    eval_dict = evaluate_sentence!(lfe, words, pv_fn, mass_fn;
+        resonant_chain=gen.resonant_chain,
+        carrier=gen.carrier,
+        density_matrix=gen.density_matrix)
+    apply_feedback!(lfe, gen, eval_dict; pv_fn=pv_fn)
+    update_density_from_generation!(lfe, gen, words)
+end
+
+function get_feedback_report(lfe::LanguageFeedbackEngine)
+    return Dict(
+        "total_generations" => lfe.total_generations,
+        "good_count" => lfe.good_count,
+        "poor_count" => lfe.poor_count,
+        "avg_coherence" => round(lfe.avg_coherence, digits=4),
+        "good_ratio" => lfe.total_generations > 0 ?
+            round(lfe.good_count / lfe.total_generations, digits=3) : 0.0,
+    )
+end
+
+end # module LanguageFeedback

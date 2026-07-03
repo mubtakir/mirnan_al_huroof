@@ -1,0 +1,65 @@
+"""ResponsePlanner + ResponseArchitect + TrajectoryPlanner."""
+module ResponsePlanning
+using LinearAlgebra
+export ResponsePlanner, ResponseArchitect, TrajectoryPlanner, TrajectoryMilestone
+
+struct TrajectoryMilestone
+    target_word::String; target_pv::Vector{Float64}; position::Int
+end
+
+mutable struct TrajectoryPlanner
+    milestones::Vector{TrajectoryMilestone}
+end
+TrajectoryPlanner() = TrajectoryPlanner(TrajectoryMilestone[])
+
+function plan!(tp::TrajectoryPlanner, prompt_words::Vector{String}, pv_fn)
+    empty!(tp.milestones)
+    for (i, w) in enumerate(prompt_words)
+        push!(tp.milestones, TrajectoryMilestone(w, Float64.(pv_fn(w)), i))
+    end
+end
+
+function trajectory_score(tp::TrajectoryPlanner, candidate_pv, position::Int)
+    isempty(tp.milestones) && return 0.0
+    # Closest milestone by position
+    closest = tp.milestones[1]; best_dist = abs(closest.position - position)
+    for m in tp.milestones
+        d = abs(m.position - position)
+        if d < best_dist; best_dist = d; closest = m; end
+    end
+    return max(0.0, dot(candidate_pv, closest.target_pv) / (norm(candidate_pv)*norm(closest.target_pv) + 1e-10))
+end
+
+mutable struct ResponsePlanner
+    intent::String; strategy::String; target_words::Vector{String}
+end
+ResponsePlanner() = ResponsePlanner("STATEMENT", "direct", String[])
+
+function plan_response!(rp::ResponsePlanner, intent::String, pv_fn=nothing, kb=nothing)
+    rp.intent = intent
+    if intent == "GREETING"; rp.target_words = ["وعليكم","السلام","أهلا","مرحبا"]; rp.strategy = "greet_back"
+    elseif intent == "QUESTION"; rp.target_words = ["لأن","بسبب","الجواب","نعم"]; rp.strategy = "answer"
+    elseif intent == "COMMAND"; rp.target_words = ["حاضر","تم","سأفعل"]; rp.strategy = "acknowledge"
+    else rp.target_words = ["إن","قد","هذا","هناك"]; rp.strategy = "statement"
+    end
+end
+
+function response_fidelity(rp::ResponsePlanner, word::String)
+    return word in rp.target_words ? 1.0 : 0.0
+end
+
+struct ResponseArchitect
+    phases::Vector{String}  # ["open","body","close"]
+end
+ResponseArchitect() = ResponseArchitect(["open","body","close"])
+
+function architect_score(ra::ResponseArchitect, step::Int, total_steps::Int, word::String)
+    total_steps == 0 && return 0.0
+    phase_idx = step / total_steps
+    starters = ["إن","قد","هذا","وعليكم","أهلا"] # open
+    closers = ["والله","أعلم","شكرا","سلام"]     # close
+    if phase_idx < 0.3 && word in starters; return 0.3; end
+    if phase_idx > 0.7 && word in closers; return 0.3; end
+    return 0.0
+end
+end

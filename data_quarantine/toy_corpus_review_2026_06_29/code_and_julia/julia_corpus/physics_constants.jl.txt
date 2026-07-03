@@ -1,0 +1,37 @@
+"""
+الثوابت الفيزيائية لكون مرنان الدلالي.
+
+الفضاء الكلي 10000 بُعداً:
+- 9958 طوري أساسي (PHASE_DIM)
+- 8 جذري (ROOT_DIMS) — حروف الجذر الثلاثي/الرباعي → متجه طوري
+- 6 إضافي DDE (EXTRA_DIMS)
+- 6 نحوي (SYNTAX_DIMS)
+- 16 دلالي-فلسفي (SEMANTIC_DIMS)
+- 6 قصدي-علائقي (PRAGMATIC_DIMS)
+"""
+module Constants
+
+export PLANCK_H, LIGHT_SPEED_C, GRAVITY_G, BOLTZMANN_KB,
+       PHASE_DIM, ROOT_DIMS, EXTRA_DIMS, SYNTAX_DIMS, SEMANTIC_DIMS,
+       PRAGMATIC_DIMS, TOTAL_DIM, RICH_SEMANTIC_DIMS, TOTAL_RICH_DIM,
+       POSITION_WEIGHTS
+
+const PLANCK_H = 1.0
+const LIGHT_SPEED_C = 1.0
+const GRAVITY_G = 1.0
+const BOLTZMANN_KB = 0.1
+
+const PHASE_DIM = 9958
+const ROOT_DIMS = 8
+const EXTRA_DIMS = 6
+const SYNTAX_DIMS = 6
+const SEMANTIC_DIMS = 16
+const PRAGMATIC_DIMS = 6
+const TOTAL_DIM = PHASE_DIM + ROOT_DIMS + EXTRA_DIMS + SYNTAX_DIMS + SEMANTIC_DIMS + PRAGMATIC_DIMS
+
+const RICH_SEMANTIC_DIMS = 29
+const TOTAL_RICH_DIM = PHASE_DIM + ROOT_DIMS + EXTRA_DIMS + SYNTAX_DIMS + RICH_SEMANTIC_DIMS + PRAGMATIC_DIMS
+
+const POSITION_WEIGHTS = [3.5, 2.5, 2.0, 1.5, 1.2, 1.0, 0.8, 0.6, 0.4, 0.3]
+
+end # module Constants

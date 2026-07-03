@@ -1,0 +1,553 @@
+"""
+فيزياء الكلمة في مرنان — Word Physics.
+
+تحويل الحروف إلى متجهات طورية عبر E = hf → m = E/c².
+تدعم: compute_word_phase_vector (9958D), compute_extended_phase_vector (10000D),
+compute_word_mass, compute_word_energy.
+"""
+module WordPhysics
+
+using ..Constants
+using ..LetterDB: LetterDatabase, get_vector, get_omega_0, has, get_operator
+using LinearAlgebra
+using Random, Statistics
+
+export compute_word_phase_vector, compute_extended_phase_vector,
+       compute_word_frequency, compute_word_energy, compute_word_mass,
+       phase_similarity, dress_phase_vector, dress_extended_phase_vector,
+       get_letter_db, get_semantic_embedding, _normalize_letters,
+       _parse_word_harakat, _build_modulated_vectors,
+       compute_word_frequency_with_irab, IRAB_MAP, IRAB_OMEGA_BIAS,
+       extract_irab, get_irab_omega_bias
+
+# إعادة تصدير الرموز من LetterDB للاستخدام الخارجي
+using ..LetterDB: get_vector, get_omega_0, has
+
+# ─── Global state — يُهيّأ مرة واحدة ───
+const _letter_db = Ref{Union{LetterDatabase,Nothing}}(nothing)
+const _semantic_embedding = Ref{Any}(nothing)
+const _config = Ref{Union{Dict,Nothing}}(nothing)
+
+"""
+    get_letter_db() -> LetterDatabase
+
+استرجاع (أو إنشاء) قاعدة بيانات الحروف.
+"""
+function get_letter_db()
+    if _letter_db[] === nothing
+        _letter_db[] = LetterDatabase()
+    end
+    return _letter_db[]
+end
+
+function get_semantic_embedding()
+    if _semantic_embedding[] === nothing
+        # ستنفذ عند إنشاء وحدة Semantics
+        _semantic_embedding[] = true  # placeholder
+    end
+    return _semantic_embedding[]
+end
+
+# ─── تطبيع الحروف العربية ───
+const _NORMALIZE_MAP = Dict(
+    'آ' => 'ا', 'أ' => 'ا', 'إ' => 'ا',
+    'ؤ' => 'و', 'ئ' => 'ي', 'ة' => 'ه', 'ى' => 'ي',
+)
+
+const _HARAKAT_CHARS = ('ً', 'ٌ', 'ٍ', 'َ', 'ُ', 'ِ', 'ّ', 'ْ', 'ـ')
+
+# ─── إعراب طوري: إزاحة التردد حسب الحالة الإعرابية ───
+const IRAB_MAP = Dict(
+    0x064F => :n,   # ضمة → مرفوع
+    0x064C => :n,   # تنوين ضم → مرفوع
+    0x064E => :a,   # فتحة → منصوب
+    0x064B => :a,   # تنوين فتح → منصوب
+    0x0650 => :g,   # كسرة → مجرور
+    0x064D => :g,   # تنوين كسر → مجرور
+    0x0652 => :j,   # سكون → مجزوم
+)
+
+const IRAB_OMEGA_BIAS = Dict(
+    :n =>  0.30,   # مرفوع → +0.30 rad/s (قائد في كوراموتو)
+    :a => -0.20,   # منصوب → -0.20 rad/s (تابع — مفعول)
+    :g => -0.30,   # مجرور → -0.30 rad/s (تابع — إضافة/جر)
+    :j => -0.10,   # مجزوم → -0.10 rad/s (مشروط)
+)
+
+function extract_irab(word::String)
+    if isempty(word); return nothing; end
+    chars = collect(word)
+    last_chars = chars[max(1, length(chars)-1):end]
+    for ch in reverse(last_chars)
+        cp = Int(ch)
+        if haskey(IRAB_MAP, cp)
+            return IRAB_MAP[cp]
+        end
+    end
+    return nothing
+end
+
+function get_irab_omega_bias(word::String)
+    irab = extract_irab(word)
+    irab === nothing && return 0.0
+    return get(IRAB_OMEGA_BIAS, irab, 0.0)
+end
+
+"""
+    _normalize_letters(word::String) -> String
+
+تطبيع الحروف العربية (آ/أ/إ → ا, ؤ → و, ئ → ي, ة → ه, ى → ي).
+يطبع أشكال الألف فقط دون إزالة الحركات — يطابق سلوك بايثون.
+"""
+function _normalize_letters(word::String)
+    return lowercase(map(c -> get(_NORMALIZE_MAP, c, c), word))
+end
+
+"""
+    _parse_word_harakat(word::String) -> Vector{Tuple{Char, Vector{Int}}}
+
+تفكيك الكلمة العربية إلى أزواج (حرف مُطبَّع، قائمة حركاته).
+كل حرف أصلي يُطبَّع (أ→ا، ة→ه...) ثم تُضاف حركاته التالية.
+"""
+function _parse_word_harakat(word::String)
+    parsed = Tuple{Char, Vector{Int}}[]
+    current_letter = nothing
+    current_harakat = Int[]
+
+    for ch in word
+        cp = Int(ch)
+        norm_ch = get(_NORMALIZE_MAP, ch, ch)
+        if (0x0621 <= cp <= 0x064A && cp != 0x0640) || haskey(_NORMALIZE_MAP, ch)
+            if current_letter !== nothing
+                push!(parsed, (current_letter, current_harakat))
+            end
+            current_letter = lowercase(norm_ch)
+            current_harakat = Int[]
+        elseif 0x064B <= cp <= 0x0652
+            if current_letter !== nothing
+                push!(current_harakat, cp)
+            end
+        end
+    end
+    if current_letter !== nothing
+        push!(parsed, (current_letter, current_harakat))
+    end
+    return parsed
+end
+
+"""
+    _build_modulated_vectors(parsed, db) -> Vector{Vector{Float64}}
+
+بناء متجهات الحروف مع تعديل الحركات:
+- فتحة/تنوين فتح → +0.5·v_ا
+- ضمة/تنوين ضم → +0.5·v_و
+- كسرة/تنوين كسر → +0.5·v_ي
+- شدة → ×2.0
+- سكون → لا تعديل
+"""
+function _build_modulated_vectors(parsed::Vector{Tuple{Char, Vector{Int}}}, db)
+    vectors = Vector{Float64}[]
+    for (letter, harakat) in parsed
+        v = Float64.(get_vector(db, string(letter)))
+        for h in harakat
+            if h in (0x064E, 0x064B)
+                v .+= 0.5 .* Float64.(get_vector(db, "ا"))
+            elseif h in (0x064F, 0x064C)
+                v .+= 0.5 .* Float64.(get_vector(db, "و"))
+            elseif h in (0x0650, 0x064D)
+                v .+= 0.5 .* Float64.(get_vector(db, "ي"))
+            elseif h == 0x0651
+                v .*= 2.0
+            end
+        end
+        push!(vectors, v)
+    end
+    return vectors
+end
+
+"""
+    compute_word_frequency(word::String) -> Float64
+
+التردد الكلي للكلمة = مجموع ترددات حروفها (بدون الحركات).
+"""
+function compute_word_frequency(word::String)
+    db = get_letter_db()
+    freq = 0.0
+    for (letter, _) in _parse_word_harakat(word)
+        if has(db, string(letter))
+            freq += get_omega_0(db, string(letter))
+        end
+    end
+    return freq == 0.0 ? 1.0 : freq
+end
+
+"""
+    compute_word_frequency_with_irab(word::String) -> Float64
+
+التردد الكلي للكلمة مع إزاحة إعرابية (IRAB_OMEGA_BIAS).
+المرفوع يزيد التردد (+0.30)، المنصوب ينقصه (-0.20)، المجرور (-0.30)، المجزوم (-0.10).
+هذا يجعل الفاعل (مرفوع) هو القائد الطوري في نموذج كوراموتو.
+"""
+function compute_word_frequency_with_irab(word::String)
+    return compute_word_frequency(word) + get_irab_omega_bias(word)
+end
+
+"""
+    compute_word_energy(word::String) -> Float64
+
+طاقة الكلمة: E = h · f
+"""
+function compute_word_energy(word::String)
+    return PLANCK_H * compute_word_frequency(word)
+end
+
+"""
+    compute_word_mass(word::String) -> Float64
+
+كتلة الكلمة: m = E / c²
+"""
+function compute_word_mass(word::String)
+    return compute_word_energy(word) / (LIGHT_SPEED_C^2)
+end
+
+"""
+    compute_word_phase_vector(word::String; widen=1.0, method="linear") -> Vector{Float32}
+
+حساب المتجه الطوري 9958D للكلمة عبر جمع متجهات حروفها المعدَّلة بالحركات بعد إزاحة موضعية.
+
+الفتحة تضيف نصف متجه الألف، والضمة نصف متجه الواو، والكسرة نصف متجه الياء، والشدة تضاعف.
+يُضاف إزاحة دائرية (roll) لكل حرف حسب موضعه في الكلمة لكسر تناظر التباديل،
+ثم يُطبَّع المتجه الناتج.
+"""
+function compute_word_phase_vector(word::String; widen::Float64=1.0,
+                                    method::String="linear",
+                                    vowel_modulation::Bool=true)
+    db = get_letter_db()
+
+    if vowel_modulation
+        parsed = _parse_word_harakat(word)
+        vectors = _build_modulated_vectors(parsed, db)
+    else
+        parsed = _parse_word_harakat(word)
+        vectors = Vector{Float64}[]
+        for (letter, _) in parsed
+            push!(vectors, Float64.(get_vector(db, string(letter))))
+        end
+    end
+
+    if isempty(vectors)
+        return zeros(Float32, PHASE_DIM)
+    end
+
+    result = zeros(Float32, PHASE_DIM)
+    for (i, v) in enumerate(vectors)
+        shift = i - 1
+        for j in 1:length(v)
+            dest = mod1(j + shift, PHASE_DIM)
+            result[dest] += Float32(v[j])
+        end
+    end
+
+    nrm = norm(result)
+    if nrm > 1e-10
+        result ./= nrm
+    end
+
+    if widen != 1.0
+        result .= sign.(result) .* abs.(result) .^ widen
+    end
+    return result
+end
+
+"""
+    _compute_extra_dims(word::String) -> Vector{Float64}
+
+الأبعاد الإضافية DDE الستة: operator score, length, frequency, energy, variance, diversity.
+يستخدم الحروف فقط (بدون حركات) مع بُعد حركي إضافي.
+"""
+function _compute_extra_dims(word::String)
+    db = get_letter_db()
+    parsed = _parse_word_harakat(word)
+
+    ops = Float64[]
+    haraka_count = 0
+    bare_letters = Char[]
+    for (letter, harakat) in parsed
+        op = get_operator(db, string(letter))
+        if op == "+1"
+            push!(ops, 1.0)
+        elseif op == "-1"
+            push!(ops, -1.0)
+        else
+            push!(ops, 0.0)
+        end
+        push!(bare_letters, letter)
+        haraka_count += length(harakat)
+    end
+
+    op_score = length(ops) > 0 ? sum(ops) / length(ops) : 0.0
+    wlen = min(length(bare_letters) / 12.0, 1.0)
+    omega = compute_word_frequency(word)
+    freq_norm = min(omega / 15.0, 1.0)
+    energy = compute_word_energy(word)
+    energy_norm = min(energy / 15.0, 1.0)
+    op_var = length(ops) > 1 ? var(ops) : 0.0
+    diversity = length(Set(bare_letters)) / max(length(bare_letters), 1)
+
+    return Float64[op_score, wlen, freq_norm, energy_norm, op_var, diversity]
+end
+
+"""
+    _compute_root_dims(word::String) -> Vector{Float32}
+
+أبعاد الجذر (8D): تُستخرج من جذر الكلمة عبر الحروف المميزة.
+"""
+function _compute_root_dims(word::String)
+    root_chars = _extract_root_light(word)
+    if isempty(root_chars)
+        return zeros(Float32, ROOT_DIMS)
+    end
+
+    db = get_letter_db()
+    vecs = Float32[]
+    for c in root_chars
+        v_raw = get_vector(db, string(c))
+        if norm(v_raw) > 1e-10
+            for k in 1:min(2, length(v_raw))
+                push!(vecs, Float32(v_raw[k]))
+            end
+        else
+            push!(vecs, 0.0f0)
+            push!(vecs, 0.0f0)
+        end
+    end
+
+    if length(vecs) < ROOT_DIMS
+        append!(vecs, zeros(Float32, ROOT_DIMS - length(vecs)))
+    else
+        vecs = vecs[1:ROOT_DIMS]
+    end
+
+    nrm = norm(vecs)
+    if nrm > 1e-10
+        vecs ./= nrm
+    end
+    return vecs
+end
+
+# ─── استخراج الجذر الخفيف ───
+const _AUGMENTATION = Set("سألتمونيها")
+const _PREFIXES = ["و", "ف", "ب", "ل", "ك"]
+const _DEF_ARTICLE = "ال"
+const _ATTACHED = ["هم", "هن", "هما", "ها", "ه", "ون", "ين", "ان", "ات",
+                    "كم", "كن", "كما", "ك", "تم", "تن", "تما", "وا",
+                    "نا", "ني", "ي", "ت"]
+
+const _ROOT_PATTERNS = [
+    ("استفعال", [4, 5, 7]),
+    ("مستفعل", [4, 5, 6]),
+    ("استفعل", [4, 5, 6]),
+    ("انفعال", [3, 4, 6]),
+    ("افتعال", [2, 4, 6]),
+    ("مفاعيل", [2, 4, 6]),
+    ("مفاعلة", [2, 4, 5]),
+    ("مفاعل", [2, 4, 5]),
+    ("تفعيل", [2, 3, 5]),
+    ("تفاعل", [2, 4, 5]),
+    ("تفعّل", [2, 3, 5]),
+    ("مفعول", [2, 3, 5]),
+    ("فعائل", [1, 2, 5]),
+    ("فواعل", [1, 4, 5]),
+    ("أفعال", [2, 3, 5]),
+    ("إفعال", [2, 3, 5]),
+    ("أفعل", [2, 3, 4]),
+    ("مفعل", [2, 3, 4]),
+    ("فاعل", [1, 3, 4]),
+    ("فعال", [1, 2, 4]),
+    ("فعول", [1, 2, 4]),
+    ("فعيل", [1, 2, 4]),
+    ("فعلة", [1, 2, 3]),
+    ("يفعل", [2, 3, 4]),
+    ("تفعل", [2, 3, 4]),
+    ("نفعل", [2, 3, 4]),
+]
+
+function _extract_root_light(word::String)
+    # Convert word to character vector, removing diacritics
+    w = collect(filter(c -> c ∉ ('ً', 'ٌ', 'ٍ', 'َ', 'ُ', 'ِ', 'ّ', 'ْ', 'ـ'), word))
+
+    # إزالة "ال"
+    if length(w) > 4 && w[1] == 'ا' && w[2] == 'ل'
+        w = w[3:end]
+    end
+
+    # إزالة السوابق
+    _PREFIXES_CHARS = Set{Char}("وفبلك")
+    for _ in 1:2
+        if !isempty(w) && w[1] in _PREFIXES_CHARS && length(w) > 4
+            w = w[2:end]
+        end
+    end
+
+    # إزالة اللواحق
+    for pr in sort(_ATTACHED; by=length, rev=true)
+        pr_chars = collect(pr)
+        n_pr = length(pr_chars)
+        if length(w) > n_pr + 2 && w[end-n_pr+1:end] == pr_chars
+            w = w[1:end-n_pr]
+            break
+        end
+    end
+
+    # إزالة التاء المربوطة
+    if !isempty(w) && w[end] == 'ة' && length(w) > 3
+        w = w[1:end-1]
+    end
+
+    # مطابقة الأوزان الصرفية
+    for (pat, indices) in _ROOT_PATTERNS
+        pat_chars = collect(pat)
+        if length(w) == length(pat_chars)
+            chars = Char[]
+            match = true
+            for i in 1:length(w)
+                if i in indices
+                    push!(chars, w[i])
+                elseif w[i] != pat_chars[i] && w[i] in _AUGMENTATION
+                    if pat_chars[i] == 'ا' && w[i] in ('أ', 'إ', 'آ', 'و', 'ي', 'ا')
+                        continue
+                    elseif pat_chars[i] == 'ء' && w[i] in ('ؤ', 'ئ', 'ء')
+                        continue
+                    else
+                        match = false
+                        break
+                    end
+                elseif w[i] != pat_chars[i]
+                    match = false
+                    break
+                end
+            end
+            if match && length(chars) >= 3
+                return chars[1:min(4, end)]
+            end
+        end
+    end
+
+    # تجريد حرفي: أول 3-4 حروف مميزة
+    chars = Char[]
+    seen = Set{Char}()
+    for c in w
+        if c ∉ _AUGMENTATION || length(chars) < 3
+            if c ∉ seen || length(chars) < 3
+                push!(chars, c)
+                push!(seen, c)
+            end
+        end
+        length(chars) >= 4 && break
+    end
+    return length(chars) >= 2 ? chars[1:min(4, end)] : (isempty(w) ? Char[] : [w[1]])
+end
+
+"""
+    compute_extended_phase_vector(word::String; widen=1.0) -> Vector{Float32}
+
+المتجه الطوري الموسع (10000D):
+- 9958D: طور أساسي
+- 8D: أبعاد الجذر
+- 6D: أبعاد DDE
+- 6D: أبعاد نحوية
+- 16D: أبعاد دلالية فلسفية
+- 6D: أبعاد قصدية
+"""
+function compute_extended_phase_vector(word::String; widen::Float64=1.0)
+    base = compute_word_phase_vector(word; widen=widen)
+    root = _compute_root_dims(word)
+    extra = Float32.(_compute_extra_dims(word))
+    syn = zeros(Float32, SYNTAX_DIMS)
+    sem = zeros(Float32, SEMANTIC_DIMS)
+    prag = zeros(Float32, PRAGMATIC_DIMS)
+
+    return vcat(base, root, extra, syn, sem, prag)
+end
+
+"""
+    phase_similarity(v1::Vector, v2::Vector) -> Float64
+
+التشابه الطوري (جيب التمام) بين متجهين.
+"""
+function phase_similarity(v1::AbstractVector, v2::AbstractVector)
+    n1 = norm(v1)
+    n2 = norm(v2)
+    if n1 < 1e-10 || n2 < 1e-10
+        return 0.0
+    end
+    return max(-1.0, min(1.0, dot(v1, v2) / (n1 * n2)))
+end
+
+"""
+    dress_phase_vector(word::String, context_words::Vector{String}; alpha=0.3, widen=1.0) -> Vector{Float32}
+
+تلبيس المتجه الطوري بالسياق: base + α·متوسط اتجاهات السياق المتوافقة.
+"""
+function dress_phase_vector(word::String, context_words::Vector{String};
+                            alpha::Float64=0.3, widen::Float64=1.0)
+    base = compute_word_phase_vector(word; widen=widen)
+    if isempty(context_words)
+        return base
+    end
+
+    dress = zeros(Float32, length(base))
+    n = 0
+    for cw in context_words[max(1, end-4):end]
+        cpv = compute_word_phase_vector(cw; widen=widen)
+        align = phase_similarity(base, cpv)
+        if align > 0.3
+            dress .+= Float32(align) .* cpv ./ Float32(norm(cpv) + 1e-10)
+            n += 1
+        end
+    end
+
+    if n > 0
+        dress .= Float32(alpha) .* dress ./ Float32(n)
+    end
+
+    result = base .+ dress
+    nrm = norm(result)
+    if nrm > 1e-10
+        result ./= nrm
+    end
+    return result
+end
+
+"""
+    dress_extended_phase_vector(word::String, context_words::Vector{String}; alpha=0.3, widen=1.0) -> Vector{Float32}
+
+تلبيس المتجه الموسع بالسياق.
+"""
+function dress_extended_phase_vector(word::String, context_words::Vector{String};
+                                     alpha::Float64=0.3, widen::Float64=1.0)
+    base = compute_extended_phase_vector(word; widen=widen)
+    if isempty(context_words)
+        return base
+    end
+
+    dress = zeros(Float32, length(base))
+    n = 0
+    for cw in context_words[max(1, end-4):end]
+        cpv = compute_extended_phase_vector(cw; widen=widen)
+        align = phase_similarity(base, cpv)
+        if align > 0.3
+            dress .+= Float32(align) .* cpv ./ Float32(norm(cpv) + 1e-10)
+            n += 1
+        end
+    end
+
+    if n > 0
+        dress .= Float32(alpha) .* dress ./ Float32(n)
+    end
+
+    result = base .+ dress
+    return result
+end
+
+end # module WordPhysics

@@ -1,0 +1,3304 @@
+=== بيانات تدريب نموذج تعليم الإنجليزية للعرب وتعليم العربية للإنجليز ===
+--- 1. أزواج ترجمة (عربي - إنجليزي) ---
+مرحبا = Hello
+كيف حالك؟ = How are you?
+صباح الخير = Good morning
+مساء الخير = Good evening
+شكرا جزيلا = Thank you very much
+أنا سعيد بلقائك = I am happy to meet you
+كم عمرك؟ = How old are you?
+أين تعيش؟ = Where do you live?
+ماذا تعمل؟ = What do you do?
+هل تتحدث الإنجليزية؟ = Do you speak English?
+أنا أتعلم العربية = I am learning Arabic
+هذا جميل جدا = This is very beautiful
+أريد كوب ماء من فضلك = I want a glass of water please
+كم الساعة؟ = What time is it?
+المطار قريب من هنا = The airport is near here
+أحتاج مساعدة = I need help
+هل تفهمني؟ = Do you understand me?
+أنا لا أفهم = I do not understand
+تكلم ببطء من فضلك = Speak slowly please
+مع السلامة = Goodbye
+--- 2. جمل متدرجة الصعوبة للمبتدئين ---
+الكتاب على الطاولة = The book is on the table
+السماء زرقاء = The sky is blue
+أنا أحب القهوة = I like coffee
+هي تدرس في الجامعة = She studies at the university
+القط نائم على الكرسي = The cat is sleeping on the chair
+أخي أطول مني = My brother is taller than me
+ذهبت إلى السوق أمس = I went to the market yesterday
+سأسافر إلى مصر غدا = I will travel to Egypt tomorrow
+--- 3. جمل للمستوى المتوسط ---
+لو كنت غنيا لسافرت حول العالم = If I were rich, I would travel around the world
+بالرغم من المطر خرجنا للتنزه = Despite the rain, we went out for a walk
+لم أكن لأنجح لولا مساعدة أستاذي = I would not have succeeded without my teacher's help
+كلما درست أكثر تحسنت لغتك = The more you study, the more your language improves
+--- 4. محادثات قصيرة ---
+- مرحبا، كيف حالك؟
+- أنا بخير، شكرا. وأنت؟
+- الحمد لله. هل أنت جديد هنا؟
+- نعم، أنا طالب جديد. اسمي أحمد. وأنت؟
+- اسمي سارة. تشرفت بلقائك.
+
+- وأنا أيضا. من أين أنت؟
+- أنا من الأردن. وأنت؟
+- أنا من مصر.
+
+- Hello, how are you?
+- I am fine, thank you. And you?
+- Alhamdulillah. Are you new here?
+- Yes, I am a new student. My name is Ahmed. And you?
+- My name is Sarah. Nice to meet you.
+
+- Me too. Where are you from?
+- I am from Jordan. And you?
+- I am from Egypt.
+
+--- 5. أسئلة وأجوبة شائعة ---
+س: كيف أقول "كتاب" بالإنجليزية؟
+ج: تقول "Book"
+س: ما معنى "beautiful" بالعربية؟
+ج: معناها "جميل"
+س: كيف أقدم نفسي بالإنجليزية؟
+ج: تقول: Hello, my name is... Nice to meet you
+س: ما الفرق بين "I go" و "I am going"؟
+ج: "I go" للمعتاد، و "I am going" لما يحدث الآن
+--- 6. شرح قواعد مبسط ---
+في العربية: الفاعل يأتي أولا ثم الفعل ثم المفعول: الولد أكل التفاحة
+في الإنجليزية: الفاعل ثم الفعل ثم المفعول: The boy ate the apple
+للسؤال بالإنجليزية نستخدم: ?Wh- word + auxiliary + subject + verb
+مثال: ?Where do you live
+في العربية حروف الجر: في، على، من، إلى، مع
+في الإنجليزية: in, on, from, to, with
+--- 7. مفردات حسب الموضوع ---
+[العائلة - Family]
+أب = Father
+أم = Mother
+أخ = Brother
+أخت = Sister
+جد = Grandfather
+جدة = Grandmother
+[الألوان - Colors]
+أحمر = Red
+أزرق = Blue
+أخضر = Green
+أصفر = Yellow
+أسود = Black
+أبيض = White
+[الأرقام - Numbers]
+واحد = One
+اثنان = Two
+ثلاثة = Three
+أربعة = Four
+خمسة = Five
+[الأكل - Food]
+خبز = Bread
+ماء = Water
+لحم = Meat
+أرز = Rice
+فواكه = Fruits
+[المواصلات - Transportation]
+سيارة = Car
+قطار = Train
+طائرة = Airplane
+حافلة = Bus
+--- 8. مواقف حياتية ---
+[في المطعم]
+أريد طاولة لشخصين = I want a table for two
+ما هي الأطباق التي توصي بها؟ = What dishes do you recommend?
+الحساب من فضلك = The bill please
+[في المستشفى]
+أشعر بألم هنا = I feel pain here
+هل لديك حساسية؟ = Do you have any allergies?
+تناول هذا الدواء مرتين يوميا = Take this medicine twice a day
+[في الفندق]
+أريد حجز غرفة = I want to book a room
+هل الإفطار مشمول؟ = Is breakfast included?
+متى وقت تسجيل المغادرة؟ = What time is check-out?
+--- 9. أمثلة على أخطاء شائعة ---
+خطأ: I have 25 years
+صح: I am 25 years old
+خطأ: He go to school
+صح: He goes to school
+خطأ: أنا أحب هي
+صح: أنا أحبها
+--- 10. تدريبات ---
+املأ الفراغ: He ___ to school every day. (go / goes)
+الإجابة: goes
+ترجم: "الطقس جميل اليوم"
+الإجابة: The weather is beautiful today
+صحح الخطأ: "She don't like coffee"
+الإجابة: She doesn't like coffee
+=== بيانات تدريب نموذج تعليم اللغات - الدفعة الموسعة ===
+--- 1. أزواج ترجمة إضافية ---
+أتمنى لك يوما سعيدا = I wish you a happy day
+هل يمكنك مساعدتي من فضلك؟ = Can you help me please?
+أين يقع أقرب مصرف؟ = Where is the nearest bank?
+كم يبعد المطار عن الفندق؟ = How far is the airport from the hotel?
+هل تقبل الدفع بالبطاقة الائتمانية؟ = Do you accept credit card payment?
+أود استئجار سيارة = I would like to rent a car
+ما سعر التذكرة؟ = What is the ticket price?
+هل يوجد إنترنت لاسلكي هنا؟ = Is there wireless internet here?
+أشعر بالتعب = I feel tired
+أنا متحمس لهذه الرحلة = I am excited about this trip
+لا تقلق، كل شيء سيكون على ما يرام = Do not worry, everything will be fine
+أعطني دقيقة من فضلك = Give me a minute please
+ما رأيك في هذا؟ = What do you think of this?
+دعنا نذهب معا = Let us go together
+أتمنى لك التوفيق = I wish you good luck
+ما اسمك الكامل؟ = What is your full name?
+كيف أكتب هذه الكلمة؟ = How do I write this word?
+كيف أنطق هذه الجملة؟ = How do I pronounce this sentence?
+هل يمكنك تكرار ذلك؟ = Can you repeat that?
+ما الفرق بين هاتين الكلمتين؟ = What is the difference between these two words?
+--- 2. جمل متدرجة الصعوبة - مستوى متقدم ---
+بعد أن أنهيت دراستي الجامعية قررت السفر إلى الخارج لاكتساب خبرة عملية = After I finished my university studies, I decided to travel abroad to gain practical experience
+لو كنت أعلم بقدومك لذهبت لاستقبالك في المطار = If I had known about your arrival, I would have gone to meet you at the airport
+من الضروري أن نتعلم من أخطائنا كي لا نكررها في المستقبل = It is necessary that we learn from our mistakes so that we do not repeat them in the future
+على الرغم من الصعوبات التي واجهتها إلا أنني لم أستسلم قط = Despite the difficulties I faced, I never gave up
+إن القراءة تغذي العقل وتوسع المدارك وتفتح آفاقا جديدة = Reading nourishes the mind, expands perceptions, and opens new horizons
+لقد أثبتت الدراسات أن تعلم لغة جديدة يحسن الذاكرة ويؤخر الشيخوخة = Studies have proven that learning a new language improves memory and delays aging
+يجب علينا أن نحافظ على البيئة لأنها مسؤوليتنا تجاه الأجيال القادمة = We must preserve the environment because it is our responsibility towards future generations
+كلما زادت معرفتك زاد إدراكك لمدى جهلك = The more knowledge you gain, the more you realize the extent of your ignorance
+لا تحكم على الشخص من مظهره الخارجي بل من أخلاقه وتصرفاته = Do not judge a person by their outward appearance but by their morals and actions
+الصديق الحقيقي هو من يقف بجانبك في أوقات الشدة قبل أوقات الفرح = A true friend is the one who stands by you in times of hardship before times of joy
+--- 3. محادثات طويلة ---
+[محادثة في المطار]
+الموظف: مرحبا بك. هل يمكنني رؤية جواز سفرك من فضلك؟
+المسافر: تفضل، هذا جواز سفري.
+
+الموظف: شكرا. هل تحمل أي أمتعة ممنوعة؟
+المسافر: لا، ليس لدي أي أمتعة ممنوعة.
+
+الموظف: حسنا. هل تفضل مقعدا بجانب النافذة أم بجانب الممر؟
+المسافر: بجانب النافذة من فضلك.
+
+الموظف: تم. هذه بطاقة صعودك إلى الطائرة. البوابة رقم 12.
+
+المسافر: شكرا جزيلا. أين تقع البوابة 12؟
+الموظف: اسلك الممر إلى اليمين ثم سترى اللوحات الإرشادية.
+
+المسافر: شكرا لمساعدتك.
+
+الموظف: على الرحب والسعة. رحلة سعيدة.
+
+[محادثة في المطار - بالإنجليزية]
+Officer: Welcome. May I see your passport please?
+Traveler: Here you are, this is my passport.
+
+Officer: Thank you. Do you have any prohibited luggage?
+Traveler: No, I do not have any prohibited luggage.
+
+Officer: Alright. Do you prefer a window seat or an aisle seat?
+Traveler: A window seat please.
+
+Officer: Done. This is your boarding pass. Gate number 12.
+
+Traveler: Thank you very much. Where is gate 12?
+Officer: Take the corridor to the right, then you will see the signboards.
+
+Traveler: Thank you for your help.
+
+Officer: You are welcome. Have a pleasant flight.
+
+[محادثة في الفندق - عربي]
+النزيل: مساء الخير. لدي حجز باسم محمد علي.
+
+موظف الاستقبال: مساء الخير. دقيقة واحدة من فضلك. نعم، وجدت حجزك. غرفة لثلاث ليال.
+
+النزيل: نعم هذا صحيح. هل يمكنني الحصول على غرفة مطلة على البحر؟
+موظف الاستقبال: لحسن الحظ تتوفر لدينا غرفة مطلة على البحر في الطابق الخامس.
+
+النزيل: رائع. كم تكلفة الليلة الواحدة؟
+موظف الاستقبال: الليلة بمئة وخمسين ريالا شاملة الإفطار.
+
+النزيل: جيد. هل يوجد مسبح في الفندق؟
+موظف الاستقبال: نعم، المسبح في الطابق الأرضي ويعمل حتى العاشرة مساء.
+
+النزيل: وهل يوجد صالة رياضية؟
+موظف الاستقبال: نعم، بجانب المسبح. وهي مفتوحة 24 ساعة.
+
+النزيل: ممتاز. أين المصعد من فضلك؟
+موظف الاستقبال: على يسارك بعد الممر مباشرة. هذا مفتاح غرفتك.
+
+النزيل: شكرا جزيلا لك.
+
+موظف الاستقبال: أتمنى لك إقامة سعيدة.
+
+[محادثة في الفندق - إنجليزي]
+Guest: Good evening. I have a reservation under the name Mohammed Ali.
+
+Receptionist: Good evening. One moment please. Yes, I found your reservation. A room for three nights.
+
+Guest: Yes, that is correct. Can I get a room overlooking the sea?
+Receptionist: Fortunately, we have a room overlooking the sea on the fifth floor.
+
+Guest: Wonderful. How much is the cost per night?
+Receptionist: It is one hundred and fifty riyals per night including breakfast.
+
+Guest: Good. Is there a swimming pool in the hotel?
+Receptionist: Yes, the swimming pool is on the ground floor and works until ten in the evening.
+
+Guest: And is there a gym?
+Receptionist: Yes, next to the swimming pool. It is open 24 hours.
+
+Guest: Excellent. Where is the elevator please?
+Receptionist: To your left, just after the corridor. This is your room key.
+
+Guest: Thank you very much.
+
+Receptionist: I wish you a pleasant stay.
+
+[محادثة تعليمية - عربي]
+المعلم: اليوم سنتعلم كيف نعبر عن الرأي. عندما تريد إبداء رأيك، يمكنك أن تقول "في رأيي" أو "أعتقد أن".
+
+الطالب: فهمت. هل يمكنني أن أقول "أظن أن" أيضا؟
+المعلم: نعم، "أظن أن" صحيحة أيضا وتستخدم كثيرا. أعطني جملة كمثال.
+
+الطالب: في رأيي أن تعلم اللغات مهم جدا.
+
+المعلم: ممتاز! جملة صحيحة تماما. ماذا عنك يا سلمى؟
+الطالبة: أعتقد أن القراءة مفيدة للعقل.
+
+المعلم: أحسنت. الآن، كيف تعبر عن عدم موافقتك بأدب؟
+الطالب: يمكن أن أقول "أحترم رأيك ولكنني أختلف معك".
+
+المعلم: رائع. هذه طريقة مهذبة جدا. والآن تمرين: كل واحد منكم يعطي رأيه في موضوع "السفر" ويستخدم التعابير التي تعلمناها.
+
+[محادثة تعليمية - إنجليزي]
+Teacher: Today we will learn how to express an opinion. When you want to give your opinion, you can say "in my opinion" or "I believe that".
+
+Student: I understand. Can I say "I suppose that" as well?
+Teacher: Yes, "I suppose that" is also correct and is used a lot. Give me a sentence as an example.
+
+Student: In my opinion, learning languages is very important.
+
+Teacher: Excellent! A completely correct sentence. What about you, Salma?
+Student: I believe that reading is beneficial for the mind.
+
+Teacher: Well done. Now, how do you express your disagreement politely?
+Student: I can say "I respect your opinion but I disagree with you".
+
+Teacher: Wonderful. That is a very polite way. And now an exercise: each of you gives their opinion on the topic of "travel" and uses the expressions we have learned.
+
+--- 4. أسئلة وأجوبة تعليمية ---
+س: كيف أفرق بين استخدام "this" و "that" في الإنجليزية؟
+ج: "this" تستخدم للقريب، و "that" تستخدم للبعيد. مثال: This book here is mine. That book there is yours.
+
+س: كيف أقول "أنا ذاهب إلى المدرسة" بالإنجليزية؟
+ج: تقول: I am going to school
+س: ما الفرق بين "I have been" و "I have gone"؟
+ج: "I have been" تعني ذهبت وعدت. "I have gone" تعني ذهبت ولم تعد بعد.
+
+س: متى نستخدم أداة التعريف "the"؟
+ج: نستخدمها مع شيء محدد أو معروف للمتكلم والمستمع، أو مع أشياء فريدة مثل the sun و the moon.
+
+س: كيف أبني سؤالا في العربية؟
+ج: بإضافة أداة استفهام في البداية مثل: هل، ماذا، أين، كيف، متى، من. مثال: هل أنت جائع؟ أين تسكن؟
+س: ما الفرق بين الماضي البسيط والماضي المستمر في الإنجليزية؟
+ج: الماضي البسيط لفعل انتهى: I ate. الماضي المستمر لفعل كان مستمرا: I was eating.
+
+س: كيف أعبر عن المستقبل في العربية؟
+ج: باستخدام حرف السين أو سوف قبل الفعل. مثال: سأدرس غدا. أو: سوف أدرس غدا.
+
+س: ما معنى كلمة "nevertheless" وكيف تستخدم؟
+ج: معناها "بالرغم من ذلك". مثال: It was raining; nevertheless, we went out.
+
+س: متى تستخدم "much" ومتى تستخدم "many"؟
+ج: "much" مع غير المعدود مثل water و money. "many" مع المعدود مثل books و cars.
+
+س: كيف أقول "لا بد من" بالإنجليزية؟
+ج: تقول: must أو have to. مثال: You must study. أو: You have to study.
+
+س: ما إعراب "الكتابُ مفيدٌ"؟
+ج: الكتاب: مبتدأ مرفوع وعلامة رفعه الضمة. مفيد: خبر مرفوع وعلامة رفعه الضمة.
+
+س: كيف تشرح زمن المضارع التام للمبتدئين؟
+ج: هو زمن يربط الماضي بالحاضر. نستخدم have/has ثم التصريف الثالث للفعل. يستخدم لتجارب الحياة أو أحداث انتهت للتو. مثال: I have finished my homework.
+
+--- 5. شرح قواعد موسع ---
+[المقارنة والتفضيل في الإنجليزية]
+المقارنة بين شيئين: نضيف er للصفة القصيرة، أو more قبل الصفة الطويلة
+مثال: Ahmed is taller than Ali. This book is more interesting than that one.
+
+التمييز في العربية: نستخدم أفعل التفضيل
+مثال: أحمد أطول من علي. هذا الكتاب أكثر إثارة من ذاك.
+
+[النفي في اللغتين]
+العربية: نستخدم لا، لم، لن، ما، ليس
+لا أحب الكذب. لم أذهب إلى الحفلة. لن أتأخر غدا.
+
+الإنجليزية: نستخدم do not, does not, did not, will not, is not
+I do not like lying. I did not go to the party. I will not be late tomorrow.
+
+[حروف الجر والاتجاهات]
+في العربية: فوق، تحت، أمام، خلف، بجانب، بين، داخل، خارج
+في الإنجليزية: above, under, in front of, behind, next to, between, inside, outside
+[الضمائر في الحالتين]
+العربية: الضمائر المنفصلة (أنا، أنت، هو، هي، نحن، هم) والمتصلة (كتابي، كتابك، كتابه)
+الإنجليزية: الضمائر الشخصية (I, you, he, she, we, they) وضمائر الملكية (my, your, his, her, our, their)
+[الأزمنة الأساسية في الإنجليزية]
+المضارع البسيط: يستخدم للحقائق والعادات. I eat breakfast every day.
+
+الماضي البسيط: يستخدم لأحداث انتهت. I ate breakfast yesterday.
+
+المستقبل البسيط: يستخدم للتنبؤ والخطط. I will eat breakfast tomorrow.
+
+المضارع المستمر: يستخدم لما يحدث الآن. I am eating breakfast now.
+
+[بناء الجملة الاسمية والفعلية في العربية]
+الجملة الاسمية: تبدأ باسم. العلم نور. الصدق منجاة.
+
+الجملة الفعلية: تبدأ بفعل. يذهب الطالب إلى المدرسة. نام الطفل مبكرا.
+
+--- 6. مفردات موسعة حسب الموضوع ---
+[الطقس - Weather]
+مشمس = Sunny
+غائم = Cloudy
+ممطر = Rainy
+عاصف = Stormy
+مثلج = Snowy
+ضبابي = Foggy
+الرطوبة = Humidity
+درجة الحرارة = Temperature
+نسيم = Breeze
+الرياح = Wind
+العاصفة الرعدية = Thunderstorm
+[المشاعر - Emotions]
+سعيد = Happy
+حزين = Sad
+غاضب = Angry
+خائف = Afraid
+متفاجئ = Surprised
+قلق = Anxious
+متحمس = Excited
+فخور = Proud
+محبط = Disappointed
+ممتن = Grateful
+فضولي = Curious
+متوتر = Nervous
+مرتاح = Relaxed
+مشتاق = Longing
+[الصفات - Adjectives]
+طويل = Tall / Long
+قصير = Short
+كبير = Big
+صغير = Small
+سريع = Fast
+بطيء = Slow
+قوي = Strong
+ضعيف = Weak
+ذكي = Intelligent
+لطيف = Kind
+كريم = Generous
+بخيل = Stingy
+شجاع = Brave
+جبان = Cowardly
+مشهور = Famous
+[المهن - Professions]
+طبيب = Doctor
+مهندس = Engineer
+معلم = Teacher
+محام = Lawyer
+صحفي = Journalist
+طباخ = Cook
+سائق = Driver
+ممرض = Nurse
+صيدلي = Pharmacist
+محاسب = Accountant
+فنان = Artist
+كاتب = Writer
+عالم = Scientist
+قاضي = Judge
+تاجر = Merchant
+[أجزاء الجسم - Body Parts]
+رأس = Head
+عين = Eye
+أذن = Ear
+أنف = Nose
+فم = Mouth
+لسان = Tongue
+سن = Tooth
+رقبة = Neck
+كتف = Shoulder
+ذراع = Arm
+يد = Hand
+إصبع = Finger
+ظهر = Back
+صدر = Chest
+قلب = Heart
+معدة = Stomach
+رجل = Leg
+ركبة = Knee
+قدم = Foot
+[الحيوانات - Animals]
+أسد = Lion
+نمر = Tiger
+فيل = Elephant
+زرافة = Giraffe
+قرد = Monkey
+ثعبان = Snake
+تمساح = Crocodile
+دلفين = Dolphin
+حوت = Whale
+نسر = Eagle
+بومة = Owl
+فراشة = Butterfly
+نحلة = Bee
+حصان = Horse
+جمل = Camel
+خروف = Sheep
+بقرة = Cow
+دجاجة = Chicken
+[الرياضة - Sports]
+كرة القدم = Football
+كرة السلة = Basketball
+السباحة = Swimming
+الجري = Running
+التنس = Tennis
+الملاكمة = Boxing
+ركوب الدراجات = Cycling
+التزلج = Skiing
+الجمباز = Gymnastics
+الشطرنج = Chess
+[التكنولوجيا - Technology]
+حاسوب = Computer
+هاتف محمول = Mobile phone
+شاشة = Screen
+لوحة مفاتيح = Keyboard
+فأرة = Mouse
+سماعات = Headphones
+إنترنت = Internet
+بريد إلكتروني = Email
+تطبيق = Application
+برنامج = Program
+--- 7. مواقف حياتية موسعة ---
+[في المطعم - إنجليزي]
+Waiter: Good evening. Welcome to our restaurant. How many people?
+Customer: Good evening. A table for four please.
+
+Waiter: Right this way please. Here is the menu.
+
+Customer: Thank you. What do you recommend today?
+Waiter: Our special today is grilled fish with vegetables.
+
+Customer: That sounds good. I will have the grilled fish.
+
+Waiter: And to drink?
+Customer: Fresh orange juice please.
+
+Waiter: Excellent choice. Your order will be ready shortly.
+
+[في المستشفى - عربي]
+المريض: صباح الخير يا دكتور.
+
+الطبيب: صباح الخير. تفضل بالجلوس. ما الذي تشكو منه؟
+المريض: أشعر بألم شديد في رأسي منذ ثلاثة أيام.
+
+الطبيب: هل الألم مستمر أم يأتي ويذهب؟
+المريض: يأتي ويذهب، لكنه يزداد في الليل.
+
+الطبيب: هل جربت أخذ أي دواء؟
+المريض: نعم، أخذت مسكنا لكن دون فائدة.
+
+الطبيب: دَعني أفحصك. هل تعاني من ضغط في العمل مؤخرا؟
+المريض: نعم، لدي الكثير من العمل هذه الأيام.
+
+الطبيب: قد يكون السبب هو التوتر والإرهاق. سأصف لك دواء. وعليك أن تأخذ قسطا من الراحة.
+
+المريض: شكرا يا دكتور. هل أحتاج إلى العودة؟
+الطبيب: نعم، عد إلي بعد أسبوع إن لم يتحسن الألم.
+
+[في المتجر - إنجليزي]
+Customer: Excuse me, where can I find the dairy products?
+Shop Assistant: They are in aisle number five, on your left.
+
+Customer: Thank you. Also, do you have organic vegetables?
+Shop Assistant: Yes, the organic section is at the back of the store.
+
+Customer: Great. One more thing, what time do you close?
+Shop Assistant: We close at ten o'clock in the evening.
+
+Customer: Thank you for your help.
+
+Shop Assistant: You are welcome. Have a nice day.
+
+[في البنك - عربي]
+العميل: السلام عليكم. أريد فتح حساب توفير.
+
+الموظف: وعليكم السلام. بالطبع. هل لديك إثبات شخصية؟
+العميل: نعم، هذا جواز سفري.
+
+الموظف: شكرا. ما المبلغ الذي تريد إيداعه كرصيد افتتاحي؟
+العميل: أريد إيداع خمسة آلاف ريال.
+
+الموظف: حسنا. ستحتاج إلى تعبئة هذا النموذج من فضلك.
+
+العميل: هل يمكنك مساعدتي في تعبئته؟
+الموظف: بالتأكيد. اكتب اسمك الكامل هنا، وعنوانك هنا.
+
+العميل: شكرا. كم تستغرق إجراءات فتح الحساب؟
+الموظف: حوالي نصف ساعة فقط. سأعطيك بطاقة الصراف فور الانتهاء.
+
+--- 8. أخطاء شائعة مع التصحيح ---
+خطأ: He is more taller than me.
+
+صح: He is taller than me.
+
+الشرح: لا نستخدم more مع الصفات التي تنتهي ب er.
+
+خطأ: I have went to the market.
+
+صح: I have gone to the market.
+
+الشرح: التصريف الثالث من go هو gone وليس went.
+
+خطأ: She can to swim very well.
+
+صح: She can swim very well.
+
+الشرح: لا نستخدم to بعد أفعال المودال مثل can و must و should.
+
+خطأ: There is many people in the room.
+
+صح: There are many people in the room.
+
+الشرح: people جمع فنستخدم are بدلا من is.
+
+خطأ: أنا شربت الماء.
+
+صح: أنا شربت الماء. (صحيحة ولكن الأفضل: شربت الماء بدون أنا لأن الفعل يدل على الفاعل)
+الشرح: في العربية يمكن حذف الضمير إذا كان الفعل يدل عليه.
+
+خطأ: إن أخاك قادم.
+
+صح: إن أخاك قادم. (صحيحة ولكن إذا كانت الأداة "إن" فالاسم منصوب: إن أخاك قادمٌ)
+الشرح: إن وأخواتها تنصب الاسم وترفع الخبر.
+
+خطأ: The informations are useful.
+
+صح: The information is useful.
+
+الشرح: information اسم غير معدود في الإنجليزية.
+
+خطأ: I am agree with you.
+
+صح: I agree with you.
+
+الشرح: agree فعل وليس صفة فلا يحتاج إلى am.
+
+خطأ: هو ذهب إلى المدرسة أمس.
+
+صح: ذهب إلى المدرسة أمس. (أفضل بدون تكرار الضمير)
+أو: هو ذهب إلى المدرسة أمس. (صحيحة للتوكيد فقط)
+--- 9. تدريبات وتطبيقات ---
+[تدريب 1: اختر الإجابة الصحيحة]
+?___ What time
+a) do the train leave?
+b) does the train leave?
+c) the train leaves?
+الإجابة الصحيحة: b
+[تدريب 2: أكمِل الجملة]
+إذا كنت تريد النجاح ______ أن تعمل بجد.
+
+الإجابة: فعليك
+[تدريب 3: ترجِم إلى العربية]
+The museum is closed on Mondays.
+
+الإجابة: المتحف مغلق يوم الاثنين.
+
+[تدريب 4: ترجم إلى الإنجليزية]
+أنا مهتم بتعلم اللغة العربية الفصحى.
+
+الإجابة: I am interested in learning Standard Arabic.
+
+[تدريب 5: صحح الخطأ]
+She don't know the answer.
+
+التصحيح: She doesn't know the answer.
+
+[تدريب 6: صرف الفعل في الماضي]
+هو (يكتب) ______ رسالة أمس.
+
+الإجابة: كتب
+[تدريب 7: حول إلى المبني للمجهول]
+The students read the book.
+
+الإجابة: The book is read by the students.
+
+[تدريب 8: أعرِب]
+"العلمُ نورٌ"
+العلمُ: مبتدأ مرفوع وعلامة رفعه الضمة الظاهرة.
+
+نورٌ: خبر مرفوع وعلامة رفعه الضمة الظاهرة.
+
+[تدريب 9: املأ بحرف الجر المناسب]
+أنا ذاهب _____ المدرسة.
+
+الإجابة: إلى
+[تدريب 10: حول إلى صيغة السؤال]
+He lives in London.
+
+الإجابة: Does he live in London?
+--- 10. نصوص قراءة ---
+[نص قراءة بالعربية - المستوى المبتدئ]
+اسمي خالد. أنا من المملكة العربية السعودية. عمري خمسة وعشرون عاما. أنا طالب في الجامعة. أدرس اللغة الإنجليزية. أحب القراءة والرياضة. في وقت فراغي أذهب إلى النادي الرياضي. أتمنى أن أصبح مترجما في المستقبل. الترجمة مهنة جميلة لأنها تربط بين الثقافات المختلفة. كما أتمنى أن أسافر إلى بريطانيا لأمارس اللغة الإنجليزية مع أهلها.
+
+[نص قراءة بالإنجليزية - المستوى المبتدئ]
+My name is Khaled. I am from Saudi Arabia. I am twenty-five years old. I am a student at the university. I study the English language. I like reading and sports. In my free time, I go to the gym. I hope to become a translator in the future. Translation is a beautiful profession because it connects different cultures. I also hope to travel to Britain to practice the English language with its people.
+
+[نص قراءة بالعربية - المستوى المتوسط]
+المكتبة هي بيت المعرفة ومكان للتعلم والاكتشاف. عندما تدخل 	 كبيرة تشعر وكأنك تدخل عالما آخر مليئا بالأسرار والقصص والمعلومات. تحتوي المكتبات على كتب في شتى المجالات: العلمية والأدبية والتاريخية والفلسفية. وهي ليست مجرد مكان للقراءة بل هي أيضا مكان للدراسة والبحث والاجتماعات الثقافية. في المكتبة تتعلم الهدوء والتركيز وتتعود على احترام الآخرين. وكما قيل: خير جليس في الزمان كتاب. فالمكتبة هي المكان الذي يجتمع فيه آلاف الجلساء في آن واحد.
+
+[نص قراءة بالإنجليزية - المستوى المتوسط]
+The library is the house of knowledge and a place for learning and discovery. When you enter a large library, you feel as if you are entering another world full of secrets, stories, and information. Libraries contain books in various fields: scientific, literary, historical, and philosophical. It is not merely a place for reading, but it is also a place for studying, research, and cultural meetings. In the library, you learn calmness and focus and get used to respecting others. And as it was said: the best companion in time is a book. The library is the place where thousands of companions gather at once.
+
+[نص قراءة بالعربية - المستوى المتقدم]
+اختلف العلماء قديما وحديثا حول أصل اللغة وكيف نشأت عند الإنسان. فهناك من يرى أنها موهبة إلهية وهبها الله للإنسان ليميزه عن سائر المخلوقات، وهناك من يعتقد أنها تطورت تدريجيا من أصوات بسيطة كان يصدرها الإنسان البدائي للتعبير عن حاجاته ومشاعره. ومهما يكن أصل اللغة، فإن الثابت الذي لا يختلف عليه اثنان هو أن اللغة هي أعظم اختراع في تاريخ البشرية. فهي ليست مجرد وسيلة للتواصل بل هي وعاء يحمل الفكر والثقافة والهوية والتاريخ.
+
+[نص قراءة بالإنجليزية - المستوى المتقدم]
+Scholars, both ancient and modern, have differed about the origin of language and how it arose in humans. Some see it as a divine gift that God granted to humans to distinguish them from all other creatures, while others believe that it gradually evolved from simple sounds that primitive humans made to express their needs and feelings. Whatever the origin of language may be, what is certain and upon which no two people disagree is that language is the greatest invention in human history. It is not merely a means of communication, but rather a vessel that carries thought, culture, identity, and history.
+
+[نص قراءة تحليلي - عربي]
+الأدب هو مرآة المجتمع، فهو يعكس أحواله وآماله وآلامه. حين نقرأ رواية من الأدب العربي المعاصر، فإننا لا نقرأ قصة أشخاص فقط، بل نتعرف على فترة زمنية كاملة بكل ما فيها من تحولات اجتماعية وسياسية. على سبيل المثال، إذا قرأنا رواية تدور أحداثها في خمسينيات القرن الماضي، فسنجد تفاصيل عن الحياة اليومية، والعادات والتقاليد، وطريقة كلام الناس ولباسهم. وهنا تكمن أهمية الأدب، فهو يسجل التاريخ بطريقة غير رسمية لكنها عميقة ومؤثرة. لهذا السبب، يجب علينا أن نشجع الأجيال الجديدة على قراءة الأدب وليس مجرد الكتب الدراسية.
+
+--- 11. تصريف الأفعال الشائعة ---
+[الفعل: ذهب - Go]
+الماضي: ذهب = went
+المضارع: يذهب = goes / go
+الأمر: اذهب = go
+المصدر: الذهاب = going / to go
+[الفعل: أكل - Eat]
+الماضي: أكل = ate
+المضارع: يأكل = eats / eat
+الأمر: كُل = eat
+المصدر: الأكل = eating / to eat
+[الفعل: شرب - Drink]
+الماضي: شرب = drank
+المضارع: يشرب = drinks / drink
+الأمر: اشرب = drink
+المصدر: الشرب = drinking / to drink
+[الفعل: كتب - Write]
+الماضي: كتب = wrote
+المضارع: يكتب = writes / write
+الأمر: اكتب = write
+المصدر: الكتابة = writing / to write
+[الفعل: قرأ - Read]
+الماضي: قرأ = read
+المضارع: يقرأ = reads / read
+الأمر: اقرأ = read
+المصدر: القراءة = reading / to read
+[الفعل: نام - Sleep]
+الماضي: نام = slept
+المضارع: ينام = sleeps / sleep
+الأمر: نَم = sleep
+المصدر: النوم = sleeping / to sleep
+--- 12. أمثلة على استخدامات متقدمة ---
+[التعبير عن الندم]
+عربي: ليتني درست بجدية أكبر عندما كنت صغيرا.
+
+إنجليزي: I wish I had studied harder when I was young.
+
+[التعبير عن الاقتراح]
+عربي: ما رأيك أن نذهب إلى السينما الليلة؟
+إنجليزي: How about going to the cinema tonight?
+[التعبير عن الاستنتاج]
+عربي: لا بد أنه مريض لأنه لم يحضر العمل اليوم.
+
+إنجليزي: He must be sick because he did not come to work today.
+
+[التعبير عن الشك]
+عربي: قد يكون على حق، لكنني لست متأكدا.
+
+إنجليزي: He might be right, but I am not sure.
+
+[التعبير عن التعجب]
+عربي: ما أجمل هذه اللوحة!
+إنجليزي: How beautiful this painting is!
+[التعبير عن التمني]
+عربي: أتمنى أن تتحقق أحلامك.
+
+إنجليزي: I hope your dreams come true.
+
+[التعبير عن الامتنان]
+عربي: لا أعرف كيف أشكرك على مساعدتك.
+
+إنجليزي: I do not know how to thank you for your help.
+
+--- 13. نماذج إضافية للتدريب ---
+[أكمل الحوار - عربي]
+أ: مرحبا، ______ حالك؟
+ب: ______ بخير، ______. وأنت؟
+أ: الحمد لله. ______ اسمك؟
+ب: اسمي فاطمة. ______؟
+أ: اسمي ليلى. ______ بلقائك.
+
+ب: وأنا ______.
+
+[أكمل الحوار - إنجليزي]
+A: Hello, ______ are you?
+B: I am ______, thank you. ______ you?
+A: I am fine, ______. What is ______ name?
+B: My ______ is John. Nice to ______ you.
+
+A: Nice to meet you ______.
+
+[صحح الأخطاء في النص التالي - عربي]
+ذهبت أنا إلى السوق واشتريت أنا خبز وحليب. ثم رأيت أنا صديقي القديم. تحدثنا نحن عن أيام الدراسة. كان هو سعيدا بلقائي. (يوجد تكرار للضمائر)
+التصحيح: ذهبت إلى السوق واشتريت خبزا وحليبا. ثم رأيت صديقي القديم. تحدثنا عن أيام الدراسة. كان سعيدا بلقائي.
+
+[صحح الأخطاء في النص التالي - إنجليزي]
+Yesterday I go to the park. I see many childrens. They was playing. One boy fall down and start crying. His mother come quickly.
+
+التصحيح: Yesterday I went to the park. I saw many children. They were playing. One boy fell down and started crying. His mother came quickly.
+
+--- نهاية الدفعة التدريبية ---
+=== بيانات تدريبية - الدفعة الثالثة ===
+--- 1. نصوص قراءة طويلة بالعربية ---
+[نص: أهمية تعلم اللغات]
+لا شك أن تعلم اللغات الأجنبية أصبح ضرورة ملحة في عصرنا الحالي. فالعالم لم يعد تلك القرى المتباعدة التي تفصل بينها المسافات الشاسعة، بل أصبح قرية واحدة صغيرة بفضل التقدم التكنولوجي الهائل في وسائل الاتصال والنقل. عندما يتعلم الإنسان لغة جديدة فإنه لا يتعلم مجرد كلمات وقواعد نحوية فحسب، بل يفتح نافذة جديدة يطل من خلالها على ثقافة مختلفة وعادات وتقاليد قد تكون غريبة عنه. وهذا بدوره يوسع آفاق التفكير لديه ويجعله أكثر تقبلا للآخر وأكثر فهما للاختلافات بين البشر. وقد أثبتت الدراسات العلمية الحديثة أن تعلم لغة ثانية يحسن من وظائف الدماغ ويقوي الذاكرة ويؤخر ظهور أعراض الشيخوخة. كما أن متقني أكثر من لغة يتمتعون بقدرة أكبر على حل المشكلات والتفكير الإبداعي. لذلك فإنني أنصح كل شاب وفتاة بأن يبدؤوا في تعلم لغة جديدة اليوم قبل الغد، فالوقت الذي تستثمره في التعلم سيعود عليك بالنفع في حياتك العملية والشخصية.
+
+[نص: رحلة إلى مدينة تاريخية]
+في الصيف الماضي قررت أنا وأصدقائي القيام برحلة إلى مدينة مراكش المغربية. انطلقنا في الصباح الباكر وكان الجو مشمسا وجميلا. وصلنا إلى المدينة عند الظهر تقريبا. أول ما لفت انتباهنا هو سور المدينة القديم الذي يعود تاريخه إلى قرون عديدة. دخلنا من باب كبير مزخرف ووجدنا أنفسنا في عالم مختلف تماما. الأزقة ضيقة ومتعرجة، والمباني مطلية باللون الأحمر، والهواء تفوح منه رائحة التوابل والعطور. زرنا ساحة جامع الفنا الشهيرة حيث شاهدنا عروضا شعبية مذهلة: مروضي الأفاعي، ورواة القصص، وعازفي الموسيقى التقليدية. ثم زرنا قصر البديع الذي كان آية في الجمال رغم مرور الزمن عليه. تناولنا طعام الغداء في مطعم تقليدي، وأكلنا طبق الطاجين المغربي الشهير. كان الطعم لذيذا للغاية. وفي المساء جلسنا في مقهى على السطح نشرب الشاي المغربي بالنعناع ونشاهد غروب الشمس. كانت تجربة لا تنسى. عدنا إلى الفندق متعبين ولكن سعداء جدا. تعلمت من هذه الرحلة أن لكل مدينة روحها الخاصة، وأن علينا أن نتعمق في استكشافها لنشعر بها حقا.
+
+[نص: العمل التطوعي وأثره على المجتمع]
+العمل التطوعي هو أحد أسمى الأعمال التي يمكن أن يقوم بها الإنسان. فهو يعكس روح التعاون والتكافل بين أفراد المجتمع. عندما يتطوع الشخص بوقته وجهده لمساعدة الآخرين دون مقابل مادي، فإنه يساهم في بناء مجتمع متماسك وقوي. هناك أنواع كثيرة من العمل التطوعي: فهناك التطوع في المستشفيات لمساعدة المرضى، وهناك التطوع في المدارس لتعليم الأطفال المحتاجين، وهناك التطوع في حملات تنظيف البيئة، وهناك أيضا التطوع في الجمعيات الخيرية لتوزيع الطعام على الفقراء. العمل التطوعي لا يفيد المجتمع فقط بل يفيد المتطوع نفسه أيضا. فعندما تساعد الآخرين تشعر بسعادة حقيقية ورضا داخلي. كما أنك تكتسب خبرات ومهارات جديدة وتتعرف على أشخاص جدد. لذلك أدعو الجميع إلى المشاركة في الأعمال التطوعية ولو لساعة واحدة في الأسبوع. تخيل كيف سيكون حال مجتمعنا إذا تبرع كل فرد ببعض وقته لخدمة الآخرين. لا شك أننا سنعيش في عالم أفضل وأجمل.
+
+[نص: التكنولوجيا بين الفوائد والأضرار]
+أحدثت التكنولوجيا ثورة هائلة في حياة البشر خلال العقود الأخيرة. فبفضل الهواتف الذكية والإنترنت أصبحنا نستطيع التواصل مع أي شخص في أي مكان في العالم في ثوان معدودة. وبفضل التقدم الطبي تم علاج أمراض كانت تعد مستعصية في الماضي. وبفضل وسائل النقل الحديثة أصبح السفر بين القارات سهلا وسريعا. لكن لكل شيء جانب مضيء وجانب مظلم. فمن أضرار التكنولوجيا أنها أدت إلى عزلة اجتماعية لدى بعض الناس الذين أصبحوا يقضون ساعات طويلة أمام الشاشات بدلا من التواصل الحقيقي مع أسرهم وأصدقائهم. كما أن وسائل التواصل الاجتماعي تسببت في مشاكل نفسية مثل القلق والاكتئاب بسبب المقارنات المستمرة بين الناس. لذلك علينا أن نتعلم كيف نستخدم التكنولوجيا باعتدال وحكمة. يجب أن تكون التكنولوجيا أدوات تخدمنا وليست أسيادا تتحكم فينا. التوازن هو المفتاح: استمتع بفوائد التكنولوجيا ولكن لا تنس أن تعيش حياتك الحقيقية.
+
+[نص: حوار بين كتاب وقارئ]
+قال القارئ للكتاب: من أنت؟
+فأجاب الكتاب: أنا صديق لا يخون، وجليس لا يمل، ورفيق لا يتذمر. أنا نافذة تطل على عوالم لا تعد ولا تحصى. تستطيع من خلالي أن تسافر إلى بلاد لم تطأها قدماك، وتعيش في أزمنة مضت منذ قرون، وتلتقي بأشخاص لم ترهم عيناك. أنا مستودع الحكمة وتراث الأجداد. كل ما سطره العظماء من علم وفكر موجود بين دفتي.
+
+قال القارئ: لكنك صامت! كيف أستفيد منك إن لم تتكلم؟
+فأجاب الكتاب: صمتي هو سر قوتي. فأنا لا أتكلم إلا عندما تفتحني. وعندها ستسمع صوتي واضحا جليا. سأهمس في أذنك بأفكار لم تخطر ببالك، وسأريك صورا لم ترها من قبل. ولكن بشرط: أن تقرأني بتمعن وتركيز. فالقراءة السريعة لا تروي ظمأ العقول.
+
+قال القارئ: أقنعتني. سأجعلك رفيق دربي.
+
+فقال الكتاب: وأنا سأكون لك خير رفيق.
+
+--- 2. نصوص قراءة طويلة بالإنجليزية ---
+[Text: The Importance of Learning Languages]
+There is no doubt that learning foreign languages has become an urgent necessity in our current era. The world is no longer those distant villages separated by vast distances; it has become a single small village thanks to the enormous technological progress in means of communication and transportation. When a person learns a new language, they do not merely learn words and grammatical rules; rather, they open a new window through which they look upon a different culture, customs, and traditions that may be strange to them. This, in turn, broadens their horizons of thinking and makes them more accepting of others and more understanding of the differences among human beings. Modern scientific studies have proven that learning a second language improves brain functions, strengthens memory, and delays the appearance of aging symptoms. Also, those who master more than one language enjoy a greater ability to solve problems and think creatively. Therefore, I advise every young man and woman to start learning a new language today before tomorrow, for the time you invest in learning will benefit you in your professional and personal life.
+
+[Text: A Journey to a Historic City]
+Last summer, my friends and I decided to take a trip to the city of Marrakech in Morocco. We set off early in the morning, and the weather was sunny and beautiful. We arrived in the city around noon. The first thing that caught our attention was the old city wall, which dates back many centuries. We entered through a large decorated gate and found ourselves in a completely different world. The alleys were narrow and winding, the buildings were painted red, and the air was filled with the scent of spices and perfumes. We visited the famous Jemaa el-Fnaa Square, where we watched amazing folk performances: snake charmers, storytellers, and traditional musicians. Then we visited the El Badi Palace, which was a marvel of beauty despite the passage of time. We had lunch in a traditional restaurant and ate the famous Moroccan tagine dish. The taste was incredibly delicious. In the evening, we sat in a rooftop café drinking Moroccan mint tea and watching the sunset. It was an unforgettable experience. We returned to the hotel tired but very happy. I learned from this trip that every city has its own spirit, and we must delve deeply into exploring it to truly feel it.
+
+[Text: Volunteer Work and Its Impact on Society]
+Volunteer work is one of the noblest deeds a human being can perform. It reflects the spirit of cooperation and solidarity among members of society. When a person volunteers their time and effort to help others without material compensation, they contribute to building a cohesive and strong society. There are many types of volunteer work: volunteering in hospitals to help patients, volunteering in schools to teach needy children, volunteering in environmental clean-up campaigns, and also volunteering in charitable organizations to distribute food to the poor. Volunteer work does not only benefit society; it also benefits the volunteer themselves. When you help others, you feel true happiness and inner satisfaction. You also gain new experiences and skills and meet new people. Therefore, I invite everyone to participate in volunteer activities, even for just one hour a week. Imagine what our society would be like if every individual donated some of their time to serve others. There is no doubt that we would live in a better and more beautiful world.
+
+[Text: Technology Between Benefits and Harms]
+Technology has brought about a massive revolution in human life over recent decades. Thanks to smartphones and the internet, we can now communicate with anyone anywhere in the world in a matter of seconds. Thanks to medical progress, diseases that were considered incurable in the past have been treated. Thanks to modern means of transportation, travel between continents has become easy and fast. However, everything has a bright side and a dark side. Among the harms of technology is that it has led to social isolation for some people who spend long hours in front of screens instead of having real communication with their families and friends. Social media has also caused psychological problems such as anxiety and depression due to constant comparisons between people. Therefore, we must learn how to use technology in moderation and wisdom. Technology should be tools that serve us, not masters that control us. Balance is the key: enjoy the benefits of technology but do not forget to live your real life.
+
+[Text: Dialogue Between a Book and a Reader]
+The reader said to the book: Who are you?
+The book replied: I am a friend who does not betray, a companion who does not bore, and a comrade who does not complain. I am a window overlooking countless worlds. Through me, you can travel to lands your feet have never tread, live in times that passed centuries ago, and meet people your eyes have never seen. I am the repository of wisdom and the heritage of ancestors. All that the great have penned of knowledge and thought is between my covers.
+
+The reader said: But you are silent! How can I benefit from you if you do not speak?
+The book replied: My silence is the secret of my strength. I do not speak until you open me. And then you will hear my voice clearly. I will whisper in your ear ideas that never crossed your mind, and I will show you images you have never seen before. But on one condition: that you read me carefully and with concentration. For fast reading does not quench the thirst of minds.
+
+The reader said: You have convinced me. I will make you my companion on the path.
+
+The book said: And I will be the best companion for you.
+
+--- 3. مفردات في مجالات جديدة ---
+[القانون - Law]
+محكمة = Court
+قاضي = Judge
+محام = Lawyer
+مدعي = Prosecutor
+متهم = Defendant
+شاهد = Witness
+حكم = Verdict
+قانون = Law
+دستور = Constitution
+عقوبة = Punishment
+غرامة = Fine
+جريمة = Crime
+دليل = Evidence
+استئناف = Appeal
+براءة = Acquittal
+إدانة = Conviction
+عقد = Contract
+حقوق = Rights
+واجبات = Duties
+[الاقتصاد - Economy]
+اقتصاد = Economy
+تضخم = Inflation
+ركود = Recession
+استثمار = Investment
+بورصة = Stock market
+عملة = Currency
+ميزانية = Budget
+ضرائب = Taxes
+صادرات = Exports
+واردات = Imports
+عرض وطلب = Supply and demand
+قرض = Loan
+فائدة = Interest
+رأس مال = Capital
+أرباح = Profits
+خسائر = Losses
+تنمية = Development
+[السياسة - Politics]
+حكومة = Government
+وزارة = Ministry
+وزير = Minister
+سفارة = Embassy
+انتخابات = Elections
+تصويت = Voting
+ديمقراطية = Democracy
+ديكتاتورية = Dictatorship
+حزب = Party
+برلمان = Parliament
+سيادة = Sovereignty
+معاهدة = Treaty
+سلام = Peace
+حرب = War
+مواطن = Citizen
+جنسية = Nationality
+تأشيرة = Visa
+[الفنون - Arts]
+رسم = Painting
+نحت = Sculpture
+تصوير فوتوغرافي = Photography
+مسرح = Theater
+تمثيل = Acting
+سينما = Cinema
+موسيقى = Music
+أوبرا = Opera
+باليه = Ballet
+رواية = Novel
+شعر = Poetry
+قصة قصيرة = Short story
+معرض = Exhibition
+لوحة فنية = Artwork
+إبداع = Creativity
+[العلوم - Sciences]
+فيزياء = Physics
+كيمياء = Chemistry
+أحياء = Biology
+رياضيات = Mathematics
+فلك = Astronomy
+جيولوجيا = Geology
+مختبر = Laboratory
+تجربة = Experiment
+نظرية = Theory
+فرضية = Hypothesis
+ذرة = Atom
+جزيء = Molecule
+خلية = Cell
+حمض نووي = DNA
+جاذبية = Gravity
+طاقة = Energy
+[الزراعة - Agriculture]
+زراعة = Agriculture
+محصول = Crop
+مزرعة = Farm
+فلاح = Farmer
+حرث = Plowing
+بذر = Sowing
+حصاد = Harvest
+ري = Irrigation
+سماد = Fertilizer
+تربة = Soil
+قمح = Wheat
+شعير = Barley
+ذرة = Corn
+قطن = Cotton
+زيتون = Olives
+نخيل = Palm trees
+[العمارة والبناء - Architecture and Construction]
+مهندس معماري = Architect
+مبنى = Building
+جسر = Bridge
+ناطحة سحاب = Skyscraper
+طابق = Floor
+أساسات = Foundations
+خرسانة = Concrete
+حديد = Iron
+زجاج = Glass
+مخطط = Blueprint
+تصميم = Design
+ترميم = Restoration
+ارتفاع = Height
+--- 4. محادثات في مواقف متنوعة ---
+[محادثة: مقابلة عمل - عربي]
+المدير: صباح الخير. تفضل بالجلوس.
+
+المتقدم: صباح الخير. شكرا جزيلا.
+
+المدير: حدثني عن نفسك.
+
+المتقدم: اسمي عمر. تخرجت من جامعة 	 بتخصص إدارة الأعمال. عملت لمدة ثلاث سنوات في شركة تسويق. أحب العمل الجماعي وأسعى دائما لتطوير مهاراتي.
+
+المدير: لماذا تقدمت للعمل في شركتنا؟
+المتقدم: لأن شركتكم من أفضل الشركات في المجال. سمعت عن بيئة العمل الممتازة وفرص التطوير المهني التي تقدمونها.
+
+المدير: ما هي نقاط قوتك وضعفك؟
+المتقدم: من نقاط قوتي الالتزام بالمواعيد والقدرة على التعلم بسرعة. أما نقطة ضعفي فأنا أحيانا أركز على التفاصيل بشكل مبالغ فيه لكنني أعمل على تحسين ذلك.
+
+المدير: أين ترى نفسك بعد خمس سنوات؟
+المتقدم: أطمح أن أكون مدير قسم التسويق وأن أساهم في نمو الشركة.
+
+المدير: حسنا. هل لديك أي أسئلة؟
+المتقدم: نعم. ما هي فرص التدريب والتطوير المتاحة للموظفين الجدد؟
+المدير: نقدم برنامجا تدريبيا شاملا لمدة ثلاثة أشهر.
+
+المتقدم: هذا رائع. شكرا على وقتك.
+
+المدير: شكرا لك. سنتصل بك قريبا.
+
+[محادثة: مقابلة عمل - إنجليزي]
+Manager: Good morning. Please have a seat.
+
+Applicant: Good morning. Thank you very much.
+
+Manager: Tell me about yourself.
+
+Applicant: My name is Omar. I graduated from Cairo University with a degree in Business Administration. I worked for three years in a marketing company. I like teamwork and always seek to develop my skills.
+
+Manager: Why did you apply to work in our company?
+Applicant: Because your company is one of the best in the field. I have heard about the excellent work environment and the professional development opportunities you offer.
+
+Manager: What are your strengths and weaknesses?
+Applicant: Among my strengths are punctuality and the ability to learn quickly. As for my weakness, I sometimes focus on details excessively, but I am working on improving that.
+
+Manager: Where do you see yourself in five years?
+Applicant: I aspire to be the marketing department manager and contribute to the growth of the company.
+
+Manager: Alright. Do you have any questions?
+Applicant: Yes. What training and development opportunities are available for new employees?
+Manager: We offer a comprehensive three-month training program.
+
+Applicant: That is wonderful. Thank you for your time.
+
+Manager: Thank you. We will contact you soon.
+
+[محادثة: حجز تذكرة طيران - عربي]
+العميل: مرحبا. أريد حجز تذكرة طيران إلى دبي من فضلك.
+
+الموظف: أهلا بك. متى تريد السفر؟
+العميل: يوم الخميس القادم.
+
+الموظف: تفضل. لدينا رحلتان يوم الخميس. الأولى في الثامنة صباحا والثانية في الرابعة عصرا. أيهما تفضل؟
+العميل: الرحلة الصباحية أفضل.
+
+الموظف: على الدرجة السياحية أم درجة رجال الأعمال؟
+العميل: درجة سياحية من فضلك.
+
+الموظف: سعر التذكرة ألفان وخمسمئة ريال.
+
+العميل: هل يشمل السعر الأمتعة؟
+الموظف: نعم، يشمل حقيبة واحدة حتى 23 كيلوغراما.
+
+العميل: جيد. احجز لي من فضلك.
+
+الموظف: الاسم الكامل من فضلك.
+
+العميل: خالد عبد الله الحربي.
+
+الموظف: تم الحجز. هذه تفاصيل رحلتك. يرجى التواجد في المطار قبل موعد الإقلاع بثلاث ساعات.
+
+العميل: شكرا جزيلا.
+
+[محادثة: في الصيدلية - إنجليزي]
+Customer: Hello. I need something for a headache.
+
+Pharmacist: How long have you had the headache?
+Customer: Since this morning. It is getting worse.
+
+Pharmacist: Do you have any other symptoms? Fever or nausea?
+Customer: No, just the headache.
+
+Pharmacist: Have you taken anything for it yet?
+Customer: No, nothing yet.
+
+Pharmacist: I recommend this painkiller. Take one tablet every six hours.
+
+Customer: Are there any side effects?
+Pharmacist: It may cause drowsiness, so avoid driving after taking it.
+
+Customer: Understood. How much does it cost?
+Pharmacist: Fifteen riyals.
+
+Customer: Here you are. Thank you.
+
+Pharmacist: Get well soon.
+
+[محادثة: طلب الطعام عبر الهاتف - عربي]
+المطعم: مطعم القصر. كيف يمكنني مساعدتك؟
+الزبون: أريد طلب توصيل إلى المنزل من فضلك.
+
+المطعم: تفضل. ماذا تريد أن تطلب؟
+الزبون: أريد دجاجا مشويا مع أرز، وسلطة خضراء، وعصير برتقال طازج.
+
+المطعم: هل تريد إضافة أي شيء آخر؟
+الزبون: لا، هذا يكفي. كم المبلغ الإجمالي؟
+المطعم: خمسة وأربعون ريالا مع التوصيل.
+
+الزبون: حسنا. متى سيصل الطلب تقريبا؟
+المطعم: في غضون أربعين دقيقة.
+
+الزبون: جيد. عنواني: شارع النخيل، مبنى رقم 15، شقة 7.
+
+المطعم: تم تسجيل الطلب. شكرا لاختيارك مطعم القصر.
+
+[محادثة: في محطة القطار - إنجليزي]
+Traveler: Excuse me, where can I buy tickets to Manchester?
+Station Staff: The ticket office is over there, on the right. Or you can use the machines.
+
+Traveler: I think I will use the ticket office. Thank you.
+
+At the ticket office...
+
+Traveler: A one-way ticket to Manchester please.
+
+Clerk: Standard or first class?
+Traveler: Standard class please.
+
+Clerk: That will be forty-five pounds.
+
+Traveler: What time does the next train leave?
+Clerk: At 3:15 from platform 7.
+
+Traveler: Is it a direct train?
+Clerk: Yes, it is direct and takes about two hours.
+
+Traveler: Perfect. Here is the money. Thank you.
+
+Clerk: Here is your ticket. Have a good journey.
+
+[محادثة: في معرض الكتاب - عربي]
+الزائر: مرحبا. لدي استفسار.
+
+البائع: تفضل. كيف يمكنني مساعدتك؟
+الزائر: أبحث عن كتاب لتعليم اللغة العربية لغير الناطقين بها.
+
+البائع: لدينا مجموعة ممتازة في هذا القسم. هل تبحث عن مستوى معين؟
+الزائر: مستوى مبتدئ. لشخص لا يعرف العربية أبدا.
+
+البائع: أقترح عليك هذا الكتاب. يبدأ من الحروف الهجائية وينتهي بمحادثات بسيطة. وهو مليء بالصور والتمارين.
+
+الزائر: يبدو مناسبا. كم سعره؟
+البائع: خمسون ريالا.
+
+الزائر: وهل لديكم كتاب لتعليم الإنجليزية للعرب؟
+البائع: نعم، هذه سلسلة كاملة من ثلاثة أجزاء. الجزء الأول للمبتدئين والثاني للمتوسطين والثالث للمتقدمين.
+
+الزائر: سآخذ الجزء الأول حاليا. كم السعر؟
+البائع: خمسة وثلاثون ريالا للجزء الواحد.
+
+الزائر: إذا أخذت الكتابين معا، هل يوجد خصم؟
+البائع: نعم، يمكنني أن أعطيك خصم عشرة بالمئة.
+
+الزائر: رائع. سآخذهما. شكرا على المساعدة.
+
+[محادثة: شكوى في فندق - إنجليزي]
+Guest: Hello. I have a complaint about my room.
+
+Receptionist: I am sorry to hear that. What seems to be the problem?
+Guest: The air conditioning is not working properly, and the room is very hot.
+
+Receptionist: I do apologize for the inconvenience. Let me check. Your room number please?
+Guest: Room 404.
+
+Receptionist: I will send a technician to your room immediately.
+
+Guest: Also, there is no hot water in the bathroom.
+
+Receptionist: Oh, that should not happen. I will have maintenance check both issues right away.
+
+Guest: How long will it take?
+Receptionist: No more than thirty minutes, I assure you. If the problems are not fixed, we will move you to another room.
+
+Guest: Thank you. I appreciate your quick response.
+
+Receptionist: It is our duty. We want you to have a comfortable stay.
+
+[محادثة: التخطيط لرحلة - عربي]
+أحمد: ما رأيك أن نخطط لرحلة في نهاية هذا الشهر؟
+سارة: فكرة رائعة! إلى أين تريد أن نذهب؟
+أحمد: كنت أفكر في الطائف. الجو هناك جميل هذه الأيام.
+
+سارة: سمعت أنها مدينة جميلة جدا. كم تبعد عن جدة؟
+أحمد: حوالي ساعتين ونصف بالسيارة.
+
+سارة: كم يوما سنبقى؟
+أحمد: أقترح ثلاثة أيام. نخرج صباح الخميس ونعود مساء السبت.
+
+سارة: مناسب. من سيأتي معنا؟
+أحمد: محمد وخالد وعائلاتهم. سنكون مجموعة صغيرة.
+
+سارة: جميل. هل سنحجز فندقا أم نستأجر شقة؟
+أحمد: الشقة أفضل لأننا سنكون مع عائلاتنا. سأبحث عن شقق مفروشة.
+
+سارة: وماذا عن الطعام؟
+أحمد: يمكننا أن نأكل في المطاعم أو نطبخ في الشقة.
+
+سارة: أنا متحمسة جدا! لم أسافر منذ مدة طويلة.
+
+أحمد: وأنا أيضا. سأحجز كل شيء اليوم وأرسل لك التفاصيل.
+
+سارة: بانتظارك. شكرا على المبادرة.
+
+--- 5. أمثلة إضافية على التراكيب المتقدمة ---
+[التعبير عن الشرط المستحيل في الماضي]
+عربي: لو كنت أعلم بالامتحان لاستعدت له جيدا.
+
+إنجليزي: If I had known about the exam, I would have prepared well for it.
+
+[التعبير عن التوقع]
+عربي: من المتوقع أن تصل الطائرة في تمام الساعة السادسة.
+
+إنجليزي: The plane is expected to arrive at exactly six o'clock.
+
+[التعبير عن الإصرار]
+عربي: أصر على حضور الاجتماع رغم مرضه.
+
+إنجليزي: He insisted on attending the meeting despite his illness.
+
+[التعبير عن الاحتمال]
+عربي: ربما يكون قد نسي الموعد.
+
+إنجليزي: He might have forgotten the appointment.
+
+[التعبير عن الاستغراب]
+عربي: من الغريب أنه لم يجب على اتصالاتي.
+
+إنجليزي: It is strange that he has not answered my calls.
+
+[التعبير عن الافتراض]
+عربي: لنفترض أنك ربحت مليون ريال، ماذا كنت ستفعل؟
+إنجليزي: Suppose you won a million riyals, what would you do?
+--- 6. تدريبات قراءة الفهم ---
+[اقرأ النص ثم أجب عن الأسئلة - عربي]
+النص: خرج عمر من منزله باكرا كعادته. كان الجو باردا والسماء ملبدة بالغيوم. أسرع في خطواته كي لا يتأخر عن العمل. عندما وصل إلى محطة الحافلات اكتشف أنه نسي محفظته في المنزل. شعر بالإحباط الشديد. فكر في العودة إلى المنزل لكن الوقت كان متأخرا. لحسن الحظ كان معه نقود صغيرة في جيبه تكفي لثمن التذكرة. قرر أن يستدين من زميله في العمل ثمن الغداء.
+
+الأسئلة:
+1. لماذا أسرع عمر في خطواته؟
+الإجابة: كي لا يتأخر عن العمل.
+
+2. ماذا نسي عمر في المنزل؟
+الإجابة: محفظته.
+
+3. كيف حل عمر مشكلة ثمن التذكرة؟
+الإجابة: كان معه نقود صغيرة في جيبه.
+
+4. كيف كان الجو في ذلك اليوم؟
+الإجابة: كان باردا والسماء ملبدة بالغيوم.
+
+[Read the text then answer the questions - English]
+Text: Sarah loves reading. Every evening before sleeping, she reads for thirty minutes. Her favorite books are historical novels. Last week she finished a book about ancient Egypt. She learned many interesting facts about the pyramids and the pharaohs. Next week she plans to start a new book about the Roman Empire. Reading makes her feel relaxed and helps her sleep better.
+
+Questions:
+1. How long does Sarah read every evening?
+Answer: She reads for thirty minutes.
+
+2. What kind of books does she like most?
+Answer: Historical novels.
+
+3. What did she learn about from her last book?
+Answer: The pyramids and the pharaohs.
+
+4. Why does Sarah like reading before sleeping?
+Answer: Because reading makes her feel relaxed and helps her sleep better.
+
+--- نهاية الدفعة الثالثة ---
+=== بيانات تدريبية - الدفعة الرابعة ===
+--- 1. نصوص قراءة في الفلسفة والتاريخ بالعربية ---
+[نص فلسفي: مفهوم السعادة عند الفلاسفة]
+تعددت تعريفات السعادة بين الفلاسفة عبر العصور. فعند أرسطو، السعادة هي الغاية القصوى للحياة الإنسانية، وهي لا تتحقق إلا بممارسة الفضيلة والعقل. ويرى أرسطو أن السعادة ليست مجرد شعور عابر باللذة، بل هي حالة دائمة من الرضا تنتج عن عيش حياة متوازنة. أما الفيلسوف الرواقي أبكتيتوس فيرى أن السعادة الحقيقية تكمن في التحكم برغباتنا لا في تحقيقها. ويقول: لا تسعَ إلى أن تكون الأشياء كما تريد، بل أرد الأشياء كما تكون، وعندها ستعيش سعيدا. وفي الفلسفة الإسلامية، يرى الفارابي أن السعادة هي أسمى درجات الكمال الإنساني، وتتحقق عندما تصل النفس إلى مرحلة الاتصال بالعقل الفعال. أما ابن مسكويه فيربط السعادة بالحكمة والعمل الصالح. في العصر الحديث، تختلف النظرة إلى السعادة وتصبح أكثر ارتباطا بالعوامل النفسية والاجتماعية. لكن السؤال الذي يطرح نفسه: هل السعادة هدف أم رحلة؟ وهل يختلف مفهوم السعادة من ثقافة إلى أخرى؟
+[نص تاريخي: الحضارة العباسية وعصرها الذهبي]
+تعتبر الحضارة العباسية واحدة من أزهى الفترات في التاريخ الإسلامي والعالمي. قامت الدولة العباسية عام 132 هجرية بعد سقوط الدولة الأموية، واتخذت من بغداد عاصمة لها. وقد شهدت هذه الفترة نهضة علمية وثقافية غير مسبوقة، حيث أنشأ الخليفة هارون الرشيد وابنه المأمون بيت الحكمة، الذي كان أشبه بأكبر جامعة في العالم آنذاك. ضم بيت الحكمة آلاف المخطوطات من مختلف الحضارات، وعمل فيه مترجمون وعلماء من شتى الأديان والأعراق. ترجمت فيه كتب الفلسفة اليونانية والطب الهندي والرياضيات الفارسية. وفي هذا العصر عاش علماء كبار مثل الخوارزمي الذي أسس علم الجبر، والرازي الذي برع في الطب، والكندي الفيلسوف والموسوعي، والجاحظ الأديب والعالم. ولم تقتصر النهضة على العلوم وحدها، بل شملت الأدب والفن والعمارة. لكن هذه الحضارة العظيمة بدأت في الضعف تدريجيا بسبب الصراعات الداخلية والغزوات الخارجية، حتى سقطت بغداد على يد المغول عام 656 هجرية. ومع ذلك، فإن إرث الحضارة العباسية لا يزال حيا في المكتبات والمتاحف والعقول.
+
+[نص فلسفي: الحرية والمسؤولية]
+الحرية مفهوم شغل الفلاسفة والمفكرين منذ القدم. لكن ما هي الحرية حقا؟ هل هي أن تفعل ما تشاء دون قيود؟ أم أن الحرية الحقيقية هي أن تختار بوعي وإرادة؟ يرى جان بول سارتر أن الإنسان محكوم عليه بالحرية، فهو مسؤول عن كل اختيار يقوم به. ويقول سارتر: نحن لا نختار أن نكون أحرارا، لكننا محكومون بالحرية. أما إيمانويل كانت فيربط الحرية بالعقل والأخلاق. فالحرية عنده ليست أن تتبع شهواتك، بل أن تتصرف وفقا للقانون الأخلاقي الذي يضعه عقلك. وفي التراث العربي الإسلامي، يقول الإمام علي بن أبي طالب رضي الله عنه مقولة عميقة: لا تكن عبد غيرك وقد جعلك الله حرا. فالإسلام جاء ليحرر الإنسان من عبودية البشر إلى عبادة رب البشر. وهناك سؤال فلسفي مهم: هل توجد حرية مطلقة؟ أم أن الحرية دائما مقيدة بقيود المجتمع والقانون والظروف؟ الحقيقة أن الحرية والمسؤولية وجهان لعملة واحدة، فلا يمكن أن تكون حرا دون أن تتحمل مسؤولية حريتك.
+
+[نص تاريخي: سقوط الأندلس]
+قصة الأندلس هي واحدة من أكثر القصص تأثيرا في التاريخ الإسلامي. دخل المسلمون الأندلس بقيادة طارق بن زياد عام 92 هجرية، وأقاموا فيها حضارة استمرت قرابة ثمانية قرون. كانت الأندلس منارة للعلم والحضارة في أوروبا التي كانت تعيش في عصور مظلمة. بنى المسلمون مدنا رائعة مثل قرطبة وغرناطة وإشبيلية. وكانت قرطبة تضيء شوارعها بالمصابيح بينما كانت شوارع لندن وباريس غارقة في الظلام. في الأندلس عاش علماء عظام مثل ابن رشد الفيلسوف والطبيب، وابن حزم الأديب والفقيه، والزهراوي رائد الجراحة. عاش المسلمون والمسيحيون واليهود معا في تعايش وتسامح. لكن الوحدة بدأت تتصدع بسبب الصراعات بين ملوك الطوائف. الواحد تلو الآخر، سقطت المدن الأندلسية في أيدي الممالك المسيحية. وأخيرا سقطت غرناطة آخر معقل للمسلمين عام 1492 ميلادية. وقف آخر ملوكها أبو عبد الله الصغير يبكي وهو يغادر المدينة، فقالت له أمه مقولتها الشهيرة: ابك كالنساء ملكا لم تحافظ عليه كالرجال. وهكذا طويت صفحة من أروع صفحات التاريخ.
+
+--- 2. نصوص قراءة في الفلسفة والتاريخ بالإنجليزية ---
+[Philosophical Text: The Concept of Happiness According to Philosophers]
+The definitions of happiness have varied among philosophers throughout the ages. For Aristotle, happiness is the ultimate goal of human life, and it is only achieved through the practice of virtue and reason. Aristotle believed that happiness is not merely a fleeting feeling of pleasure; rather, it is a permanent state of contentment resulting from living a balanced life. As for the Stoic philosopher Epictetus, he believed that true happiness lies in controlling our desires, not in fulfilling them. He famously said: Do not seek to have events happen as you wish, but wish for events to happen as they do, and you will live happily. In Islamic philosophy, Al-Farabi believed that happiness is the highest degree of human perfection and is attained when the soul reaches the stage of connection with the active intellect. Ibn Miskawayh, on the other hand, linked happiness to wisdom and righteous deeds. In modern times, the view of happiness has shifted to become more connected to psychological and social factors. Yet the question remains: Is happiness a destination or a journey? And does the concept of happiness differ from one culture to another?
+[Historical Text: The Abbasid Civilization and Its Golden Age]
+The Abbasid civilization is considered one of the most brilliant periods in Islamic and world history. The Abbasid state was established in 132 AH after the fall of the Umayyad state, and it made Baghdad its capital. This period witnessed an unprecedented scientific and cultural renaissance, as Caliph Harun al-Rashid and his son al-Ma'mun established the House of Wisdom, which was akin to the largest university in the world at that time. The House of Wisdom housed thousands of manuscripts from various civilizations, and translators and scholars from all religions and ethnicities worked in it. Books on Greek philosophy, Indian medicine, and Persian mathematics were translated there. In this era, great scholars lived, such as Al-Khwarizmi, who founded algebra; Al-Razi, who excelled in medicine; Al-Kindi, the philosopher and polymath; and Al-Jahiz, the writer and scientist. The renaissance was not limited to the sciences alone but also encompassed literature, art, and architecture. However, this great civilization began to gradually weaken due to internal conflicts and external invasions, until Baghdad fell to the Mongols in 656 AH. Nevertheless, the legacy of the Abbasid civilization lives on in libraries, museums, and minds.
+
+[Philosophical Text: Freedom and Responsibility]
+Freedom is a concept that has occupied philosophers and thinkers since ancient times. But what is freedom really? Is it doing whatever you want without constraints? Or is true freedom choosing with awareness and will? Jean-Paul Sartre saw that man is condemned to be free, and he is responsible for every choice he makes. Sartre said: We do not choose to be free; we are condemned to freedom. Immanuel Kant, on the other hand, linked freedom to reason and morality. For him, freedom is not following your desires, but acting according to the moral law established by your reason. In the Arab Islamic heritage, Imam Ali ibn Abi Talib, may God be pleased with him, stated a profound saying: Do not be a slave to others when God has made you free. Islam came to liberate humans from servitude to people to the worship of the Lord of people. An important philosophical question arises: Does absolute freedom exist? Or is freedom always bound by the constraints of society, law, and circumstances? The truth is that freedom and responsibility are two sides of the same coin; you cannot be free without bearing the responsibility of your freedom.
+
+[Historical Text: The Fall of Al-Andalus]
+The story of Al-Andalus is one of the most impactful stories in Islamic history. Muslims entered Al-Andalus under the leadership of Tariq ibn Ziyad in 92 AH and established a civilization that lasted nearly eight centuries. Al-Andalus was a beacon of knowledge and civilization in a Europe that was living in the Dark Ages. Muslims built magnificent cities such as Cordoba, Granada, and Seville. The streets of Cordoba were lit with lamps while the streets of London and Paris were plunged in darkness. In Al-Andalus lived great scholars such as Ibn Rushd, the philosopher and physician; Ibn Hazm, the writer and jurist; and Al-Zahrawi, the pioneer of surgery. Muslims, Christians, and Jews lived together in coexistence and tolerance. But unity began to crumble due to conflicts among the Taifa kings. One after another, the Andalusian cities fell to the Christian kingdoms. Finally, Granada, the last stronghold of the Muslims, fell in 1492 AD. Its last king, Abu Abdullah al-Saghir, stood weeping as he left the city. His mother said to him her famous words: Weep like women for a kingdom you did not preserve like men. Thus, one of the most glorious pages of history was turned.
+
+--- 3. محادثات في مواقف طارئة ---
+[محادثة: حادث سير - عربي]
+المتصل: السلام عليكم. أريد الإبلاغ عن حادث سير.
+
+الشرطي: وعليكم السلام. أين وقع الحادث بالضبط؟
+المتصل: على الطريق السريع بين الرياض والدمام، بالقرب من محطة الوقود الأولى.
+
+الشرطي: هل يوجد مصابون؟
+المتصل: نعم، هناك شخصان مصابان. أحدهما ينزف من رأسه.
+
+الشرطي: هل اتصلت بالإسعاف؟
+المتصل: ليس بعد. اتصلت بكم أولا.
+
+الشرطي: حسنا. سأرسل سيارة إسعاف ودورية شرطة فورا. ابق في مكانك ولا تحرك المصابين.
+
+المتصل: حسنا. هل من شيء آخر يجب أن أفعله؟
+الشرطي: حاول تهدئة المصابين. وضع قطعة قماش نظيفة على الجرح إن أمكن. ولا تعطهم أي شيء ليشربوه.
+
+المتصل: فهمت. كم من الوقت تحتاجون للوصول؟
+الشرطي: حوالي عشر دقائق. نحن في طريقنا الآن.
+
+المتصل: شكرا جزيلا. أنتظركم.
+
+[محادثة: حادث سير - إنجليزي]
+Caller: Hello. I want to report a car accident.
+
+Police Officer: Hello. Where exactly did the accident happen?
+Caller: On the highway between Riyadh and Dammam, near the first gas station.
+
+Police Officer: Are there any injured people?
+Caller: Yes, two people are injured. One of them is bleeding from his head.
+
+Police Officer: Have you called the ambulance?
+Caller: Not yet. I called you first.
+
+Police Officer: Alright. I will send an ambulance and a police patrol immediately. Stay where you are and do not move the injured.
+
+Caller: Okay. Is there anything else I should do?
+Police Officer: Try to calm the injured. Put a clean cloth on the wound if possible. And do not give them anything to drink.
+
+Caller: Understood. How long will it take you to arrive?
+Police Officer: About ten minutes. We are on our way now.
+
+Caller: Thank you very much. I am waiting for you.
+
+[محادثة: في قسم الطوارئ بالمستشفى - عربي]
+المريض: أرجوك ساعدني. أشعر بألم شديد في صدري.
+
+الممرض: اجلس هنا من فضلك. منذ متى تشعر بهذا الألم؟
+المريض: منذ ساعتين تقريبا. ظننت أنه سيختفي لكنه يزداد سوءا.
+
+الممرض: هل تشعر بضيق في التنفس أيضا؟
+المريض: نعم، وأشعر بدوار أيضا.
+
+الممرض: هل لديك تاريخ مرضي مع القلب؟
+المريض: نعم، عندي ضغط الدم المرتفع.
+
+الممرض: حسنا. سأقيس ضغطك ونبضك أولا. ثم سيأتي الطبيب فورا.
+
+المريض: هل الأمر خطير؟
+الممرض: لا تقلق. أنت في المكان الصحيح. هل أتيت مع أحد؟
+المريض: لا، أنا لوحدي.
+
+الممرض: هل تريدنا أن نتصل بأحد من عائلتك؟
+المريض: نعم، اتصلوا بابني من فضلك. هذا رقمه.
+
+الممرض: سنتصل به حالا. الآن تنفس بعمق وحاول أن تهدأ. الطبيب قادم.
+
+[محادثة: في قسم الطوارئ - إنجليزي]
+Patient: Please help me. I feel severe pain in my chest.
+
+Nurse: Sit here please. How long have you felt this pain?
+Patient: For about two hours. I thought it would go away, but it is getting worse.
+
+Nurse: Do you also feel short of breath?
+Patient: Yes, and I feel dizzy as well.
+
+Nurse: Do you have a medical history with the heart?
+Patient: Yes, I have high blood pressure.
+
+Nurse: Alright. I will measure your blood pressure and pulse first. Then the doctor will come right away.
+
+Patient: Is it serious?
+Nurse: Do not worry. You are in the right place. Did you come with anyone?
+Patient: No, I am alone.
+
+Nurse: Do you want us to contact someone from your family?
+Patient: Yes, please call my son. Here is his number.
+
+Nurse: We will call him immediately. Now breathe deeply and try to calm down. The doctor is coming.
+
+[محادثة: الإبلاغ عن جريمة في مركز الشرطة - عربي]
+المواطن: السلام عليكم. أريد تقديم بلاغ عن سرقة.
+
+الضابط: وعليكم السلام. تفضل بالجلوس. ماذا حدث بالضبط؟
+المواطن: الليلة الماضية وأنا نائم، دخل لص إلى منزلي وسرق أغراضا ثمينة.
+
+الضابط: كيف دخل اللص إلى المنزل؟
+المواطن: لا أعرف بالضبط. ربما من النافذة الخلفية لأنني وجدتها مفتوحة هذا الصباح.
+
+الضابط: ماذا سرق منك؟
+المواطن: سرق جهاز الحاسوب المحمول، وهاتفي القديم، ومبلغا من المال كان في الدرج. حوالي ألفي ريال.
+
+الضابط: هل شاهدت اللص؟
+المواطن: لا، لم أره. لكن جاري قال إنه شاهد شخصا غريبا يتسلل في الحي حوالي الساعة الثانية بعد منتصف الليل.
+
+الضابط: سنأخذ إفادة جارك. هل لديك أي كاميرات مراقبة في المنزل؟
+المواطن: لا للأسف.
+
+الضابط: حسنا. املأ هذا النموذج من فضلك بكل التفاصيل. وسنرسل فريقا لفحص مسرح الجريمة.
+
+المواطن: شكرا. هل هناك أمل في استعادة أغراضي؟
+الضابط: سنبذل قصارى جهدنا. وسنبلغك بأي تطورات.
+
+[محادثة: سرقة - إنجليزي]
+Citizen: Hello. I want to report a theft.
+
+Officer: Hello. Please have a seat. What exactly happened?
+Citizen: Last night while I was sleeping, a thief entered my house and stole valuable items.
+
+Officer: How did the thief enter the house?
+Citizen: I do not know exactly. Perhaps through the back window because I found it open this morning.
+
+Officer: What was stolen from you?
+Citizen: He stole my laptop, my old phone, and an amount of money that was in the drawer. About two thousand riyals.
+
+Officer: Did you see the thief?
+Citizen: No, I did not see him. But my neighbor said he saw a strange person sneaking around the neighborhood around two o'clock in the morning.
+
+Officer: We will take your neighbor's statement. Do you have any surveillance cameras in the house?
+Citizen: No, unfortunately.
+
+Officer: Alright. Please fill out this form with all the details. And we will send a team to examine the crime scene.
+
+Citizen: Thank you. Is there any hope of recovering my belongings?
+Officer: We will do our best. And we will inform you of any developments.
+
+[محادثة: طلب إسعاف - عربي]
+المتصل: الإسعاف من فضلك! الوضع طارئ.
+
+المستجيب: خدمات الطوارئ. ما هي حالتك الطارئة؟
+المتصل: جدي البالغ من العمر سبعين سنة لا يستطيع التنفس. لونه يتحول إلى الأزرق!
+المستجيب: اهدأ من فضلك. ما هو عنوانك بالضبط؟
+المتصل: شارع الملك فهد، حي الروضة، مبنى رقم 22، الطابق الثالث، شقة 5.
+
+المستجيب: هل المريض واع؟ هل يرد عليك؟
+المتصل: لا. عيناه مغمضتان ولا يستجيب لي.
+
+المستجيب: هل تعرف كيف تقوم بإنعاش القلب والرئتين؟
+المتصل: لا أعرف. أرجوك أسرع!
+المستجيب: سيارة الإسعاف في الطريق. سأبقى معك على الهاتف. ضع جدك على ظهره على الأرض. وهل يستطيع أحد مساعدتك؟
+المتصل: نعم، أخي معي.
+
+المستجيب: جيد. أخبر أخاك أن يذهب إلى مدخل المبنى لاستقبال سيارة الإسعاف وإرشادهم إلى الشقة.
+
+المتصل: حسنا. فعل ذلك.
+
+المستجيب: ممتاز. الآن تحقق من تنفس جدك. ضع أذنك قرب فمه. هل تسمع أو تشعر بهواء يخرج؟
+المتصل: لا. لا أسمع شيئا.
+
+المستجيب: حسنا. ضع يديك فوق منتصف صدره واضغط بقوة وبسرعة. سأعد لك: واحد اثنان ثلاثة... استمر هكذا حتى يصل المسعفون.
+
+[محادثة: طلب إسعاف - إنجليزي]
+Caller: An ambulance please! It is an emergency.
+
+Responder: Emergency services. What is your emergency?
+Caller: My seventy-year-old grandfather cannot breathe. His color is turning blue!
+Responder: Please calm down. What is your exact address?
+Caller: King Fahd Street, Al-Rawda District, Building Number 22, Third Floor, Apartment 5.
+
+Responder: Is the patient conscious? Is he responding to you?
+Caller: No. His eyes are closed and he does not respond to me.
+
+Responder: Do you know how to perform CPR?
+Caller: I do not know how. Please hurry!
+Responder: The ambulance is on the way. I will stay on the phone with you. Lay your grandfather on his back on the floor. And can anyone help you?
+Caller: Yes, my brother is with me.
+
+Responder: Good. Tell your brother to go to the building entrance to receive the ambulance and guide them to the apartment.
+
+Caller: Okay. He has done that.
+
+Responder: Excellent. Now check your grandfather's breathing. Put your ear near his mouth. Do you hear or feel any air coming out?
+Caller: No. I do not hear anything.
+
+Responder: Alright. Place your hands on the middle of his chest and press firmly and quickly. I will count for you: one two three... Continue like this until the paramedics arrive.
+
+[محادثة: حريق - عربي]
+المتصل: النجدة! هناك حريق في المبنى!
+الدفاع المدني: اهدأ يا أخي. أين أنت؟ ما هو العنوان؟
+المتصل: شارع الأمير سلطان، برج الأعمال، الطابق الخامس.
+
+الدفاع المدني: هل أنت محاصر في الطابق الخامس؟
+المتصل: نعم. الدخان كثيف في كل مكان. لا نستطيع رؤية شيء.
+
+الدفاع المدني: كم شخصا معك؟
+المتصل: أربعة أشخاص. نحن في مكتب في آخر الممر.
+
+الدفاع المدني: سيارات الإطفاء في الطريق. الآن استمع إلي جيدا: انزلوا على الأرض. الدخان يتصاعد إلى الأعلى والهواء النقي في الأسفل.
+
+المتصل: حسنا. نحن على الأرض الآن.
+
+الدفاع المدني: هل تستطيعون الوصول إلى نافذة؟ افتحوها ولوحوا بقطعة قماش بيضاء إن أمكن.
+
+المتصل: النافذة لا تفتح! إنها مغلقة بإحكام.
+
+الدفاع المدني: لا تحاول كسرها بقوة. سأخبر رجال الإطفاء بمكانكم. ضعوا قطعة قماش مبللة تحت الباب لتمنعوا دخول الدخان.
+
+المتصل: لا يوجد ماء قريب!
+الدفاع المدني: استخدموا أي سائل متوفر. عصير، قهوة، أي شيء.
+
+المتصل: حسنا فعلنا ذلك. كم من الوقت حتى وصولكم؟
+الدفاع المدني: ثلاث دقائق ونحن معكم. اثبتوا ولا تفزعوا.
+
+[محادثة: حريق - إنجليزي]
+Caller: Help! There is a fire in the building!
+Civil Defense: Calm down, brother. Where are you? What is the address?
+Caller: Prince Sultan Street, the Business Tower, fifth floor.
+
+Civil Defense: Are you trapped on the fifth floor?
+Caller: Yes. The smoke is thick everywhere. We cannot see anything.
+
+Civil Defense: How many people are with you?
+Caller: Four people. We are in an office at the end of the corridor.
+
+Civil Defense: Fire trucks are on the way. Now listen to me carefully: Get down on the floor. Smoke rises upward and the fresh air is below.
+
+Caller: Okay. We are on the floor now.
+
+Civil Defense: Can you reach a window? Open it and wave a white piece of cloth if possible.
+
+Caller: The window does not open! It is tightly closed.
+
+Civil Defense: Do not try to break it forcefully. I will inform the firefighters of your location. Place a wet cloth under the door to prevent smoke from entering.
+
+Caller: There is no water nearby!
+Civil Defense: Use any available liquid. Juice, coffee, anything.
+
+Caller: Okay, we did that. How long until you arrive?
+Civil Defense: Three minutes and we will be with you. Hold on and do not panic.
+
+--- 4. مفردات علمية متخصصة ---
+[الفيزياء - Physics]
+قوة = Force
+تسارع = Acceleration
+سرعة = Velocity
+كتلة = Mass
+وزن = Weight
+كثافة = Density
+ضغط = Pressure
+حجم = Volume
+طاقة حركية = Kinetic energy
+طاقة كامنة = Potential energy
+موجة = Wave
+تردد = Frequency
+طول موجي = Wavelength
+شحنة كهربائية = Electric charge
+تيار = Current
+جهد = Voltage
+مقاومة = Resistance
+مجال مغناطيسي = Magnetic field
+جاذبية = Gravity
+احتكاك = Friction
+زخم = Momentum
+نظرية الكم = Quantum theory
+نظرية النسبية = Theory of relativity
+نواة = Nucleus
+إلكترون = Electron
+بروتون = Proton
+نيوترون = Neutron
+فوتون = Photon
+إشعاع = Radiation
+نظير = Isotope
+[الكيمياء - Chemistry]
+عنصر = Element
+مركب = Compound
+مزيج = Mixture
+تفاعل كيميائي = Chemical reaction
+محلول = Solution
+مذيب = Solvent
+مذاب = Solute
+حمض = Acid
+قاعدة = Base
+ملح = Salt
+أكسدة = Oxidation
+اختزال = Reduction
+محفز = Catalyst
+توازن كيميائي = Chemical equilibrium
+تركيز = Concentration
+رقم هيدروجيني = pH
+رابطة أيونية = Ionic bond
+رابطة تساهمية = Covalent bond
+جدول دوري = Periodic table
+غاز نبيل = Noble gas
+فلز = Metal
+لا فلز = Nonmetal
+شبه فلز = Metalloid
+بوليمر = Polymer
+تقطير = Distillation
+ترشيح = Filtration
+تبخر = Evaporation
+تكثف = Condensation
+[الأحياء - Biology]
+خلية = Cell
+نواة = Nucleus
+غشاء خلوي = Cell membrane
+ميتوكندريا = Mitochondria
+ريبوسوم = Ribosome
+حمض نووي = DNA / RNA
+جين = Gene
+كروموسوم = Chromosome
+انقسام خلوي = Cell division
+انقسام متساوي = Mitosis
+انقسام منصف = Meiosis
+بناء ضوئي = Photosynthesis
+تنفس خلوي = Cellular respiration
+إنزيم = Enzyme
+هرمون = Hormone
+جهاز عصبي = Nervous system
+جهاز هضمي = Digestive system
+جهاز دوري = Circulatory system
+جهاز تنفسي = Respiratory system
+جهاز مناعي = Immune system
+جهاز إخراجي = Excretory system
+جهاز هيكلي = Skeletal system
+جهاز عضلي = Muscular system
+غدة = Gland
+ناقل عصبي = Neurotransmitter
+مضاد حيوي = Antibiotic
+لقاح = Vaccine
+فيروس = Virus
+بكتيريا = Bacteria
+فطر = Fungus
+طفيلي = Parasite
+[علم الفلك - Astronomy]
+مجرة = Galaxy
+درب التبانة = Milky Way
+نظام شمسي = Solar system
+كوكب = Planet
+قمر = Moon / Satellite
+نجم = Star
+كوكبة = Constellation
+سديم = Nebula
+ثقب أسود = Black hole
+نجم نيوتروني = Neutron star
+قزم أبيض = White dwarf
+عملاق أحمر = Red giant
+سوبرنوفا = Supernova
+مذنب = Comet
+كويكب = Asteroid
+نيزك = Meteor
+مدار = Orbit
+جاذبية = Gravity
+تلسكوب = Telescope
+إشعاع كوني = Cosmic radiation
+انفجار عظيم = Big Bang
+مادة مظلمة = Dark matter
+طاقة مظلمة = Dark energy
+سنة ضوئية = Light year
+وحدة فلكية = Astronomical unit
+[الرياضيات - Mathematics]
+جمع = Addition
+طرح = Subtraction
+ضرب = Multiplication
+قسمة = Division
+أس = Exponent
+جذر تربيعي = Square root
+معادلة = Equation
+متباينة = Inequality
+دالة = Function
+متغير = Variable
+ثابت = Constant
+مشتقة = Derivative
+تكامل = Integral
+نهاية = Limit
+مصفوفة = Matrix
+متجه = Vector
+احتمال = Probability
+إحصاء = Statistics
+هندسة = Geometry
+مثلث = Triangle
+دائرة = Circle
+محيط = Perimeter / Circumference
+مساحة = Area
+حجم = Volume
+مبرهنة = Theorem
+إثبات = Proof
+عدد أولي = Prime number
+نسبة = Ratio
+تناسب = Proportion
+لوغاريتم = Logarithm
+[علوم الحاسوب - Computer Science]
+خوارزمية = Algorithm
+برمجة = Programming
+شفرة = Code
+قاعدة بيانات = Database
+شبكة = Network
+خادم = Server
+متصفح = Browser
+نظام تشغيل = Operating system
+ذاكرة = Memory
+معالج = Processor
+قرص صلب = Hard disk
+برمجية = Software
+عتاد = Hardware
+ذكاء اصطناعي = Artificial intelligence
+تعلم آلي = Machine learning
+شبكة عصبية = Neural network
+أمن سيبراني = Cybersecurity
+تشفير = Encryption
+لغة برمجة = Programming language
+واجهة مستخدم = User interface
+حوسبة سحابية = Cloud computing
+بيانات ضخمة = Big data
+إنترنت الأشياء = Internet of things
+واقع افتراضي = Virtual reality
+واقع معزز = Augmented reality
+[الطب - Medicine]
+تشخيص = Diagnosis
+أعراض = Symptoms
+فحص = Examination
+تحليل دم = Blood test
+أشعة سينية = X-ray
+أشعة مقطعية = CT scan
+رنين مغناطيسي = MRI
+جراحة = Surgery
+تخدير = Anesthesia
+وصفة طبية = Prescription
+جرعة = Dose
+طبيب عام = General practitioner
+طبيب مختص = Specialist
+طبيب قلب = Cardiologist
+طبيب أعصاب = Neurologist
+طبيب جلدية = Dermatologist
+طبيب عيون = Ophthalmologist
+طبيب أطفال = Pediatrician
+طبيب نفسي = Psychiatrist
+علاج طبيعي = Physiotherapy
+إنعاش = Resuscitation
+عناية مركزة = Intensive care
+غرفة عمليات = Operating room
+طوارئ = Emergency
+--- نهاية الدفعة الرابعة ---
+=== بيانات تدريبية - الدفعة الخامسة ===
+--- 1. نصوص أدبية: قصص قصيرة وخواطر وشعر نثري بالعربية ---
+[قصة قصيرة: الجسر]
+في قرية صغيرة، كان هناك جسر خشبي قديم يربط بين ضفتي النهر. كان الجسر قديما جدا، حتى أن بعض ألواحه بدأت تتكسر. كان أهل القرية يخافون عبوره، لكنهم مضطرون لأنه الطريق الوحيد إلى المدرسة والسوق. وفي يوم من الأيام، جاءت عاصفة شديدة، وهطلت أمطار غزيرة. خرج رجل عجوز من بيته في منتصف الليل ورأى أن النهر بدأ يرتفع. أسرع إلى الجسر وبدأ يربط ألواحه بالحبال ويقوي أساساته بالحجارة. كان يعمل وحده في الظلام، تحت المطر والرعد. لم يطلب مساعدة أحد، ولم ينتظر شكرا من أحد. وعند الفجر، هدأت العاصفة. عبر الأطفال الجسر إلى المدرسة، وعبر الفلاحون إلى الحقول. لم يسأل أحد عن الجسر، ولم يلاحظ أحد أنه أصبح أقوى. لكن العجوز كان يجلس على كرسيه قرب النافذة، يبتسم في صمت. فقد كان يعرف أن الخير الحقيقي لا ينتظر تصفيقا، ولا يحتاج إلى شهود.
+
+[قصة قصيرة: المفتاح]
+كان في جيب سعيد مفتاح صغير، قديم، صدئ قليلا. لم يكن يعرف لأي باب يعود هذا المفتاح. كان والده قد أعطاه إياه قبل أن يسافر وقال له: احتفظ بهذا المفتاح، سيأتي يوم وتعرف بابه. مرت السنوات، ونسي سعيد المفتاح في درج 	. سافر، وتزوج، وأنجب أطفالا. وفي يوم من الأيام، عاد إلى بيت أبيه القديم ليرممه. وجد المفتاح مصادفة في صندوق صغير. أمسكه بيده وتذكر كلمات أبيه. بدأ يجرب المفتاح على كل أبواب البيت. جربه على باب الغرفة، لم يفتح. جربه على باب المطبخ، لم يفتح. وأخيرا جربه على صندوق خشبي قديم كان تحت الدرج. فتح الصندوق. في داخله وجد رسالة من أبيه مكتوبا فيها: بني، أثمن ما أملك ليس المال، بل الذكريات التي صنعناها معا. هذه صورك وأنت صغير، وهذه أول رسمة رسمتها، وهذا أول حذاء مشيت به. احتفظت بها كلها، لأنك أنت أغلى ما في حياتي. جلس سعيد على الأرض وبكى. لم يكن المفتاح يفتح بابا، بل كان يفتح قلبا.
+
+[خاطرة: البحر والإنسان]
+وقفت على شاطئ البحر وحدي. كانت الأمواج تتكسر عند قدمي، وكأن البحر يهمس لي بأسرار قديمة. تأملت ذلك الامتداد الأزرق اللامتناهي. كم هو عظيم هذا البحر! وكم هو صغير الإنسان! البحر لا يكبر ولا يصغر، لا يزيد ولا ينقص، هو هو منذ خلق الله الأرض. أما الإنسان فيأتي إلى الدنيا طفلا، ثم يكبر ويشيخ، ثم يرحل. لكن البحر يبقى. سألت نفسي: هل يمكن للإنسان أن يكون مثل البحر؟ واسع الصدر، عميق الفكر، قوي الإرادة، متجدد العطاء؟ أعتقد أننا نستطيع ذلك. ففي داخل كل إنسان بحر من المشاعر والأفكار والأحلام. بعض الناس يبحرون في بحرهم الداخلي ويكتشفون كنوزه، وبعضهم يقف على الشاطئ خائفا من الغرق. وأنا قررت أن أبحر.
+
+[خاطرة: الغيمة]
+كنت أنظر من نافذة الطائرة فرأيت غيمة بيضاء كبيرة. كانت تبدو مثل قصر من القطن. تذكرت وأنا صغير كيف كنت أستلقي على العشب وأتأمل الغيوم، أرى فيها وجوها وحيوانات وبيوتا. كان الخيال يأخذني إلى عوالم بعيدة. ثم كبرت وانشغلت بالحياة، ونسيت الغيوم. واليوم، من فوق السحاب، تذكرت أن السعادة الحقيقية ليست في الأشياء الكبيرة. السعادة في تلك اللحظات الصغيرة: لحظة تأمل، لحظة حلم، لحظة صمت. الغيمة التي كنت أراها من الأسفل أصبحت الآن تحتي. انظر كم تغيرت الزاوية. ربما لو غيرنا زاوية نظرنا إلى الحياة، لتغير كل شيء.
+
+[شعر نثري: أنا والطريق]
+أنا والطريق.. صديقان قديمان.
+
+أمشي فلا يمل، ويتعب فلا أشكو.
+
+يأخذني إلى حيث لا أدري، وأثق به.
+
+في منعطفاته مفاجآت، وفي نهايته بدايات.
+
+كم مرة ضللت الطريق، فوجدت نفسي.
+
+وكم مرة تعبت، فأعطاني الطريق ظل شجرة.
+
+يقولون: لا تمش وحدك في الطريق.
+
+أقول: الطريق رفيقي.
+
+يقولون: الطريق طويل.
+
+أقول: الطريق هو الحياة، والحياة جميلة بطولها، بمنعطفاتها، بمفاجآتها.
+
+امش.. ولا توقف. فالطريق لمن يمشي.
+
+[شعر نثري: المساء]
+يجيء المساء كضيف حزين، يطرق نافذتي بلطف، يدخل دون استئذان. يجلس في زاوية الغرفة، صامتا مثقلا بالذكريات. أسأله: لماذا أنت حزين أيها المساء؟ فيقول: لست حزينا، بل أنا متعب. أحمل على كتفي أثقال النهار: ضحكات لم تكتمل، دموعا لم تسكب، كلمات لم تقل، أحلاما لم تولد بعد. أقول له: ضع أثقالك عندي، واسترح. فيبتسم المساء لأول مرة، وينام على أريكتي. وحين يأتي الصباح، يغادر خفيفا. لا يوقظني. يتركني أحلم. وأستيقظ فأجد الدنيا جديدة، وكأن المساء غسلها بدموعه.
+
+[قصة قصيرة: المصباح]
+في سوق قديم، كان هناك دكان صغير لبيع المصابيح. كانت المصابيح مختلفة الأشكال والألوان. كان صاحب الدكان رجلا طيبا، يجلس على كرسيه الخشبي وينتظر الزبائن. وفي يوم، دخل طفل صغير وسأله: لماذا لا تشعل كل هذه المصابيح؟ إنها جميلة! أجابه الرجل: لأن بعض المصابيح يا بني لا تشتعل إلا في الظلام. تعجب الطفل من الجواب ومشى. وبعد سنوات، كبر الطفل وأصبح شابا. مر بظروف صعبة، فقد فيها عمله وماله. شعر أن الدنيا أظلمت في عينيه. وفي ليلة من اليالي، تذكر دكان المصابيح. ذهب إليه، فوجده لا يزال هناك. دخل فوجد الرجل العجوز لا يزال جالسا. قال له الشاب: الآن فهمت ما قلته لي وأنا صغير. في الظلام فقط، نعرف قيمة النور. ابتسم العجوز وقال: وفي الظلام فقط، تشتعل المصابيح.
+
+--- 2. نصوص أدبية: قصص قصيرة وخواطر وشعر نثري بالإنجليزية ---
+[Short Story: The Bridge]
+In a small village, there was an old wooden bridge connecting the two banks of the river. The bridge was so old that some of its planks had begun to break. The villagers were afraid to cross it, but they had to because it was the only way to the school and the market. One day, a fierce storm came and heavy rains fell. An old man left his house in the middle of the night and saw that the river had begun to rise. He hurried to the bridge and began tying its planks with ropes and strengthening its foundations with stones. He worked alone in the darkness, under the rain and thunder. He did not ask for anyone's help, nor did he wait for anyone's thanks. At dawn, the storm subsided. The children crossed the bridge to school, and the farmers crossed to the fields. No one asked about the bridge, and no one noticed that it had become stronger. But the old man sat on his chair by the window, smiling in silence. For he knew that true goodness does not wait for applause and does not need witnesses.
+
+[Short Story: The Key]
+In Saeed's pocket was a small key, old and slightly rusty. He did not know which door this key belonged to. His father had given it to him before traveling and said: Keep this key; a day will come when you will know its door. Years passed, and Saeed forgot the key in his desk drawer. He traveled, married, and had children. One day, he returned to his father's old house to renovate it. He found the key by chance in a small box. He held it in his hand and remembered his father's words. He began trying the key on every door in the house. He tried it on the bedroom door; it did not open. He tried it on the kitchen door; it did not open. Finally, he tried it on an old wooden chest under the stairs. The chest opened. Inside, he found a letter from his father that read: My son, the most precious thing I own is not money, but the memories we made together. These are your pictures when you were little, this is the first drawing you drew, and these are the first shoes you walked in. I kept them all because you are the most precious thing in my life. Saeed sat on the floor and wept. The key did not open a door; it opened a heart.
+
+[Reflection: The Sea and Man]
+I stood on the seashore alone. The waves were breaking at my feet, as if the sea was whispering ancient secrets to me. I contemplated that endless blue expanse. How great this sea is! And how small man is! The sea does not grow larger or smaller, does not increase or decrease; it is as it has been since God created the earth. As for man, he comes into the world as a child, then grows up and grows old, then departs. But the sea remains. I asked myself: Can man be like the sea? Broad in heart, deep in thought, strong in will, ever-renewing in giving? I believe we can. For inside every human being is a sea of feelings, thoughts, and dreams. Some people sail in their inner sea and discover its treasures, while others stand on the shore afraid of drowning. And I have decided to sail.
+
+[Reflection: The Cloud]
+I was looking out of the airplane window when I saw a large white cloud. It looked like a palace made of cotton. I remembered how, as a child, I used to lie on the grass and gaze at the clouds, seeing faces, animals, and houses in them. Imagination would take me to distant worlds. Then I grew up and became busy with life, and I forgot the clouds. Today, from above the clouds, I remembered that true happiness is not in big things. Happiness is in those small moments: a moment of contemplation, a moment of dreaming, a moment of silence. The cloud that I used to see from below is now beneath me. Look how the angle has changed. Perhaps if we changed our angle of looking at life, everything would change.
+
+[Prose Poetry: The Path and I]
+The path and I... are old friends.
+
+I walk and it does not grow weary, and it tires and I do not complain.
+
+It takes me to where I do not know, and I trust it.
+
+In its bends are surprises, and at its end are beginnings.
+
+How many times I lost the way, and found myself.
+
+And how many times I grew tired, and the path gave me the shade of a tree.
+
+They say: Do not walk the path alone.
+
+I say: The path is my companion.
+
+They say: The path is long.
+
+I say: The path is life, and life is beautiful in its length, in its bends, in its surprises.
+
+Walk... and do not stop. For the path belongs to those who walk.
+
+[Prose Poetry: The Evening]
+The evening comes like a sad guest, knocks gently on my window, enters without permission. It sits in a corner of the room, silent, burdened with memories. I ask it: Why are you sad, O evening? It says: I am not sad, but I am tired. I carry on my shoulders the burdens of the day: laughter that was not completed, tears that were not shed, words that were not spoken, dreams that were not yet born. I say to it: Lay your burdens with me, and rest. The evening smiles for the first time and sleeps on my sofa. And when morning comes, it leaves lightly. It does not wake me. It leaves me dreaming. I wake up to find the world new, as if the evening washed it with its tears.
+
+[Short Story: The Lamp]
+In an old market, there was a small shop selling lamps. The lamps were of different shapes and colors. The shop owner was a kind man who sat on his wooden chair waiting for customers. One day, a small child entered and asked: Why do you not light all these lamps? They are beautiful! The man replied: Because some lamps, my son, only light up in the darkness. The child wondered at the answer and walked away. Years later, the child grew up and became a young man. He went through difficult circumstances in which he lost his job and his money. He felt that the world had gone dark in his eyes. One night, he remembered the lamp shop. He went to it and found it still there. He entered and found the old man still sitting. The young man said to him: Now I understand what you said to me when I was young. Only in the darkness do we know the value of light. The old man smiled and said: And only in the darkness do the lamps light up.
+
+--- 3. مفردات في مجالات الهندسة والطيران والفضاء ---
+[الهندسة المدنية - Civil Engineering]
+مهندس مدني = Civil engineer
+جسر = Bridge
+نفق = Tunnel
+سد = Dam
+طريق سريع = Highway
+أساسات = Foundations
+خرسانة مسلحة = Reinforced concrete
+فولاذ = Steel
+إسمنت = Cement
+أسفلت = Asphalt
+حمل = Load
+إجهاد = Stress
+انفعال = Strain
+مخطط هيكلي = Structural plan
+مساحة = Surveying
+تصريف = Drainage
+صرف صحي = Sewage
+محطة معالجة = Treatment plant
+مبنى = Building
+هيكل = Structure
+عمود = Column
+عارضة = Beam
+بلاطة = Slab
+جدار استنادي = Retaining wall
+[الهندسة الميكانيكية - Mechanical Engineering]
+محرك = Engine
+مكبس = Piston
+صمام = Valve
+ترس = Gear
+عمود دوران = Shaft
+محمل = Bearing
+ناقل حركة = Transmission
+مبادل حراري = Heat exchanger
+ضاغط = Compressor
+توربين = Turbine
+مضخة = Pump
+ديناميكا حرارية = Thermodynamics
+ميكانيكا الموائع = Fluid mechanics
+تبريد = Cooling
+تسخين = Heating
+تهوية = Ventilation
+تكييف هواء = Air conditioning
+روبوت = Robot
+تصنيع = Manufacturing
+لحام = Welding
+خراطة = Turning
+تشغيل آلي = Automation
+[الهندسة الكهربائية - Electrical Engineering]
+دائرة كهربائية = Electric circuit
+تيار مستمر = Direct current (DC)
+تيار متناوب = Alternating current (AC)
+محول = Transformer
+مولد = Generator
+محرك كهربائي = Electric motor
+مقاومة = Resistor
+مكثف = Capacitor
+ملف = Inductor / Coil
+دايود = Diode
+ترانزستور = Transistor
+لوحة كهربائية = Electrical panel
+قاطع دائرة = Circuit breaker
+تأريض = Grounding
+جهد عالي = High voltage
+جهد منخفض = Low voltage
+تردد = Frequency
+قدرة = Power
+واط = Watt
+أمبير = Ampere
+فولت = Volt
+أوم = Ohm
+[هندسة البرمجيات - Software Engineering]
+دورة حياة البرمجيات = Software life cycle
+تحليل المتطلبات = Requirements analysis
+تصميم النظام = System design
+ترميز = Coding
+اختبار = Testing
+صيانة = Maintenance
+منهجية أجايل = Agile methodology
+سكرم = Scrum
+نموذج الشلال = Waterfall model
+تحكم بالإصدارات = Version control
+تصحيح الأخطاء = Debugging
+توثيق = Documentation
+واجهة برمجة تطبيقات = API
+هندسة عكسية = Reverse engineering
+قابلية التوسع = Scalability
+أمان = Security
+أداء = Performance
+[الطيران - Aviation]
+طائرة = Airplane
+مطار = Airport
+مدرج = Runway
+برج مراقبة = Control tower
+قمرة قيادة = Cockpit
+طيار = Pilot
+مساعد طيار = Co-pilot
+مضيف جوي = Flight attendant
+رحلة = Flight
+إقلاع = Takeoff
+هبوط = Landing
+سرعة جوية = Airspeed
+ارتفاع = Altitude
+جناح = Wing
+محرك نفاث = Jet engine
+مروحة = Propeller
+هيكل الطائرة = Fuselage
+ذيل = Tail
+جهاز هبوط = Landing gear
+حزام أمان = Seat belt
+سترة نجاة = Life vest
+قناع أكسجين = Oxygen mask
+مخرج طوارئ = Emergency exit
+مقصورة = Cabin
+درجة أولى = First class
+درجة رجال الأعمال = Business class
+درجة سياحية = Economy class
+[الفضاء - Space]
+فضاء = Space
+كون = Universe
+رائد فضاء = Astronaut
+مركبة فضائية = Spacecraft
+صاروخ = Rocket
+قمر صناعي = Satellite
+محطة فضاء = Space station
+مكوك فضاء = Space shuttle
+جاذبية صغرى = Microgravity
+مدار = Orbit
+إطلاق = Launch
+هبوط على القمر = Moon landing
+استكشاف = Exploration
+تليسكوب فضائي = Space telescope
+مسبار = Probe
+بدلة فضاء = Spacesuit
+غلاف جوي = Atmosphere
+كوكب = Planet
+قمر = Moon
+كويكب = Asteroid
+مذنب = Comet
+ثقب أسود = Black hole
+مجرة = Galaxy
+نظام شمسي = Solar system
+--- 4. محادثات في مواقف السفر ---
+[محادثة: في المطار - إجراءات السفر - عربي]
+الموظف: مرحبا بك. جواز سفرك وتذكرتك من فضلك.
+
+المسافر: تفضل.
+
+الموظف: شكرا. إلى أين أنت مسافر؟
+المسافر: إلى لندن.
+
+الموظف: كم حقيبة لديك؟
+المسافر: حقيبتان.
+
+الموظف: ضع الحقيبة الأولى على الميزان من فضلك. وزنها ضمن المسموح. والحقيبة الثانية أيضا وزنها مناسب.
+
+المسافر: الحمد لله. هل يمكنني الحصول على مقعد بجانب الممر؟
+الموظف: دعني أتحقق. نعم، يوجد مقعد بجانب الممر في الصف الثامن عشر.
+
+المسافر: ممتاز.
+
+الموظف: هل حملت حقيبتك بنفسك طوال الوقت؟
+المسافر: نعم.
+
+الموظف: هل ترك أحد معك أي شيء أو طلب منك حمل شيء؟
+المسافر: لا.
+
+الموظف: تفضل بطاقة صعود الطائرة. البوابة رقم 7. موعد الإقلاع الساعة الرابعة عصرا. الرجاء التواجد عند البوابة قبل نصف ساعة من الإقلاع.
+
+المسافر: شكرا جزيلا. أين البوابة 7؟
+الموظف: بعد الجوازات مباشرة، اتجه يسارا واتبع اللوحات الإرشادية.
+
+المسافر: شكرا.
+
+[محادثة: في المطار - إنجليزي]
+Agent: Welcome. Your passport and ticket please.
+
+Traveler: Here you are.
+
+Agent: Thank you. Where are you traveling to?
+Traveler: To London.
+
+Agent: How many bags do you have?
+Traveler: Two bags.
+
+Agent: Place the first bag on the scale please. Its weight is within the limit. And the second bag, its weight is also fine.
+
+Traveler: Thank goodness. Can I get an aisle seat?
+Agent: Let me check. Yes, there is an aisle seat in row eighteen.
+
+Traveler: Excellent.
+
+Agent: Have you had your bag with you at all times?
+Traveler: Yes.
+
+Agent: Has anyone given you anything or asked you to carry something?
+Traveler: No.
+
+Agent: Here is your boarding pass. Gate number 7. Departure time is four o'clock in the afternoon. Please be at the gate thirty minutes before departure.
+
+Traveler: Thank you very much. Where is gate 7?
+Agent: Just after passport control, turn left and follow the signs.
+
+Traveler: Thank you.
+
+[محادثة: الجوازات والتفتيش - عربي]
+الضابط: جواز سفرك من فضلك.
+
+المسافر: تفضل.
+
+الضابط: شكرا. ما الغرض من زيارتك؟
+المسافر: السياحة.
+
+الضابط: كم ستبقى؟
+المسافر: عشرة أيام.
+
+الضابط: أين ستقيم؟
+المسافر: في فندق رويال. هذا تأكيد الحجز.
+
+الضابط: حسنا. هل تحمل أي مبالغ نقدية كبيرة؟
+المسافر: لا، لدي بطاقات مصرفية.
+
+الضابط: انظر إلى الكاميرا من فضلك. شكرا. أهلا بك. إقامة سعيدة.
+
+المسافر: شكرا.
+
+[محادثة: الجوازات - إنجليزي]
+Officer: Your passport please.
+
+Traveler: Here you are.
+
+Officer: Thank you. What is the purpose of your visit?
+Traveler: Tourism.
+
+Officer: How long will you stay?
+Traveler: Ten days.
+
+Officer: Where will you be staying?
+Traveler: At the Royal Hotel. Here is the booking confirmation.
+
+Officer: Alright. Are you carrying any large amounts of cash?
+Traveler: No, I have bank cards.
+
+Officer: Look at the camera please. Thank you. Welcome. Have a pleasant stay.
+
+Traveler: Thank you.
+
+[محادثة: استلام الأمتعة - عربي]
+المسافر: عفوا، أين يمكنني استلام حقائبي؟
+الموظف: من أي رحلة أنت قادم؟
+المسافر: الرحلة رقم 332 القادمة من دبي.
+
+الموظف: أمتعة هذه الرحلة على السير رقم 4. اتجه يمينا وستجده.
+
+عند السير...
+
+المسافر: ساعدني من فضلك. إحدى حقائبي لم تصل!
+الموظف: لا تقلق. دعني أتحقق. أعطني بطاقة الأمتعة التي أعطيت لك عند تسجيل الحقيبة.
+
+المسافر: تفضل.
+
+الموظف: سأبحث في النظام. ما لون الحقيبة ووصفها؟
+المسافر: حقيبة سوداء متوسطة الحجم، عليها ملصق أحمر.
+
+الموظف: حسنا. يبدو أن حقيبتك تأخرت في مطار دبي وستصل على الرحلة التالية. ستصل الليلة في الساعة العاشرة.
+
+المسافر: وماذا أفعل الآن؟ أحتاج أغراضي.
+
+الموظف: نعتذر عن الإزعاج. املأ هذا النموذج بعنوان فندقك وسنقوم بتوصيل الحقيبة إليك الليلة. ونحن نتحمل أي تكاليف ضرورية.
+
+المسافر: شكرا. آمل أن تصل الليلة فعلا.
+
+[محادثة: استلام الأمتعة - إنجليزي]
+Traveler: Excuse me, where can I collect my luggage?
+Staff: Which flight have you arrived on?
+Traveler: Flight number 332 from Dubai.
+
+Staff: The luggage for that flight is on belt number 4. Go right and you will find it.
+
+At the belt...
+
+Traveler: Help me please. One of my bags has not arrived!
+Staff: Do not worry. Let me check. Give me the baggage tag that was given to you when you checked in the bag.
+
+Traveler: Here you are.
+
+Staff: I will search in the system. What is the color and description of the bag?
+Traveler: A medium-sized black bag with a red sticker on it.
+
+Staff: Alright. It seems your bag was delayed at Dubai airport and will arrive on the next flight. It will arrive tonight at ten o'clock.
+
+Traveler: And what do I do now? I need my belongings.
+
+Staff: We apologize for the inconvenience. Fill out this form with your hotel address, and we will deliver the bag to you tonight. We will cover any necessary expenses.
+
+Traveler: Thank you. I hope it arrives tonight indeed.
+
+[محادثة: حجز فندق عند الوصول - عربي]
+النزيل: مساء الخير. هل لديك غرفة شاغرة؟
+موظف الاستقبال: مساء الخير. نعم، كم ليلة تريد الإقامة؟
+النزيل: ليلتان من فضلك.
+
+موظف الاستقبال: هل تفضل غرفة مفردة أم مزدوجة؟
+النزيل: مفردة. هل الغرفة مطلة على المدينة؟
+موظف الاستقبال: الغرف المفردة المتاحة حاليا تطل على الفناء الداخلي.
+
+النزيل: لا بأس. ما سعر الليلة؟
+موظف الاستقبال: الليلة بثلاثمئة ريال شامل الإفطار وخدمة الإنترنت.
+
+النزيل: جيد. هل يمكنني رؤية الغرفة قبل الحجز؟
+موظف الاستقبال: بالتأكيد. سأرسل معك عامل الفندق. إن أعجبتك، عد إلى مكتب الاستقبال لإتمام الحجز.
+
+النزيل: شكرا. أيضا، ما هي مرافق الفندق؟
+موظف الاستقبال: لدينا مسبح في الطابق العلوي، وصالة رياضية، ومطعمان، وخدمة غرف على مدار 24 ساعة.
+
+النزيل: ممتاز. سأعود بعد رؤية الغرفة.
+
+[محادثة: حجز فندق - إنجليزي]
+Guest: Good evening. Do you have a vacant room?
+Receptionist: Good evening. Yes, how many nights do you wish to stay?
+Guest: Two nights please.
+
+Receptionist: Do you prefer a single room or a double room?
+Guest: Single. Does the room overlook the city?
+Receptionist: The single rooms currently available overlook the inner courtyard.
+
+Guest: That is fine. What is the price per night?
+Receptionist: It is three hundred riyals per night including breakfast and internet service.
+
+Guest: Good. Can I see the room before booking?
+Receptionist: Certainly. I will send the bellboy with you. If you like it, return to the reception desk to complete the booking.
+
+Guest: Thank you. Also, what are the hotel facilities?
+Receptionist: We have a swimming pool on the top floor, a gym, two restaurants, and 24-hour room service.
+
+Guest: Excellent. I will return after seeing the room.
+
+[محادثة: تسجيل الخروج من الفندق - عربي]
+النزيل: صباح الخير. أريد تسجيل الخروج من فضلك.
+
+موظف الاستقبال: صباح الخير. ما رقم غرفتك؟
+النزيل: غرفة 512.
+
+موظف الاستقبال: شكرا. لحظة من فضلك. هل تناولت شيئا من الميني بار هذا الصباح؟
+النزيل: لا، لم أتناول شيئا.
+
+موظف الاستقبال: حسنا. الفاتورة النهائية: ثلاث ليال، إضافة إلى وجبة العشاء ليلة أمس. المجموع 1200 ريال.
+
+النزيل: هل يمكنني الدفع ببطاقة الائتمان؟
+موظف الاستقبال: نعم، بالتأكيد.
+
+النزيل: تفضل البطاقة. وبالمناسبة، أحببت إقامتي هنا كثيرا. الخدمة ممتازة.
+
+موظف الاستقبال: شكرا لك على كلماتك اللطيفة. هل تحتاج إلى سيارة أجرة؟
+النزيل: نعم، إلى المطار من فضلك.
+
+موظف الاستقبال: سأطلبها لك فورا. إليك إيصال الدفع. نتمنى لك رحلة سعيدة ونأمل أن نراك مجددا.
+
+النزيل: شكرا جزيلا. بالتأكيد سأعود.
+
+[محادثة: تسجيل الخروج - إنجليزي]
+Guest: Good morning. I would like to check out please.
+
+Receptionist: Good morning. What is your room number?
+Guest: Room 512.
+
+Receptionist: Thank you. One moment please. Did you have anything from the minibar this morning?
+Guest: No, I did not have anything.
+
+Receptionist: Alright. The final bill: three nights, plus dinner last night. The total is 1200 riyals.
+
+Guest: Can I pay by credit card?
+Receptionist: Yes, certainly.
+
+Guest: Here is my card. By the way, I really enjoyed my stay here. The service is excellent.
+
+Receptionist: Thank you for your kind words. Do you need a taxi?
+Guest: Yes, to the airport please.
+
+Receptionist: I will order one for you right away. Here is your receipt. We wish you a pleasant journey and hope to see you again.
+
+Guest: Thank you very much. I will certainly return.
+
+[محادثة: الجمارك - عربي]
+المفتش: مرحبا. هل لديك شيء تعلن عنه؟
+المسافر: لا، ليس لدي شيء أعلن عنه.
+
+المفتش: افتح حقيبتك من فضلك. ما هذه العلب؟
+المسافر: هدايا للعائلة. حلويات محلية وعسل.
+
+المفتش: مسموح بها. لكن يمنع إدخال المواد الغذائية غير المعلبة.
+
+المسافر: كل شيء معلب ومغلف.
+
+المفتش: حسنا. هل تحمل أية مواد سائلة أكثر من 100 ملليلتر؟
+المسافر: لا، وضعت كل السوائل في الحقيبة المشحونة.
+
+المفتش: جيد. يمكنك إغلاق حقيبتك. مرحبا بك.
+
+المسافر: شكرا.
+
+[محادثة: الجمارك - إنجليزي]
+Inspector: Hello. Do you have anything to declare?
+Traveler: No, I have nothing to declare.
+
+Inspector: Open your bag please. What are these cans?
+Traveler: Gifts for the family. Local sweets and honey.
+
+Inspector: They are allowed. But bringing in unpackaged food items is prohibited.
+
+Traveler: Everything is canned and packaged.
+
+Inspector: Alright. Do you have any liquids exceeding 100 milliliters?
+Traveler: No, I put all liquids in the checked baggage.
+
+Inspector: Good. You may close your bag. Welcome.
+
+Traveler: Thank you.
+
+--- نهاية الدفعة الخامسة ---
+=== بيانات تدريبية - الدفعة السادسة ===
+--- 1. نصوص في الاقتصاد وإدارة الأعمال بالعربية ---
+[نص: مفهوم الاقتصاد وأهميته]
+الاقتصاد هو العلم الذي يدرس كيفية إدارة الموارد المحدودة لتلبية الاحتياجات غير المحدودة. ينقسم الاقتصاد إلى فرعين رئيسيين: الاقتصاد الجزئي الذي يهتم بسلوك الأفراد والشركات والأسواق الفردية، والاقتصاد الكلي الذي يدرس أداء الاقتصاد ككل بما في ذلك الناتج المحلي الإجمالي والتضخم والبطالة. تعود جذور علم الاقتصاد الحديث إلى كتاب آدم سميث الشهير "ثروة الأمم" الذي نشر عام 1776، حيث طرح فيه فكرة اليد الخفية التي تنظم السوق. لا يمكن لأي مجتمع أن يزدهر دون فهم أساسيات الاقتصاد، فكل قرار نتخذه في حياتنا اليومية له بعد اقتصادي، من شراء كوب قهوة إلى اختيار وظيفة أو استثمار مدخرات. إن فهم الاقتصاد يمكن الأفراد من اتخاذ قرارات مالية أفضل، ويمكن الحكومات من وضع سياسات فعالة، ويمكن الشركات من النمو والمنافسة. في عالم اليوم المعولم، أصبحت المعرفة الاقتصادية ضرورة وليست رفاهية.
+
+[نص: إدارة الأعمال ومبادئ النجاح]
+إدارة الأعمال هي فن وعلم تنظيم وتوجيه الموارد البشرية والمادية لتحقيق أهداف المنظمة بكفاءة وفعالية. هناك أربع وظائف أساسية للإدارة وهي: التخطيط، والتنظيم، والقيادة، والرقابة. التخطيط هو عملية تحديد الأهداف ورسم الطريق للوصول إليها. والتنظيم هو توزيع المهام والمسؤوليات على الأفراد والأقسام. والقيادة هي القدرة على تحفيز الموظفين وتوجيههم نحو 	 الأهداف. والرقابة هي متابعة الأداء وتصحيح الانحرافات عن المسار المخطط. من أهم نظريات الإدارة الحديثة نظرية "الإدارة بالجودة الشاملة" التي تركز على رضا العميل والتحسين المستمر. وهناك أيضا مفهوم "الإدارة الرشيقة" التي تهدف إلى تقليل الهدر وزيادة القيمة. النجاح في إدارة الأعمال لا يعتمد فقط على المعرفة النظرية، بل على المهارات العملية مثل التواصل الفعال، وحل المشكلات، واتخاذ القرارات في الوقت المناسب. وكما قال بيتر دراكر أبو الإدارة الحديثة: "أهم شيء في التواصل هو أن تسمع ما لم يُقَل".
+
+[نص: ريادة الأعمال والابتكار]
+ريادة الأعمال هي عملية إنشاء مشروع جديد أو تطوير فكرة مبتكرة تقدم قيمة مضافة للسوق. رائد الأعمال هو شخص يتمتع بالشجاعة والإبداع والقدرة على تحمل المخاطر. يختلف رائد الأعمال عن المدير التقليدي في أنه يبحث عن الفرص بدلا من التركيز على الموارد المتاحة. من أبرز رواد الأعمال في التاريخ: هنري فورد الذي أحدث ثورة في صناعة السيارات، وستيف جوبز الذي غير عالم التكنولوجيا، ومحمد بن راشد آل مكتوم الذي حول دبي إلى مركز عالمي. تقوم ريادة الأعمال على عناصر أساسية هي: الفكرة المبتكرة، وخطة العمل المدروسة، والتمويل الكافي، والفريق المناسب، والتوقيت الصحيح. تواجه المشاريع الناشئة تحديات كثيرة منها: نقص التمويل، والمنافسة الشديدة، وعدم استقرار السوق. لكن الفشل ليس نهاية الطريق بل هو درس قيم. وكما يقول المثل في وادي السيليكون: "افشل بسرعة، وافشل برخص، وقم من جديد".
+
+[نص: التسويق في العصر الرقمي]
+التسويق هو مجموعة الأنشطة التي تقوم بها الشركة للتعريف بمنتجاتها وإقناع العملاء بشرائها. تطور التسويق بشكل كبير في العقود الأخيرة من التسويق التقليدي القائم على الإعلانات التلفزيونية والورقية إلى التسويق الرقمي الذي يستخدم الإنترنت ووسائل التواصل الاجتماعي. من أهم عناصر المزيج التسويقي ما يعرف بـ "العناصر الأربعة": المنتج، والسعر، والمكان، والترويج. وفي العصر الحديث أضيفت ثلاثة عناصر أخرى هي: الأشخاص، والعمليات، والدليل المادي. أصبح التسويق بالمحتوى من أهم الاستراتيجيات الحديثة، حيث تقدم الشركات محتوى مفيدا وجذابا للعملاء بدلا من الإعلانات المباشرة. كما أن تحليل البيانات الضخمة يمكن الشركات من فهم سلوك العملاء وتقديم عروض مخصصة. وفي المستقبل القريب، سيلعب الذكاء الاصطناعي دورا أكبر في التسويق من خلال التوصيات الذكية والدردشة الآلية. لكن مهما تطورت الأدوات، يبقى العميل هو محور العملية التسويقية.
+
+--- 2. نصوص في الاقتصاد وإدارة الأعمال بالإنجليزية ---
+[Text: The Concept of Economics and Its Importance]
+Economics is the science that studies how to manage limited resources to meet unlimited needs. Economics is divided into two main branches: microeconomics, which focuses on the behavior of individuals, companies, and individual markets, and macroeconomics, which studies the performance of the economy as a whole, including gross domestic product, inflation, and unemployment. The roots of modern economics go back to Adam Smith's famous book "The Wealth of Nations," published in 1776, in which he introduced the idea of the invisible hand that regulates the market. No society can prosper without understanding the basics of economics. Every decision we make in our daily lives has an economic dimension, from buying a cup of coffee to choosing a job or investing savings. Understanding economics enables individuals to make better financial decisions, enables governments to develop effective policies, and enables companies to grow and compete. In today's globalized world, economic knowledge has become a necessity, not a luxury.
+
+[Text: Business Administration and the Principles of Success]
+Business administration is the art and science of organizing and directing human and material resources to achieve the organization's goals efficiently and effectively. There are four fundamental functions of management: planning, organizing, leading, and controlling. Planning is the process of setting goals and charting the path to reach them. Organizing is the distribution of tasks and responsibilities among individuals and departments. Leading is the ability to motivate employees and guide them toward achieving goals. Controlling is monitoring performance and correcting deviations from the planned course. Among the most important modern management theories is the theory of "Total Quality Management," which focuses on customer satisfaction and continuous improvement. There is also the concept of "Lean Management," which aims to reduce waste and increase value. Success in business administration depends not only on theoretical knowledge but on practical skills such as effective communication, problem-solving, and timely decision-making. As Peter Drucker, the father of modern management, said: "The most important thing in communication is hearing what is not said."
+[Text: Entrepreneurship and Innovation]
+Entrepreneurship is the process of creating a new project or developing an innovative idea that provides added value to the market. An entrepreneur is a person who possesses courage, creativity, and the ability to bear risks. The entrepreneur differs from the traditional manager in that they search for opportunities rather than focusing on available resources. Among the most prominent entrepreneurs in history are Henry Ford, who revolutionized the automobile industry; Steve Jobs, who changed the world of technology; and Mohammed bin Rashid Al Maktoum, who transformed Dubai into a global hub. Entrepreneurship is based on essential elements: the innovative idea, the well-thought-out business plan, adequate funding, the right team, and the correct timing. Startups face many challenges, including lack of funding, intense competition, and market instability. But failure is not the end of the road; it is a valuable lesson. As the saying goes in Silicon Valley: "Fail fast, fail cheap, and get up again."
+[Text: Marketing in the Digital Age]
+Marketing is the set of activities a company undertakes to introduce its products and persuade customers to buy them. Marketing has evolved significantly in recent decades, from traditional marketing based on television and print advertisements to digital marketing that uses the internet and social media. Among the most important elements of the marketing mix are the "four Ps": product, price, place, and promotion. In the modern era, three additional elements have been added: people, processes, and physical evidence. Content marketing has become one of the most important modern strategies, where companies offer useful and engaging content to customers instead of direct advertisements. Big data analysis also enables companies to understand customer behavior and offer personalized deals. In the near future, artificial intelligence will play a greater role in marketing through smart recommendations and chatbots. However, no matter how much the tools develop, the customer remains the focus of the marketing process.
+
+--- 3. مفردات في مجالات الصحافة والإعلام والاتصال ---
+[الصحافة - Journalism]
+صحفي = Journalist
+مراسل = Correspondent
+محرر = Editor
+رئيس تحرير = Editor-in-chief
+مقال = Article
+تقرير = Report
+	 صحفي = Investigative report
+مقابلة = Interview
+عنوان رئيسي = Headline
+مانشيت = Main headline
+صفحة أولى = Front page
+عمود صحفي = Column
+افتتاحية = Editorial
+مصدر = Source
+مصدر مجهول = Anonymous source
+شاهد عيان = Eyewitness
+سبق صحفي = Scoop
+خبر = News
+نشرة إخبارية = News bulletin
+وكالة أنباء = News agency
+تغطية حية = Live coverage
+بث مباشر = Live broadcast
+مؤتمر صحفي = Press conference
+بيان صحفي = Press release
+[الإعلام - Media]
+وسائل الإعلام = Media
+إعلام مرئي = Visual media
+إعلام مسموع = Audio media
+إعلام مكتوب = Print media
+إعلام رقمي = Digital media
+محطة تلفزيونية = Television station
+محطة إذاعية = Radio station
+قناة فضائية = Satellite channel
+برنامج = Program
+إعلان = Advertisement
+حملة إعلانية = Advertising campaign
+دعاية = Propaganda
+نسبة مشاهدة = Viewership rating
+جمهور = Audience
+مذيع = Broadcaster / Anchor
+مقدم برامج = Presenter / Host
+ضيف = Guest
+حلقة = Episode
+موسم = Season
+إعلام اجتماعي = Social media
+منصة = Platform
+محتوى = Content
+صانع محتوى = Content creator
+مؤثر = Influencer
+فيروسي = Viral
+تفاعل = Engagement
+مشاركة = Share
+تعليق = Comment
+إعجاب = Like
+متابع = Follower
+مشترك = Subscriber
+[الاتصال والتواصل - Communication]
+اتصال = Communication
+اتصال جماهيري = Mass communication
+اتصال شخصي = Interpersonal communication
+اتصال تنظيمي = Organizational communication
+اتصال لفظي = Verbal communication
+اتصال غير لفظي = Non-verbal communication
+لغة الجسد = Body language
+مهارات التواصل = Communication skills
+استماع فعال = Active listening
+تغذية راجعة = Feedback
+حوار = Dialogue
+مناقشة = Discussion
+عرض تقديمي = Presentation
+خطاب = Speech
+إلقاء = Public speaking
+إقناع = Persuasion
+تفاوض = Negotiation
+مقابلة = Interview
+رسالة = Message
+مرسل = Sender
+مستقبل = Receiver
+قناة اتصال = Communication channel
+ضوضاء / تشويش = Noise
+سياق = Context
+حواجز اتصال = Communication barriers
+تواصل بين الثقافات = Intercultural communication
+علاقات عامة = Public relations
+أزمة = Crisis
+إدارة الأزمات = Crisis management
+سمعة = Reputation
+صورة ذهنية = Public image
+[مصطلحات إعلامية معاصرة - Contemporary Media Terms]
+أخبار كاذبة = Fake news
+تضليل إعلامي = Misinformation
+التحقق من الحقائق = Fact-checking
+صحافة البيانات = Data journalism
+صحافة المواطن = Citizen journalism
+بودكاست = Podcast
+مدونة = Blog
+مدون = Blogger
+فيديو حسب الطلب = Video on demand
+بث مباشر = Live streaming
+منصة مشاركة الفيديو = Video sharing platform
+وسم = Hashtag
+ترند = Trending
+خوارزمية = Algorithm
+غرفة صدى = Echo chamber
+فقاعة تصفية = Filter bubble
+رقابة = Censorship
+حرية التعبير = Freedom of expression
+حرية الصحافة = Freedom of the press
+أخلاقيات الإعلام = Media ethics
+--- 4. محادثات في مواقف الدراسة ---
+[محادثة: التسجيل في الجامعة - عربي]
+الطالب: السلام عليكم. أريد التسجيل في دورة اللغة الإنجليزية.
+
+الموظف: وعليكم السلام. هل أنت طالب جديد أم مسجل سابقا؟
+الطالب: أنا طالب جديد. هذه أول مرة أدرس هنا.
+
+الموظف: أهلا بك. تحتاج إلى ملء استمارة التسجيل أولا. هذه الاستمارة. اكتب اسمك الكامل ورقم هاتفك وبريدك الإلكتروني.
+
+الطالب: تفضل. هل أحتاج إلى إحضار أي وثائق؟
+الموظف: نعم، صورة من جواز سفرك أو هويتك، وصورة شخصية.
+
+الطالب: معي جواز السفر. هذه صورة عنه.
+
+الموظف: شكرا. هل تريد التسجيل في الدورة الصباحية أم المسائية؟
+الطالب: المسائية أفضل لأنني أعمل في الصباح.
+
+الموظف: الدورة المسائية تبدأ من الساعة الخامسة إلى السابعة مساء، ثلاثة أيام في الأسبوع: الأحد والثلاثاء والخميس.
+
+الطالب: مناسب جدا. كم رسوم الدورة؟
+الموظف: ألفا ريال للدورة الكاملة، مدة الدورة شهران. ويمكنك الدفع على دفعتين.
+
+الطالب: سأدفع المبلغ كاملا الآن. تفضل.
+
+الموظف: شكرا. هذه بطاقة الطالب الخاصة بك. تبدأ الدورة الأحد القادم. القاعة رقم 12 في الطابق الثاني.
+
+الطالب: شكرا جزيلا.
+
+[محادثة: التسجيل في الجامعة - إنجليزي]
+Student: Hello. I want to register for the English language course.
+
+Staff: Hello. Are you a new student or previously registered?
+Student: I am a new student. This is my first time studying here.
+
+Staff: Welcome. You need to fill out the registration form first. Here is the form. Write your full name, phone number, and email address.
+
+Student: Here you are. Do I need to bring any documents?
+Staff: Yes, a copy of your passport or ID, and a personal photo.
+
+Student: I have my passport. Here is a copy of it.
+
+Staff: Thank you. Do you want to register for the morning or evening course?
+Student: The evening course is better because I work in the morning.
+
+Staff: The evening course starts from five to seven in the evening, three days a week: Sunday, Tuesday, and Thursday.
+
+Student: That is very suitable. How much are the course fees?
+Staff: Two thousand riyals for the full course; the course duration is two months. You can pay in two installments.
+
+Student: I will pay the full amount now. Here you are.
+
+Staff: Thank you. This is your student card. The course starts next Sunday. Room 12 on the second floor.
+
+Student: Thank you very much.
+
+[محادثة: في المكتبة - عربي]
+الطالب: صباح الخير. أريد استعارة بعض الكتب من فضلك.
+
+أمين المكتبة: صباح الخير. هل لديك بطاقة المكتبة؟
+الطالب: نعم، هذه بطاقتي.
+
+أمين المكتبة: شكرا. ما هي الكتب التي تريدها؟
+الطالب: أبحث عن كتاب في تاريخ الأدب العربي وكتاب آخر في علم النحو.
+
+أمين المكتبة: كتب الأدب في القسم الثالث على اليمين. وكتب النحو في القسم الثاني على اليسار. يمكنك البحث في الفهرس الإلكتروني أيضا لتحديد رقم الرف.
+
+الطالب: شكرا. وجدت الكتابين. هذا كتاب "تاريخ الأدب العربي" وهذا "النحو الوافي".
+
+أمين المكتبة: اختيار ممتاز. مدة الإعارة أسبوعان. يمكنك التجديد مرة واحدة إذا لم يحجز الكتاب طالب آخر.
+
+الطالب: حسنا. هل يمكنني استعارة أكثر من كتابين؟
+أمين المكتبة: نعم، الحد الأقصى خمسة كتب للطالب الواحد.
+
+الطالب: جميل. هذه الكتب كافية الآن. شكرا لمساعدتك.
+
+أمين المكتبة: على الرحب والسعة. وفقك الله في دراستك.
+
+[محادثة: في المكتبة - إنجليزي]
+Student: Good morning. I would like to borrow some books please.
+
+Librarian: Good morning. Do you have a library card?
+Student: Yes, here is my card.
+
+Librarian: Thank you. Which books do you want?
+Student: I am looking for a book on the history of Arabic literature and another book on grammar.
+
+Librarian: Literature books are in the third section on the right. Grammar books are in the second section on the left. You can also search the electronic catalog to determine the shelf number.
+
+Student: Thank you. I found both books. This is "The History of Arabic Literature" and this is "The Comprehensive Grammar."
+Librarian: Excellent choice. The loan period is two weeks. You can renew once if the book is not reserved by another student.
+
+Student: Alright. Can I borrow more than two books?
+Librarian: Yes, the maximum is five books per student.
+
+Student: Great. These books are enough for now. Thank you for your help.
+
+Librarian: You are welcome. Good luck with your studies.
+
+[محادثة: قبل الامتحان - عربي]
+الطالب الأول: أحمد، هل أنت مستعد لامتحان الرياضيات غدا؟
+الطالب الثاني: بصراحة، لست مستعدا تماما. لا تزال هناك بعض الدروس لم أراجعها.
+
+الطالب الأول: وأنا أيضا. ما رأيك أن نراجع معا هذه الليلة؟
+الطالب الثاني: فكرة رائعة! أين نلتقي؟
+الطالب الأول: في 	 الجامعة. تفتح حتى العاشرة مساء.
+
+الطالب الثاني: جيد. ما هي المواضيع التي ستأتي في الامتحان؟
+الطالب الأول: قال الدكتور إن الامتحان سيشمل المعادلات التفاضلية والتكامل والمصفوفات.
+
+الطالب الثاني: المعادلات التفاضلية صعبة جدا! هل فهمت الدرس الأخير؟
+الطالب الأول: نعم، فهمته نسبيا. سأشرح لك ما أعرفه. هل أحضرت معك التمارين المحلولة؟
+الطالب الثاني: نعم، معي كل التمارين. ووجدت بعض الفيديوهات التعليمية المفيدة على الإنترنت.
+
+الطالب الأول: ممتاز. سنبدأ بالمعادلات التفاضلية ثم ننتقل إلى التكامل.
+
+الطالب الثاني: شكرا لك. أنت منقذي!
+الطالب الأول: لا تقلق. معا نستطيع النجاح. أراك في المكتبة الساعة السادسة.
+
+[محادثة: قبل الامتحان - إنجليزي]
+Student 1: Ahmed, are you ready for the math exam tomorrow?
+Student 2: Honestly, I am not fully prepared. There are still some lessons I have not reviewed.
+
+Student 1: Me too. How about we review together tonight?
+Student 2: Great idea! Where shall we meet?
+Student 1: At the university library. It is open until ten in the evening.
+
+Student 2: Good. What topics will be on the exam?
+Student 1: The professor said the exam will cover differential equations, integration, and matrices.
+
+Student 2: Differential equations are so difficult! Did you understand the last lesson?
+Student 1: Yes, I understood it relatively well. I will explain what I know to you. Did you bring the solved exercises?
+Student 2: Yes, I have all the exercises with me. And I found some useful educational videos on the internet.
+
+Student 1: Excellent. We will start with differential equations, then move on to integration.
+
+Student 2: Thank you. You are my savior!
+Student 1: Do not worry. Together we can succeed. See you at the library at six o'clock.
+
+[محادثة: مناقشة أكاديمية مع أستاذ - عربي]
+الطالب: دكتور، هل يمكنني أن أسألك سؤالا عن محاضرة اليوم؟
+الأستاذ: بالتأكيد. تفضل.
+
+الطالب: لم أفهم تماما النقطة التي تحدثت عنها عن نظرية العرض والطلب. هل يمكنك شرحها مرة أخرى؟
+الأستاذ: بكل سرور. نظرية العرض والطلب تقول إن السعر في السوق يتحدد بتقاطع منحنى العرض مع منحنى الطلب. عندما يزيد الطلب على سلعة ما ويبقى العرض ثابتا، يرتفع السعر. وعندما يزيد العرض ويبقى الطلب ثابتا، ينخفض السعر. هل هذا واضح؟
+الطالب: نعم، أصبح أوضح. لكن ماذا يحدث إذا زاد العرض والطلب معا؟
+الأستاذ: سؤال ممتاز! في هذه الحالة، يعتمد تأثير ذلك على السعر على أيهما يزيد بنسبة أكبر. إذا زاد الطلب بنسبة أكبر من العرض، يرتفع السعر. وإذا زاد العرض بنسبة أكبر من الطلب، ينخفض السعر. وإذا زادا بنفس النسبة، يبقى السعر مستقرا.
+
+الطالب: فهمت الآن. شكرا لك يا دكتور.
+
+الأستاذ: على الرحب والسعة. هل لديك أسئلة أخرى؟
+الطالب: لا، هذا كل شيء حاليا. أنا ممتن لوقتك.
+
+الأستاذ: لا تشكرني. أنا هنا لمساعدتك. إذا احتجت أي شيء، تعال إلى مكتبي في أي وقت.
+
+[محادثة: مناقشة مع أستاذ - إنجليزي]
+Student: Professor, may I ask you a question about today's lecture?
+Professor: Of course. Go ahead.
+
+Student: I did not fully understand the point you made about the theory of supply and demand. Could you explain it again?
+Professor: With pleasure. The theory of supply and demand states that the price in the market is determined by the intersection of the supply curve and the demand curve. When the demand for a good increases and the supply remains constant, the price rises. And when the supply increases and the demand remains constant, the price falls. Is that clear?
+Student: Yes, it is clearer now. But what happens if both supply and demand increase?
+Professor: Excellent question! In this case, the effect on the price depends on which one increases by a greater proportion. If demand increases more than supply, the price rises. If supply increases more than demand, the price falls. And if both increase by the same proportion, the price remains stable.
+
+Student: I understand now. Thank you, Professor.
+
+Professor: You are welcome. Do you have any other questions?
+Student: No, that is all for now. I appreciate your time.
+
+Professor: Do not mention it. I am here to help you. If you need anything, come to my office at any time.
+
+[محادثة: بعد الامتحان - عربي]
+الطالب الأول: الحمد لله، انتهى الامتحان أخيرا! كيف كان أداؤك؟
+الطالب الثاني: كان أصعب مما توقعت. بعض الأسئلة كانت معقدة جدا.
+
+الطالب الأول: أوافقك. السؤال الثالث كان صعبا. لم أتوقع أن يأتي بهذا الشكل.
+
+الطالب الثاني: والسؤال الخامس أيضا. قضيت نصف الوقت فيه وحده.
+
+الطالب الأول: لكن الأسئلة المقالية كانت أسهل. السؤال السابع كان مباشرا.
+
+الطالب الثاني: نعم، هذا صحيح. أعتقد أنني سأحصل على درجة جيدة في الأسئلة المقالية لكنني خائف من الأسئلة الموضوعية.
+
+الطالب الأول: لا تقلق. أهم شيء أننا بذلنا جهدنا. النتيجة بيد الله ثم بيد المصحح.
+
+الطالب الثاني: عندك حق. متى ستظهر النتائج؟
+الطالب الأول: قال الدكتور إن النتائج ستعلن بعد أسبوعين على الموقع الإلكتروني للجامعة.
+
+الطالب الثاني: أسبوعان من القلق والانتظار!
+الطالب الأول: دعنا نحتفل اليوم بأن الامتحان انتهى. ما رأيك في الذهاب إلى المقهى؟
+الطالب الثاني: فكرة ممتازة. أحتاج إلى استراحة بعد هذا الأسبوع الطويل من المذاكرة.
+
+الطالب الأول: وأنا أيضا. هيا بنا.
+
+[محادثة: بعد الامتحان - إنجليزي]
+Student 1: Thank God, the exam is finally over! How was your performance?
+Student 2: It was more difficult than I expected. Some questions were very complicated.
+
+Student 1: I agree with you. The third question was hard. I did not expect it to come in that form.
+
+Student 2: And the fifth question as well. I spent half the time on it alone.
+
+Student 1: But the essay questions were easier. The seventh question was straightforward.
+
+Student 2: Yes, that is true. I think I will get a good grade on the essay questions, but I am worried about the multiple-choice questions.
+
+Student 1: Do not worry. The most important thing is that we did our best. The result is in God's hands and then in the grader's hands.
+
+Student 2: You are right. When will the results be announced?
+Student 1: The professor said the results will be announced in two weeks on the university's website.
+
+Student 2: Two weeks of worry and waiting!
+Student 1: Let us celebrate today that the exam is over. How about going to the café?
+Student 2: Excellent idea. I need a break after this long week of studying.
+
+Student 1: Me too. Let us go.
+
+--- 5. جمل ومصطلحات إضافية للمراجعة ---
+[مصطلحات أكاديمية - Academic Terms]
+محاضرة = Lecture
+حلقة دراسية = Seminar
+ورشة عمل = Workshop
+منهج دراسي = Curriculum / Syllabus
+مقرر = Course
+وحدة دراسية = Credit hour
+تقدير = Grade
+معدل تراكمي = Grade point average (GPA)
+فصل دراسي = Semester
+تخصص = Major
+تخصص فرعي = Minor
+بكالوريوس = Bachelor's degree
+ماجستير = Master's degree
+دكتوراه = Doctorate / PhD
+أطروحة = Thesis / Dissertation
+بحث = Research
+إشراف أكاديمي = Academic supervision
+منحة دراسية = Scholarship
+بعثة = Scholarship / Grant
+تبادل طلابي = Student exchange
+سكن جامعي = Dormitory
+أنشطة لامنهجية = Extracurricular activities
+--- نهاية الدفعة السادسة ---
+=== بيانات تدريبية - الدفعة السابعة ===
+--- 1. نصوص في الصحة والتغذية والرياضة بالعربية ---
+[نص: الصحة كنز لا يقدر بثمن]
+الصحة هي أثمن ما يملكه الإنسان في هذه الحياة. قد يظن البعض أن المال أو المنصب أو الشهرة هي أهم الأشياء، لكن الحقيقة أن كل هذه الأشياء تفقد قيمتها إذا فقد الإنسان صحته. فالمريض لا يستطيع أن يستمتع بماله، ولا أن يؤدي عمله، ولا أن يسعد بأسرته. والمجتمع السليم لا يبنى إلا على أكتاف أفراد أصحاء. تتكون الصحة من ثلاثة جوانب رئيسية: الصحة الجسدية، والصحة النفسية، والصحة الاجتماعية. الصحة الجسدية تتحقق بالتغذية السليمة وممارسة الرياضة والنوم الكافي. والصحة النفسية تتحقق بالاستقرار العاطفي والتفكير الإيجابي والتخلص من التوتر. والصحة الاجتماعية تتحقق ببناء علاقات إيجابية مع الأسرة والأصدقاء والمجتمع. وكما يقول المثل العربي القديم: "الصحة تاج على رؤوس الأصحاء لا يراه إلا المرضى". فلنحافظ على هذا التاج قبل أن نفقده.
+
+[نص: التغذية السليمة وأسرار الغذاء المتوازن]
+التغذية السليمة هي حجر الزاوية في بناء الجسم السليم والعقل السليم. والغذاء المتوازن هو الذي يحتوي على جميع العناصر الغذائية التي يحتاجها الجسم بالنسب الصحيحة. وتنقسم العناصر الغذائية إلى ست مجموعات رئيسية: الكربوهيدرات وهي مصدر الطاقة الأساسي، والبروتينات وهي لبنات بناء العضلات والأنسجة، والدهون الصحية وهي ضرورية لوظائف الدماغ والهرمونات، والفيتامينات وهي منظمات العمليات الحيوية، والمعادن مثل الحديد والكالسيوم وهي مهمة للعظام والدم، وأخيرا الماء الذي يشكل حوالي 60% من جسم الإنسان وهو ضروري لكل وظائف الجسم. ومن القواعد الذهبية للتغذية الصحية: الإكثار من تناول الخضروات والفواكه الطازجة، واختيار الحبوب الكاملة بدلا من الحبوب المكررة، وتقليل استهلاك السكر والملح، والابتعاد عن الأطعمة المصنعة والمقلية، وتناول الأسماك مرتين في الأسبوع على الأقل، وشرب كمية كافية من الماء لا تقل عن ثمانية أكواب يوميا. وتذكر دائما: "نحن ما نأكله". فكل لقمة تضعها في فمك إما أن تكون دواء يشفيك أو سما يمرضك.
+
+[نص: الرياضة أسلوب حياة وليست مجرد هواية]
+الرياضة ليست مجرد نشاط نمارسه لخسارة الوزن أو بناء العضلات، بل هي أسلوب حياة متكامل. عندما تمارس الرياضة بانتظام، فإنك لا تحسن فقط شكل جسمك، بل تحسن صحتك النفسية والعقلية أيضا. فالرياضة تزيد من إفراز هرمونات السعادة مثل الإندورفين والسيروتونين، وتقلل من هرمونات التوتر مثل الكورتيزول. كما أن الرياضة تحسن الذاكرة والتركيز، وتقي من أمراض العصر مثل السكري وارتفاع ضغط الدم وأمراض القلب. ليس من الضروري أن تكون رياضيا محترفا لتستفيد، فالمشي اليومي لمدة نصف ساعة يمكن أن يحدث فرقا كبيرا في صحتك. ومن أنواع الرياضات المفيدة: المشي والجري والسباحة وركوب الدراجة وتمارين اليوغا. والأهم من نوع الرياضة هو الاستمرارية. فخير الأعمال أدومها وإن قل. اختر الرياضة التي تستمتع بها، ومارسها مع أصدقائك، واجعلها جزءا من روتينك اليومي. وكما يقول الحكماء: "العقل السليم في الجسم السليم".
+
+[نص: النوم الصحي وأهميته للجسم والعقل]
+النوم هو حاجة أساسية للإنسان مثل الطعام والماء تماما. في المتوسط، يحتاج الإنسان البالغ إلى سبع إلى ثماني ساعات من النوم يوميا. أثناء النوم، يقوم الجسم بعمليات إصلاح وتجديد للخلايا، ويقوم الدماغ بترتيب المعلومات وتثبيت الذكريات التي تعلمناها خلال اليوم. قلة النوم تؤدي إلى مشاكل صحية خطيرة منها: ضعف جهاز المناعة، وزيادة الوزن، وارتفاع ضغط الدم، وضعف التركيز والذاكرة، وتقلب المزاج. كما أن قلة النوم تزيد من خطر الإصابة بالاكتئاب والقلق. للحصول على نوم صحي، ينصح باتباع روتين ثابت للنوم والاستيقاظ حتى في أيام العطلة، وتجنب الكافيين قبل النوم بأربع ساعات، وإطفاء الأجهزة الإلكترونية قبل النوم بساعة على الأقل، وجعل غرفة النوم مظلمة وهادئة وباردة نسبيا. وتذكر أن النوم ليس مضيعة للوقت، بل هو استثمار في صحتك وإنتاجيتك.
+
+--- 2. نصوص في الصحة والتغذية والرياضة بالإنجليزية ---
+[Text: Health, a Priceless Treasure]
+Health is the most precious thing a person possesses in this life. Some may think that money, position, or fame are the most important things, but the truth is that all these things lose their value if a person loses their health. A sick person cannot enjoy their wealth, cannot perform their work, and cannot be happy with their family. A healthy society is built only on the shoulders of healthy individuals. Health consists of three main aspects: physical health, mental health, and social health. Physical health is achieved through proper nutrition, exercise, and sufficient sleep. Mental health is achieved through emotional stability, positive thinking, and getting rid of stress. Social health is achieved by building positive relationships with family, friends, and society. As the old Arabic proverb says: "Health is a crown on the heads of the healthy that only the sick can see." Let us preserve this crown before we lose it.
+
+[Text: Proper Nutrition and the Secrets of a Balanced Diet]
+Proper nutrition is the cornerstone of building a healthy body and a sound mind. A balanced diet is one that contains all the nutrients the body needs in the right proportions. Nutrients are divided into six main groups: carbohydrates, which are the primary source of energy; proteins, which are the building blocks of muscles and tissues; healthy fats, which are necessary for brain and hormone functions; vitamins, which are regulators of vital processes; minerals such as iron and calcium, which are important for bones and blood; and finally water, which makes up about 60% of the human body and is essential for all bodily functions. Among the golden rules of healthy nutrition: eat plenty of fresh vegetables and fruits, choose whole grains instead of refined grains, reduce your consumption of sugar and salt, avoid processed and fried foods, eat fish at least twice a week, and drink an adequate amount of water, no less than eight cups a day. And always remember: "We are what we eat." Every bite you put into your mouth is either medicine that heals you or poison that harms you.
+
+[Text: Exercise as a Lifestyle, Not Just a Hobby]
+Exercise is not just an activity we do to lose weight or build muscles; it is a complete way of life. When you exercise regularly, you not only improve your body shape but also improve your mental and psychological health. Exercise increases the secretion of happiness hormones such as endorphins and serotonin, and reduces stress hormones such as cortisol. Exercise also improves memory and concentration and protects against modern diseases such as diabetes, high blood pressure, and heart disease. You do not have to be a professional athlete to benefit; daily walking for half an hour can make a huge difference in your health. Among the beneficial types of sports are walking, running, swimming, cycling, and yoga. What is more important than the type of sport is consistency. The best deeds are those done consistently, even if few. Choose the sport you enjoy, do it with your friends, and make it part of your daily routine. As the wise say: "A sound mind in a sound body."
+[Text: Healthy Sleep and Its Importance for the Body and Mind]
+Sleep is a basic human need, just like food and water. On average, an adult needs seven to eight hours of sleep per day. During sleep, the body carries out repair and renewal processes for cells, and the brain organizes information and consolidates the memories we learned during the day. Lack of sleep leads to serious health problems, including a weakened immune system, weight gain, high blood pressure, poor concentration and memory, and mood swings. Lack of sleep also increases the risk of depression and anxiety. To get healthy sleep, it is recommended to follow a consistent sleep and wake routine even on holidays, avoid caffeine four hours before bedtime, turn off electronic devices at least one hour before sleeping, and make the bedroom dark, quiet, and relatively cool. Remember that sleep is not a waste of time; it is an investment in your health and productivity.
+
+--- 3. مفردات في مجالات الطاقة المتجددة والبيئة ---
+[الطاقة المتجددة - Renewable Energy]
+طاقة شمسية = Solar energy
+لوح شمسي = Solar panel
+خلية شمسية = Solar cell
+طاقة رياح = Wind energy
+توربين رياح = Wind turbine
+مزرعة رياح = Wind farm
+طاقة مائية = Hydropower
+سد = Dam
+طاقة المد والجزر = Tidal energy
+طاقة أمواج = Wave energy
+طاقة حرارية أرضية = Geothermal energy
+طاقة الكتلة الحيوية = Biomass energy
+وقود حيوي = Biofuel
+طاقة نظيفة = Clean energy
+طاقة متجددة = Renewable energy
+طاقة غير متجددة = Non-renewable energy
+وقود أحفوري = Fossil fuel
+نفط = Oil
+غاز طبيعي = Natural gas
+فحم = Coal
+تحول الطاقة = Energy transition
+استدامة = Sustainability
+حياد كربوني = Carbon neutrality
+انبعاثات صفرية = Zero emissions
+كفاءة الطاقة = Energy efficiency
+تخزين الطاقة = Energy storage
+بطارية = Battery
+شبكة كهربائية = Electric grid
+شبكة ذكية = Smart grid
+هيدروجين أخضر = Green hydrogen
+[البيئة والتغير المناخي - Environment and Climate Change]
+بيئة = Environment
+نظام بيئي = Ecosystem
+تنوع حيوي = Biodiversity
+مناخ = Climate
+مناخ محلي = Microclimate
+تغير مناخي = Climate change
+احتباس حراري = Global warming
+غازات دفيئة = Greenhouse gases
+ثاني أكسيد الكربون = Carbon dioxide
+ميثان = Methane
+بصمة كربونية = Carbon footprint
+تعويض الكربون = Carbon offset
+تداول الكربون = Carbon trading
+غلاف جوي = Atmosphere
+طبقة أوزون = Ozone layer
+ثقب الأوزون = Ozone hole
+تصحر = Desertification
+جفاف = Drought
+فيضان = Flood
+حرائق غابات = Wildfires
+ذوبان الجليد = Ice melting
+ارتفاع مستوى سطح البحر = Sea level rise
+تلوث = Pollution
+تلوث الهواء = Air pollution
+تلوث المياه = Water pollution
+تلوث التربة = Soil pollution
+نفايات = Waste
+نفايات بلاستيكية = Plastic waste
+إعادة تدوير = Recycling
+اقتصاد دائري = Circular economy
+[حماية البيئة - Environmental Protection]
+محافظة على البيئة = Environmental conservation
+محمية طبيعية = Nature reserve
+حديقة وطنية = National park
+إعادة تشجير = Reforestation
+تشجير = Afforestation
+مكافحة التصحر = Combating desertification
+طاقة نظيفة = Clean energy
+سيارة كهربائية = Electric vehicle
+سيارة هجينة = Hybrid vehicle
+مواصلات عامة = Public transportation
+زراعة عضوية = Organic farming
+منتج صديق للبيئة = Eco-friendly product
+استهلاك مسؤول = Responsible consumption
+تقليل النفايات = Waste reduction
+إعادة استخدام = Reuse
+معاهدة بيئية = Environmental treaty
+اتفاقية باريس للمناخ = Paris Climate Agreement
+منظمة بيئية = Environmental organization
+ناشط بيئي = Environmental activist
+--- 4. محادثات في مواقف الأعمال والاجتماعات ---
+[محادثة: اجتماع عمل - مناقشة مشروع جديد - عربي]
+المدير: صباح الخير جميعا. شكرا لحضوركم هذا الاجتماع في الوقت المحدد. موضوع اجتماعنا اليوم هو مناقشة المشروع الجديد لتطوير تطبيق الهاتف المحمول.
+
+مدير التسويق: صباح الخير. لقد أعددت عرضا تقديميا عن احتياجات السوق والمنافسين.
+
+المدير: ممتاز. لكن قبل أن نبدأ، دعونا نستمع أولا إلى مدير المشروع ليشرح لنا الرؤية العامة.
+
+مدير المشروع: شكرا. رؤيتنا هي بناء تطبيق يقدم خدمات تعليمية تفاعلية للمستخدمين. نستهدف سوق الشباب من سن 15 إلى 30 سنة.
+
+المدير المالي: ما هي الميزانية المقدرة للمشروع؟
+مدير المشروع: التقدير الأولي هو مليون ريال للمرحلة الأولى.
+
+المدير المالي: هذا مبلغ كبير. هل هناك دراسة جدوى مفصلة؟
+مدير المشروع: نعم، أرسلتها بالبريد الإلكتروني الأسبوع الماضي. هل اطّلعت عليها؟
+المدير المالي: بصراحة لم أتمكن من قراءتها كاملة. سأراجعها بعد الاجتماع.
+
+المدير: حسنا. فلنركز الآن على الجدول الزمني. متى نتوقع إطلاق النسخة التجريبية؟
+مدير المشروع: نخطط للإطلاق التجريبي بعد أربعة أشهر، والإطلاق الرسمي بعد ستة أشهر.
+
+المدير: وما هي التحديات التي تتوقعونها؟
+مدير المشروع: التحدي الأكبر هو جذب المطورين المهرة. نحتاج إلى فريق تقني قوي.
+
+مدير الموارد البشرية: يمكنني البدء في البحث عن مرشحين فورا. كم عددا تحتاجون؟
+مدير المشروع: نحتاج إلى ثلاثة مطورين ومصمم واجهات ومختبر جودة.
+
+المدير: حسنا. الإجراءات التنفيذية: مدير الموارد البشرية يبدأ التوظيف، والمدير المالي يراجع دراسة الجدوى، ومدير التسويق يعد خطة التسويق الأولية. نجتمع مرة أخرى بعد أسبوعين. هل هناك أي أسئلة أخرى؟
+الجميع: لا. شكرا.
+
+المدير: شكرا لكم. انتهى الاجتماع.
+
+[محادثة: اجتماع عمل - إنجليزي]
+Manager: Good morning everyone. Thank you for attending this meeting on time. The topic of our meeting today is discussing the new project for developing the mobile application.
+
+Marketing Director: Good morning. I have prepared a presentation on market needs and competitors.
+
+Manager: Excellent. But before we begin, let us first hear from the project manager to explain the overall vision.
+
+Project Manager: Thank you. Our vision is to build an application that offers interactive educational services to users. We are targeting the youth market from ages 15 to 30.
+
+Finance Director: What is the estimated budget for the project?
+Project Manager: The initial estimate is one million riyals for the first phase.
+
+Finance Director: That is a large amount. Is there a detailed feasibility study?
+Project Manager: Yes, I sent it by email last week. Did you review it?
+Finance Director: Honestly, I was not able to read it completely. I will review it after the meeting.
+
+Manager: Alright. Let us now focus on the timeline. When do we expect to launch the beta version?
+Project Manager: We are planning the beta launch in four months and the official launch in six months.
+
+Manager: And what challenges do you anticipate?
+Project Manager: The biggest challenge is attracting skilled developers. We need a strong technical team.
+
+Human Resources Director: I can start searching for candidates immediately. How many do you need?
+Project Manager: We need three developers, one interface designer, and one quality tester.
+
+Manager: Alright. The action items: HR Director starts recruitment, Finance Director reviews the feasibility study, and Marketing Director prepares the initial marketing plan. We will meet again in two weeks. Are there any other questions?
+All: No. Thank you.
+
+Manager: Thank you all. The meeting is adjourned.
+
+[محادثة: مفاوضات تجارية - عربي]
+المشتري: شكرا لاستضافتكم لنا اليوم. هدفنا اليوم هو الاتفاق على شروط العقد الجديد.
+
+البائع: أهلا بكم. نحن سعداء بالعمل معكم ونتطلع إلى تجديد الشراكة.
+
+المشتري: نحن أيضا. لكن لدينا بعض النقاط التي نريد مناقشتها. أولا، السعر. نعتقد أن السعر الحالي مرتفع مقارنة بالسوق.
+
+البائع: أفهم وجهة نظرك. لكن جودة منتجاتنا أعلى من جودة المنافسين. نحن نستخدم مواد خام أفضل وعملية التصنيع لدينا أكثر دقة.
+
+المشتري: هذا صحيح، الجودة ممتازة ولا ننكر ذلك. لكننا نطلب كمية أكبر هذا العام. ألا يمكنكم تقديم خصم على الكميات الكبيرة؟
+البائع: نحن نقدر ولاءكم. ماذا عن خصم 5% على الكميات التي تتجاوز 1000 وحدة؟
+المشتري: 5% قليلة. كنا نأمل في 10%. لدينا عروض من منافسين آخرين بأسعار أقل.
+
+البائع: دعنا نكون صريحين. نحن نرغب في الاستمرار معكم. لنصل إلى حل وسط: خصم 7% بالإضافة إلى تمديد فترة الضمان إلى سنتين بدلا من سنة.
+
+المشتري: هذا يبدو معقولا. وماذا عن مدة التسليم؟ نحتاج التسليم في غضون 30 يوما كحد أقصى.
+
+البائع: 30 يوما ممكنة إذا أكدت الطلب قبل نهاية هذا الأسبوع.
+
+المشتري: سأؤكد الطلب غدا. إذن نحن متفقون: خصم 7%، ضمان سنتين، تسليم خلال 30 يوما.
+
+البائع: متفقون. سأرسل العقد المعدل صباح غد.
+
+المشتري: ممتاز. شكرا لتعاونكم.
+
+[محادثة: مفاوضات تجارية - إنجليزي]
+Buyer: Thank you for hosting us today. Our goal today is to agree on the terms of the new contract.
+
+Seller: Welcome. We are happy to work with you and look forward to renewing the partnership.
+
+Buyer: So are we. But we have some points we want to discuss. First, the price. We believe the current price is high compared to the market.
+
+Seller: I understand your point of view. But the quality of our products is higher than that of competitors. We use better raw materials, and our manufacturing process is more precise.
+
+Buyer: That is true, the quality is excellent, and we do not deny that. However, we are ordering a larger quantity this year. Can you not offer a discount on bulk orders?
+Seller: We appreciate your loyalty. How about a 5% discount on quantities exceeding 1000 units?
+Buyer: 5% is too little. We were hoping for 10%. We have offers from other competitors at lower prices.
+
+Seller: Let us be frank. We wish to continue working with you. Let us reach a compromise: a 7% discount plus extending the warranty period to two years instead of one.
+
+Buyer: That seems reasonable. And what about the delivery time? We need delivery within 30 days maximum.
+
+Seller: 30 days is possible if you confirm the order before the end of this week.
+
+Buyer: I will confirm the order tomorrow. So we are agreed: 7% discount, two-year warranty, delivery within 30 days.
+
+Seller: Agreed. I will send the amended contract tomorrow morning.
+
+Buyer: Excellent. Thank you for your cooperation.
+
+[محادثة: عرض تقديمي عن تقرير الأداء - عربي]
+المقدمة: صباح الخير جميعا. سأقدم لكم اليوم تقرير الأداء للربع الثالث من هذا العام. سأتحدث عن ثلاثة محاور: المبيعات، والتكاليف، والتوسع في الأسواق الجديدة.
+
+أولا: المبيعات. ارتفعت المبيعات بنسبة 15% مقارنة بالربع السابق. وكانت أعلى المبيعات في قطاع الأجهزة الذكية بنسبة نمو 22%.
+
+ثانيا: التكاليف. انخفضت التكاليف التشغيلية بنسبة 8% بفضل خطة ترشيد الإنفاق التي بدأناها في بداية العام. ولكن ارتفعت تكاليف الشحن بسبب ارتفاع أسعار الوقود العالمية.
+
+ثالثا: التوسع. نجحنا في دخول سوقين جديدين هما السوق الماليزي والسوق التركي. النتائج الأولية مشجعة جدا، وحققنا حصة سوقية 5% في كلا السوقين.
+
+أما عن التوصيات للمرحلة القادمة: أقترح زيادة الميزانية التسويقية في السوقين الجديدين، والاستمرار في خطة ترشيد الإنفاق، والاستثمار في تحسين سلسلة التوريد لتقليل تكاليف الشحن.
+
+هذا ملخص التقرير. والنسخة الكاملة موزعة عليكم. هل هناك أي أسئلة؟
+[محادثة: عرض تقديمي - إنجليزي]
+Presenter: Good morning everyone. Today I will present the performance report for the third quarter of this year. I will talk about three areas: sales, costs, and expansion into new markets.
+
+First: Sales. Sales increased by 15% compared to the previous quarter. The highest sales were in the smart devices sector, with a growth rate of 22%.
+
+Second: Costs. Operating costs decreased by 8% thanks to the spending rationalization plan we started at the beginning of the year. However, shipping costs increased due to rising global fuel prices.
+
+Third: Expansion. We succeeded in entering two new markets: the Malaysian market and the Turkish market. The initial results are very encouraging, and we achieved a market share of 5% in both markets.
+
+As for recommendations for the next phase, I suggest increasing the marketing budget in the two new markets, continuing the spending rationalization plan, and investing in improving the supply chain to reduce shipping costs.
+
+This is a summary of the report. The full version has been distributed to you. Are there any questions?
+[محادثة: مكالمة هاتفية عمل - عربي]
+المتصل: مرحبا. هل أنا أتحدث مع السيد خالد من قسم المشتريات؟
+المستلم: نعم، أنا خالد. من معي من فضلك؟
+المتصل: أنا عمر من شركة التقنية الحديثة. اتصل بخصوص طلبية الأسلاك الكهربائية التي أرسلناها لكم الأسبوع الماضي.
+
+المستلم: نعم، وصلت الطلبية اليوم. لكن للأسف وجدنا أن الكمية أقل مما طلبنا. طلبنا 500 وحدة ووصلنا 450 فقط.
+
+المتصل: أنا آسف جدا لهذا الخطأ. دعني أراجع الطلب في نظامنا. نعم، لقد حدث خطأ في إدخال الكمية. النقص 50 وحدة.
+
+المستلم: هذا يسبب لنا مشكلة لأننا نحتاج الكمية كاملة لمشروع بدأ بالفعل.
+
+المتصل: أتفهم ذلك تماما. سأشحن الـ 50 وحدة المتبقية اليوم لتصل إليكم يوم بعد غد. وسأتحمل نحن تكاليف الشحن.
+
+المستلم: شكرا. هل يمكنك أن ترسل لي رقم الشحنة فور إرسالها؟
+المتصل: بالتأكيد. سأرسل لك رسالة نصية برقم التتبع. مرة أخرى، أعتذر عن الإزعاج.
+
+المستلم: لا مشكلة. المهم أن تحل المشكلة بسرعة. شكرا لاتصالك.
+
+[محادثة: مكالمة هاتفية عمل - إنجليزي]
+Caller: Hello. Am I speaking with Mr. Khaled from the procurement department?
+Receiver: Yes, this is Khaled. Who is speaking please?
+Caller: This is Omar from Modern Technology Company. I am calling regarding the order of electrical cables we sent you last week.
+
+Receiver: Yes, the order arrived today. But unfortunately, we found that the quantity is less than what we ordered. We ordered 500 units, and only 450 arrived.
+
+Caller: I am very sorry for this mistake. Let me review the order in our system. Yes, there was an error in entering the quantity. The shortage is 50 units.
+
+Receiver: This causes a problem for us because we need the full quantity for a project that has already started.
+
+Caller: I completely understand that. I will ship the remaining 50 units today to arrive the day after tomorrow. And we will bear the shipping costs ourselves.
+
+Receiver: Thank you. Can you send me the shipment number as soon as it is sent?
+Caller: Certainly. I will send you a text message with the tracking number. Once again, I apologize for the inconvenience.
+
+Receiver: No problem. The important thing is that the problem is resolved quickly. Thank you for calling.
+
+[محادثة: اجتماع تقييم موظف - عربي]
+المدير: تفضل بالجلوس يا فهد. هذا الاجتماع هو اجتماع تقييم الأداء نصف السنوي.
+
+الموظف: شكرا. أنا متحمس لسماع ملاحظاتك.
+
+المدير: بشكل عام، أنا راض عن أدائك. أنت تلتزم بالمواعيد، وعملك دقيق، وزملاؤك يشيدون بتعاونك معهم.
+
+الموظف: شكرا لك. هذا من لطفك.
+
+المدير: لكن هناك نقطة أريد مناقشتها معك. لاحظت أنك تأخذ وقتا طويلا في إنجاز بعض المهام. أريد أن أراك تعمل على تحسين سرعة إنجازك.
+
+الموظف: أنا أدرك ذلك. أحيانا أركز على التفاصيل بشكل زائد مما يؤخرني. سأعمل على إيجاد توازن بين السرعة والدقة.
+
+المدير: هذا ما أريد سماعه. ولدي اقتراح: ما رأيك في حضور دورة عن إدارة الوقت؟ الشركة مستعدة لتحمل التكاليف.
+
+الموظف: فكرة رائعة. أرغب في ذلك بالفعل.
+
+المدير: ممتاز. سأرسل لك تفاصيل الدورات المتاحة. نقطة أخرى: ما هي أهدافك للتطوير المهني في الفترة القادمة؟
+الموظف: أطمح للحصول على شهادة مهنية في مجال إدارة المشاريع. أعتقد أنها ستضيف قيمة لعملي.
+
+المدير: أدعمك بقوة. هذا هدف ممتاز. سأوصي الإدارة العليا بدعمك في هذا المسار.
+
+الموظف: شكرا جزيلا. أقدر ثقتك بي.
+
+المدير: استمر في العمل الجيد. أنت من الموظفين الواعدين. الاجتماع القادم سيكون بعد ستة أشهر.
+
+[محادثة: تقييم موظف - إنجليزي]
+Manager: Please have a seat, Fahad. This meeting is the semi-annual performance evaluation meeting.
+
+Employee: Thank you. I am excited to hear your feedback.
+
+Manager: Overall, I am satisfied with your performance. You meet deadlines, your work is accurate, and your colleagues praise your cooperation with them.
+
+Employee: Thank you. That is kind of you.
+
+Manager: However, there is one point I want to discuss with you. I have noticed that you take a long time to complete some tasks. I want to see you work on improving your completion speed.
+
+Employee: I am aware of that. Sometimes I focus on details excessively, which delays me. I will work on finding a balance between speed and accuracy.
+
+Manager: That is what I want to hear. And I have a suggestion: How about attending a course on time management? The company is willing to cover the costs.
+
+Employee: Great idea. I would like that indeed.
+
+Manager: Excellent. I will send you the details of available courses. Another point: What are your goals for professional development in the coming period?
+Employee: I aspire to obtain a professional certification in project management. I think it will add value to my work.
+
+Manager: I strongly support you. That is an excellent goal. I will recommend to senior management to support you on this path.
+
+Employee: Thank you very much. I appreciate your trust in me.
+
+Manager: Continue the good work. You are one of the promising employees. The next meeting will be in six months.
+
+--- نهاية الدفعة السابعة ---
+=== بيانات تدريبية - الدفعة الثامنة ===
+--- 1. نصوص في الثقافة والفنون والعمارة بالعربية ---
+[نص: الثقافة جسر التواصل بين الشعوب]
+الثقافة هي مجموعة المعارف والمعتقدات والقيم والعادات والتقاليد والفنون التي تميز مجتمعا عن غيره. وهي بمثابة الذاكرة الجماعية للأمة التي تحفظ هويتها وتنقلها من جيل إلى جيل. عندما نتعرف على ثقافة شعب آخر فإننا نبني جسرا من التفاهم والاحترام المتبادل. فما قد يبدو غريبا في ثقافة ما قد يكون طبيعيا في ثقافة أخرى. وتشمل الثقافة جوانب متعددة: اللغة، والدين، والطعام، واللباس، والموسيقى، والأعياد، والطقوس الاجتماعية. ومن أجمل ما في العالم هو تنوع الثقافات، فهذا التنوع يثري حياتنا ويجعلها أكثر جمالا وإثارة. وكما قالت الحكيمة مايا أنجيلو: "نحن جميعا مختلفون، وهذا جميل. ونحن جميعا متشابهون، وهذا أيضا جميل". فالثقافة لا تعني الانغلاق على الذات بل الانفتاح على الآخر مع الحفاظ على الهوية. وفي عصر العولمة، أصبح التواصل بين الثقافات أسهل وأسرع من أي وقت مضى. لكن علينا أن نحذر من الذوبان الثقافي وفقدان الهوية. فالتوازن بين الانفتاح والتمسك بالجذور هو سر المجتمعات القوية والمزدهرة.
+
+[نص: تاريخ الفن عبر العصور]
+الفن هو مرآة تعكس روح العصر الذي نشأ فيه. منذ أن رسم الإنسان البدائي رسومه على جدران الكهوف، والفن يعبر عن مشاعر الإنسان وأفكاره ورؤيته للعالم. يمكن تقسيم تاريخ الفن إلى عدة عصور رئيسية. بدأ بالفن القديم في حضارات مصر وبلاد الرافدين واليونان وروما، حيث كان الفن مرتبطا بالدين والحكام. ثم جاء الفن المسيحي في العصور الوسطى الذي ركز على المواضيع الدينية. ثم عصر النهضة في أوروبا الذي أعاد اكتشاف الجمال الإنساني وأنجب عمالقة مثل ليوناردو دافنشي ومايكل أنجلو. ثم عصر الباروك والروكوكو الذي تميز بالتفاصيل المزخرفة والألوان الغنية. وفي القرن التاسع عشر ظهرت حركات مثل الرومانسية والواقعية والانطباعية التي غيرت مفهوم الفن تماما. أما القرن العشرون فشهد انفجارا في الأساليب الفنية من التكعيبية إلى السريالية إلى الفن التجريدي. واليوم في القرن الحادي والعشرين، دخل الفن عصر الرقمنة والفن التفاعلي وفن الشارع. لكن مهما تغيرت الأساليب والأدوات، يبقى الفن هو الصوت الذي يتحدث به الإنسان عن أحلامه وآلامه.
+
+[نص: العمارة الإسلامية وخصائصها الفريدة]
+العمارة الإسلامية هي واحدة من أروع الإنجازات الفنية في تاريخ الحضارة الإنسانية. تميزت هذه العمارة بخصائص فريدة جعلتها مختلفة عن غيرها من الطرز المعمارية. من أبرز عناصر العمارة الإسلامية: القباب التي ترتفع نحو السماء وكأنها ترمز إلى السمو الروحي، والمآذن التي كانت تستخدم لرفع الأذان وتعتبر رمزا للمدينة الإسلامية، والأقواس بأنواعها المختلفة كالقوس المدبب وقوس حدوة الفرس، والزخارف الهندسية المعقدة التي تعكس النظام والدقة في الفكر الإسلامي، والخط العربي الذي حول الكتابة إلى فن راق يزين الجدران، والأفنية الداخلية التي توفر الخصوصية والهدوء. ومن أشهر نماذج العمارة الإسلامية: المسجد الحرام في مكة، وقبة الصخرة في القدس، والمسجد الكبير في قرطبة، وقصر الحمراء في غرناطة، وتاج محل في الهند. لم تقتصر العمارة الإسلامية على المساجد فقط، بل شملت القصور والبيوت والمدارس والمستشفيات والحمامات العامة والأسواق. والعمارة الإسلامية ليست مجرد حجارة وقباب، بل هي تعبير عن فلسفة كاملة تقوم على التوازن بين الجمال والوظيفة، وبين الروح والمادة.
+
+[نص: الخط العربي بين الأصالة والتجديد]
+الخط العربي هو فن كتابة الحروف العربية بصورة فنية جميلة. وقد نال هذا الفن مكانة خاصة في الحضارة الإسلامية لأنه ارتبط بكتابة القرآن الكريم. تطورت أنواع عديدة من الخطوط العربية عبر التاريخ، من أشهرها: الخط الكوفي الذي يتميز بزواياه الحادة وحروفه المستقيمة، وخط النسخ الذي يتميز بوضوحه وسهولة قراءته، وخط الثلث الذي يعتبر أجمل الخطوط وأصعبها إتقانا، والخط الفارسي الذي يتميز بانحناءاته الجميلة، والخط الديواني الذي كان يستخدم في المراسيم السلطانية، وخط الرقعة الذي يستخدم في الكتابة اليومية. في العصر الحديث، دخل الخط العربي مجالات جديدة مثل التصميم الجرافيكي والزخرفة المعمارية والرسم التشكيلي. وظهرت مدارس فنية جديدة تمزج بين الأصالة والمعاصرة. كما أن التكنولوجيا الرقمية فتحت آفاقا جديدة للخطاطين للتجريب والإبداع. ورغم كل هذا التطور، يبقى الخط العربي فنا يحتاج إلى الصبر والممارسة والموهبة. وكما يقول الخطاطون: "الخط يخبئ في طياته روح الكاتب".
+
+--- 2. نصوص في الثقافة والفنون والعمارة بالإنجليزية ---
+[Text: Culture as a Bridge of Communication Between Peoples]
+Culture is the set of knowledge, beliefs, values, customs, traditions, and arts that distinguish one society from another. It is the collective memory of a nation that preserves its identity and transmits it from one generation to the next. When we learn about the culture of another people, we build a bridge of understanding and mutual respect. What may seem strange in one culture may be normal in another. Culture includes multiple aspects: language, religion, food, clothing, music, holidays, and social rituals. One of the most beautiful things in the world is the diversity of cultures, for this diversity enriches our lives and makes them more beautiful and exciting. As the wise Maya Angelou said: "We are all different, and that is beautiful. And we are all similar, and that is also beautiful." Culture does not mean closing oneself off but rather opening up to others while preserving one's identity. In the era of globalization, communication between cultures has become easier and faster than ever before. However, we must be wary of cultural melting and the loss of identity. Balance between openness and holding onto roots is the secret of strong and prosperous societies.
+
+[Text: The History of Art Through the Ages]
+Art is a mirror that reflects the spirit of the era in which it was born. Ever since prehistoric humans drew their paintings on cave walls, art has expressed human feelings, thoughts, and vision of the world. The history of art can be divided into several major eras. It began with ancient art in the civilizations of Egypt, Mesopotamia, Greece, and Rome, where art was linked to religion and rulers. Then came Christian art in the Middle Ages, which focused on religious themes. Then the Renaissance in Europe, which rediscovered human beauty and produced giants such as Leonardo da Vinci and Michelangelo. Then the Baroque and Rococo eras, characterized by ornate details and rich colors. In the nineteenth century, movements such as Romanticism, Realism, and Impressionism emerged and completely changed the concept of art. The twentieth century witnessed an explosion of artistic styles, from Cubism to Surrealism to Abstract art. Today, in the twenty-first century, art has entered the era of digitization, interactive art, and street art. But no matter how styles and tools change, art remains the voice through which humans speak of their dreams and pains.
+
+[Text: Islamic Architecture and Its Unique Characteristics]
+Islamic architecture is one of the most magnificent artistic achievements in the history of human civilization. This architecture was distinguished by unique characteristics that set it apart from other architectural styles. Among the most prominent elements of Islamic architecture are domes that rise toward the sky as if symbolizing spiritual transcendence; minarets that were used to call the prayer and are considered a symbol of the Islamic city; arches of various types, such as the pointed arch and the horseshoe arch; complex geometric patterns that reflect order and precision in Islamic thought; Arabic calligraphy, which turned writing into a fine art adorning walls; and interior courtyards that provide privacy and tranquility. Among the most famous examples of Islamic architecture are the Grand Mosque in Mecca, the Dome of the Rock in Jerusalem, the Great Mosque of Cordoba, the Alhambra Palace in Granada, and the Taj Mahal in India. Islamic architecture was not limited to mosques alone but included palaces, houses, schools, hospitals, public baths, and markets. Islamic architecture is not merely stones and domes; it is an expression of a complete philosophy based on balance between beauty and function and between spirit and matter.
+
+[Text: Arabic Calligraphy Between Authenticity and Renewal]
+Arabic calligraphy is the art of writing Arabic letters in a beautiful artistic manner. This art gained a special place in Islamic civilization because it was linked to the writing of the Holy Quran. Many types of Arabic scripts have developed throughout history, the most famous being Kufic script, characterized by sharp angles and straight letters; Naskh script, characterized by its clarity and ease of reading; Thuluth script, considered the most beautiful and the most difficult to master; Persian script, characterized by its beautiful curves; Diwani script, which was used in royal decrees; and Ruq'ah script, used in everyday writing. In the modern era, Arabic calligraphy has entered new fields such as graphic design, architectural decoration, and fine art. New art schools have emerged that blend authenticity with modernity. Digital technology has also opened new horizons for calligraphers to experiment and create. Despite all this development, Arabic calligraphy remains an art that requires patience, practice, and talent. As calligraphers say: "Calligraphy conceals within its folds the soul of the writer."
+--- 3. مفردات في مجالات النقل والخدمات اللوجستية ---
+[النقل البري - Land Transport]
+سيارة = Car
+شاحنة = Truck
+حافلة = Bus
+قطار = Train
+قطار فائق السرعة = High-speed train
+مترو = Metro / Subway
+ترام = Tram
+دراجة نارية = Motorcycle
+دراجة هوائية = Bicycle
+طريق سريع = Highway
+طريق رئيسي = Main road
+شارع = Street
+جسر = Bridge
+نفق = Tunnel
+إشارة مرور = Traffic light
+إزدحام مروري = Traffic jam
+محطة = Station
+موقف = Stop / Parking
+أجرة = Fare
+تذكرة = Ticket
+[النقل الجوي - Air Transport]
+مطار = Airport
+طائرة = Airplane
+طائرة شحن = Cargo plane
+طائرة خاصة = Private jet
+مروحية = Helicopter
+مدرج = Runway
+برج مراقبة = Control tower
+محطة جوية = Terminal
+بوابة = Gate
+شركة طيران = Airline
+رحلة داخلية = Domestic flight
+رحلة دولية = International flight
+شحن جوي = Air freight
+بضائع = Cargo / Goods
+وزن مسموح = Allowable weight
+وزن زائد = Excess weight
+[النقل البحري - Maritime Transport]
+ميناء = Port / Harbor
+سفينة = Ship
+سفينة حاويات = Container ship
+ناقلة نفط = Oil tanker
+عبارة = Ferry
+قارب = Boat
+مرسى = Dock / Anchorage
+رصيف = Pier / Quay
+حاوية = Container
+حاوية مبردة = Refrigerated container
+بضائع سائبة = Bulk cargo
+مستودع = Warehouse
+جمرك = Customs
+وكيل شحن = Freight forwarder
+بوليصة شحن = Bill of lading
+[الخدمات اللوجستية - Logistics Services]
+سلسلة توريد = Supply chain
+مخزون = Inventory / Stock
+مستودع = Warehouse
+مركز توزيع = Distribution center
+إدارة المخازن = Warehouse management
+نظام إدارة المخزون = Inventory management system
+تتبع = Tracking
+توصيل = Delivery
+توصيل الميل الأخير = Last-mile delivery
+موعد التسليم = Delivery date
+وقت التسليم المقدر = Estimated time of delivery
+طلب = Order
+شراء = Procurement
+توريد = Supply
+شحن = Shipping
+وسيط شحن = Freight broker
+تأمين الشحن = Shipping insurance
+تكاليف الشحن = Shipping costs
+فاتورة = Invoice
+إيصال = Receipt
+عميل = Customer / Client
+[مصطلحات النقل المتقدمة - Advanced Transport Terms]
+نقل متعدد الوسائط = Multimodal transport
+نقل البضائع الخطرة = Hazardous materials transport
+نظام النقل الذكي = Intelligent transport system
+لوجستيات عكسية = Reverse logistics
+لوجستيات الطرف الثالث = Third-party logistics
+التوصيل في نفس اليوم = Same-day delivery
+التوصيل السريع = Express delivery
+تتبع فوري = Real-time tracking
+رمز شريطي = Barcode
+رمز الاستجابة السريعة = QR code
+منصة نقالة = Pallet
+رافعة شوكية = Forklift
+سيارة كهربائية = Electric vehicle
+مركبة ذاتية القيادة = Autonomous vehicle
+طائرة بدون طيار للتوصيل = Delivery drone
+--- 4. محادثات في مواقف الحياة اليومية ---
+[محادثة: في السوبر ماركت - عربي]
+الزبون: عفوا، أين أجد الأرز والمعكرونة؟
+الموظف: الأرز في الممر رقم 3 على اليمين، والمعكرونة في نفس الممر على الرف العلوي.
+
+الزبون: شكرا. وأين أجد الحليب الطازج؟
+الموظف: الحليب ومنتجات الألبان في آخر الممر رقم 5، في الثلاجات.
+
+الزبون: شكرا جزيلا.
+
+بعد قليل...
+
+الزبون: عفوا مرة أخرى. هذه السلعة ليس عليها سعر. كم سعرها؟
+الموظف: دعني أتحقق. هذه بسعر 12 ريالا. هل تريد مني أن أضعه في الكيس؟
+الزبون: نعم من فضلك. وأحتاج إلى كيس إضافي لأن أكياسي ممتلئة.
+
+الموظف: الأكياس الإضافية بريال واحد للكيس.
+
+الزبون: لا مشكلة. هذا كل شيء. كم المجموع؟
+الموظف: المجموع 187 ريالا. كيف تريد الدفع؟ نقدا أم بطاقة؟
+الزبون: بطاقة الصراف من فضلك.
+
+الموظف: تفضل. أدخل البطاقة من فضلك. أدخل الرقم السري. شكرا. هذه فاتورتك. أهلا بك.
+
+الزبون: شكرا. مع السلامة.
+
+[محادثة: في السوبر ماركت - إنجليزي]
+Customer: Excuse me, where can I find rice and pasta?
+Employee: Rice is in aisle 3 on the right, and pasta is in the same aisle on the top shelf.
+
+Customer: Thank you. And where can I find fresh milk?
+Employee: Milk and dairy products are at the end of aisle 5, in the refrigerators.
+
+Customer: Thank you very much.
+
+A little later...
+
+Customer: Excuse me again. This item has no price on it. How much does it cost?
+Employee: Let me check. This is 12 riyals. Would you like me to put it in the bag?
+Customer: Yes please. And I need an extra bag because my bags are full.
+
+Employee: Extra bags are one riyal per bag.
+
+Customer: No problem. That is everything. How much is the total?
+Employee: The total is 187 riyals. How would you like to pay? Cash or card?
+Customer: ATM card please.
+
+Employee: Here you go. Please insert your card. Enter your PIN. Thank you. Here is your receipt. You are welcome.
+
+Customer: Thank you. Goodbye.
+
+[محادثة: حجز موعد طبي - عربي]
+المتصل: مرحبا. أريد حجز موعد عند طبيب الأسنان من فضلك.
+
+موظفة الاستقبال: أهلا بك. هل أنت مريض سابق في العيادة؟
+المتصل: نعم، اسمي سلمان الحربي.
+
+موظفة الاستقبال: لحظة من فضلك. نعم، ملفك موجود. هل تريد موعدا للكشف الروتيني أم لديك مشكلة معينة؟
+المتصل: عندي ألم في الضرس منذ يومين.
+
+موظفة الاستقبال: طيب. هل تفضل موعدا صباحيا أم مسائيا؟
+المتصل: صباحي من فضلك.
+
+موظفة الاستقبال: أقرب موعد صباحي متاح هو بعد غد الأربعاء الساعة التاسعة صباحا. هل يناسبك؟
+المتصل: نعم مناسب.
+
+موظفة الاستقبال: تم حجز الموعد. يرجى الحضور قبل الموعد بربع ساعة. وأحضر معك بطاقة التأمين إن وجدت.
+
+المتصل: بالتأكيد. شكرا جزيلا.
+
+موظفة الاستقبال: على الرحب والسعة. ننتظرك يوم الأربعاء. سلامتك.
+
+[محادثة: حجز موعد طبي - إنجليزي]
+Caller: Hello. I would like to book an appointment with the dentist please.
+
+Receptionist: Welcome. Are you a previous patient at the clinic?
+Caller: Yes, my name is Salman Al-Harbi.
+
+Receptionist: One moment please. Yes, your file is here. Do you want an appointment for a routine check-up, or do you have a specific problem?
+Caller: I have had a toothache for two days.
+
+Receptionist: Alright. Do you prefer a morning or evening appointment?
+Caller: Morning please.
+
+Receptionist: The earliest available morning appointment is the day after tomorrow, Wednesday, at nine o'clock in the morning. Does that suit you?
+Caller: Yes, it suits me.
+
+Receptionist: The appointment has been booked. Please arrive fifteen minutes before the appointment. And bring your insurance card if you have one.
+
+Caller: Of course. Thank you very much.
+
+Receptionist: You are welcome. We look forward to seeing you on Wednesday. Get well soon.
+
+[محادثة: صيانة منزلية (سباك) - عربي]
+المتصل: مرحبا. أنا أحتاج إلى سباك ضروري. هناك تسرب ماء في المطبخ.
+
+السباك: أهلا بك. أين تسكن؟
+المتصل: في حي النزهة، شارع الورود، مبنى 15، شقة 3.
+
+السباك: حسنا. ما هي المشكلة بالضبط؟
+المتصل: الحوض في المطبخ يسرب ماء من الأنبوب تحته. والماء يتجمع على الأرض.
+
+السباك: هل أغلقت محبس الماء الرئيسي؟
+المتصل: لا، لا أعرف أين هو.
+
+السباك: حسنا. سأصل إليك خلال نصف ساعة. حاول أن تضع وعاء تحت الحوض لتجميع الماء مؤقتا.
+
+المتصل: حسنا أفعل ذلك. كم تكلفة الكشف؟
+السباك: الكشف بخمسين ريالا، والتصليح حسب العطل. سأعطيك تقديرا قبل البدء في التصليح.
+
+المتصل: مناسب. أنتظرك.
+
+بعد وصول السباك...
+
+السباك: المشكلة بسيطة. الوصلة تحت الحوض مرتخية وتحتاج إلى تبديل. سأبدلها الآن.
+
+المتصل: كم تكلفة التبديل؟
+السباك: القطعة بعشرين ريالا، والتركيب بثلاثين. المجموع خمسون ريالا بالإضافة إلى رسم الكشف. يعني مئة ريال كاملة.
+
+المتصل: موافق. تفضل أصلحها.
+
+السباك: تم الإصلاح. جرب الماء الآن. لا يوجد تسرب.
+
+المتصل: شكرا. تفضل المئة ريال.
+
+السباك: شكرا لك. إذا حدث أي شيء، اتصل بي.
+
+[محادثة: صيانة منزلية - إنجليزي]
+Caller: Hello. I need a plumber urgently. There is a water leak in the kitchen.
+
+Plumber: Hello. Where do you live?
+Caller: In Al-Nuzha district, Al-Wurud Street, Building 15, Apartment 3.
+
+Plumber: Alright. What is the problem exactly?
+Caller: The sink in the kitchen is leaking water from the pipe underneath it. Water is gathering on the floor.
+
+Plumber: Have you turned off the main water valve?
+Caller: No, I do not know where it is.
+
+Plumber: Alright. I will arrive at your place within half an hour. Try to put a container under the sink to collect the water temporarily.
+
+Caller: Okay, I will do that. How much is the inspection fee?
+Plumber: The inspection is fifty riyals, and the repair depends on the fault. I will give you an estimate before starting the repair.
+
+Caller: That is suitable. I am waiting for you.
+
+After the plumber arrives...
+
+Plumber: The problem is simple. The connection under the sink is loose and needs replacement. I will replace it now.
+
+Caller: How much does the replacement cost?
+Plumber: The part is twenty riyals, and the installation is thirty. The total is fifty riyals in addition to the inspection fee. That means one hundred riyals in total.
+
+Caller: Agreed. Go ahead and fix it.
+
+Plumber: It is fixed. Try the water now. There is no leak.
+
+Caller: Thank you. Here is one hundred riyals.
+
+Plumber: Thank you. If anything happens, call me.
+
+[محادثة: شراء ملابس - عربي]
+البائع: أهلا بك. كيف يمكنني مساعدتك؟
+الزبون: أبحث عن قميص أبيض بمقاس medium.
+
+البائع: القمصان البيضاء على الرف الأيسر. أي ماركة تفضل؟
+الزبون: ليس لدي تفضيل معين. أريد شيئا مناسبا للعمل.
+
+البائع: عندنا هذه القمصان من القطن المصري. جودتها عالية وسعرها مناسب.
+
+الزبون: جميلة. هل يمكنني تجربتها؟
+البائع: بالتأكيد. غرفة القياس هناك على اليمين.
+
+بعد التجربة...
+
+الزبون: المقاس مناسب لكن الأكمام طويلة قليلا. هل لديكم نفس الموديل بأكمام أقصر؟
+البائع: دعني أتحقق. للأسف هذا الموديل متوفر بهذا المقاس فقط. لكن عندي موديل آخر مشابه جدا. تفضل جربه.
+
+الزبون: هذا أفضل بكثير. سآخذ اثنين: الأبيض والأزرق الفاتح. كم سعرهما؟
+البائع: سعر القميص الواحد 120 ريالا. المجموع 240. وإذا أخذت ثلاثة، الرابع مجانا.
+
+الزبون: عرض جيد لكن يكفيني اثنان حاليا. تفضل، أدفع بالبطاقة.
+
+البائع: شكرا. هذه مشترياتك. زرنا مرة أخرى.
+
+[محادثة: شراء ملابس - إنجليزي]
+Salesperson: Welcome. How can I help you?
+Customer: I am looking for a white shirt, size medium.
+
+Salesperson: White shirts are on the left shelf. Which brand do you prefer?
+Customer: I have no specific preference. I want something suitable for work.
+
+Salesperson: We have these Egyptian cotton shirts. Their quality is high and the price is reasonable.
+
+Customer: They are nice. Can I try them on?
+Salesperson: Of course. The fitting room is there on the right.
+
+After trying on...
+
+Customer: The size fits, but the sleeves are a bit long. Do you have the same model with shorter sleeves?
+Salesperson: Let me check. Unfortunately, this model is available only in this size. But I have another very similar model. Here, try it on.
+
+Customer: This is much better. I will take two: the white one and the light blue one. How much are they?
+Salesperson: The price of one shirt is 120 riyals. The total is 240. And if you take three, the fourth is free.
+
+Customer: That is a good offer, but two is enough for now. Here you are; I am paying by card.
+
+Salesperson: Thank you. Here are your purchases. Visit us again.
+
+[محادثة: طلب صيانة كهرباء - عربي]
+المتصل: السلام عليكم. أحتاج إلى كهربائي. الكهرباء مقطوعة في نصف البيت.
+
+الكهربائي: وعليكم السلام. أين تسكن؟
+المتصل: شارع النخيل، مبنى 8، الطابق الأرضي.
+
+الكهربائي: منذ متى والكهرباء مقطوعة؟
+المتصل: منذ ساعة تقريبا. جربت تشغيل القاطع الرئيسي لكنه يفصل فورا.
+
+الكهربائي: هذا يعني أن هناك تماسا كهربائيا في أحد الأجهزة أو المقابس. افصل كل الأجهزة الكهربائية عن المقابس وجرب مرة أخرى.
+
+المتصل: لحظة. نعم، فصلت كل الأجهزة وشغلت القاطع. الآن الكهرباء عادت.
+
+الكهربائي: جيد. الآن شغل الأجهزة واحدا تلو الآخر لتعرف أيها يسبب المشكلة.
+
+المتصل: فعلت ذلك. المكواة هي التي تفصل الكهرباء.
+
+الكهربائي: المشكلة في المكواة نفسها وليس في كهرباء البيت. تحتاج إلى تصليح المكواة أو استبدالها.
+
+المتصل: فهمت. شكرا جزيلا لك. نصيحتك وفرت علي وقتا ومالا.
+
+الكهربائي: لا شكر على واجب. إذا احتجت شيئا آخر اتصل بي.
+
+[محادثة: صيانة كهرباء - إنجليزي]
+Caller: Hello. I need an electrician. The electricity is out in half of the house.
+
+Electrician: Hello. Where do you live?
+Caller: Al-Nakheel Street, Building 8, ground floor.
+
+Electrician: How long has the electricity been out?
+Caller: For about an hour. I tried turning on the main circuit breaker, but it trips immediately.
+
+Electrician: That means there is a short circuit in one of the appliances or sockets. Unplug all electrical appliances from the sockets and try again.
+
+Caller: One moment. Yes, I unplugged everything and turned on the breaker. The electricity is back now.
+
+Electrician: Good. Now plug in the appliances one by one to find out which one is causing the problem.
+
+Caller: I did that. The iron is what trips the electricity.
+
+Electrician: The problem is with the iron itself, not with the house's electricity. You need to repair the iron or replace it.
+
+Caller: I understand. Thank you very much. Your advice saved me time and money.
+
+Electrician: You are welcome. If you need anything else, call me.
+
+[محادثة: في الصيدلية - عربي]
+الزبون: صباح الخير. عندي رشح وزكام منذ يومين. ماذا تنصحني؟
+الصيدلي: صباح الخير. هل عندك حرارة أو سعال؟
+الزبون: لا، فقط انسداد في الأنف وعطاس.
+
+الصيدلي: عندك حساسية من أي أدوية؟
+الزبون: لا.
+
+الصيدلي: طيب. عندي لك هذه الأقراص. تؤخذ حبة كل 12 ساعة. وهذا بخاخ للأنف تستخدمه مرتين في اليوم.
+
+الزبون: كم سعرهما؟
+الصيدلي: الأقراص بـ 25 ريالا، والبخاخ بـ 18 ريالا. المجموع 43 ريالا.
+
+الزبون: وهل هناك تعليمات أخرى؟
+الصيدلي: اشرب سوائل دافئة بكثرة، وخذ قسطا من الراحة. وإذا استمرت الأعراض أكثر من خمسة أيام راجع الطبيب.
+
+الزبون: شكرا جزيلا.
+
+[محادثة: في الصيدلية - إنجليزي]
+Customer: Good morning. I have had a cold and runny nose for two days. What do you recommend?
+Pharmacist: Good morning. Do you have a fever or cough?
+Customer: No, just a blocked nose and sneezing.
+
+Pharmacist: Are you allergic to any medications?
+Customer: No.
+
+Pharmacist: Alright. I have these tablets for you. Take one tablet every 12 hours. And this is a nasal spray, use it twice a day.
+
+Customer: How much are they?
+Pharmacist: The tablets are 25 riyals, and the spray is 18 riyals. The total is 43 riyals.
+
+Customer: Are there any other instructions?
+Pharmacist: Drink plenty of warm fluids and get some rest. If the symptoms persist for more than five days, see a doctor.
+
+Customer: Thank you very much.
+
+--- نهاية الدفعة الثامنة ---

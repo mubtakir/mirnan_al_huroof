@@ -1,0 +1,243 @@
+# -*- coding: utf-8 -*-
+"""
+Path Integral Reasoner — مسبب التكامل المساري مع جاذبية مزدوجة.
+
+المبدأ الفيزيائي: تكامل مسار فاينمان (Feynman Path Integral).
+- الجسيم يسلك جميع المسارات الممكنة آنياً.
+- كل مسار يُوزن بـ exp(iS/ħ) حيث S هو الفعل (action).
+- المسار الأكثر احتمالاً = المسار ذو الفعل الأدنى.
+
+التطبيق في مِران:
+- كل خطوة استدلال = اختيار كلمة من المرشحين.
+- الجاذبية المزدوجة: كل مرشح يُجذب باتجاهين:
+  1. جاذبية محلية (Local): F_local = G·m1·m2/r² بين المرشح والسياق الحالي
+  2. جاذبية الهدف (Goal): F_goal = m_cand/∥v_cand - v_goal∥²
+- تبريد محاكى لكل خطوة استدلالية: τ عالٍ في البداية (استعارة)، τ منخفض في النهاية (تقارب).
+
+الواجهة:
+  reasoner = PhasePathIntegralReasoner(generator)
+  chain = reasoner.reason(start_words, goal_pv, max_depth=5)
+"""
+
+import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class PhasePathIntegralReasoner:
+    """مسبب تكامل مساري باستخدام جاذبية طورية مزدوجة."""
+
+    def __init__(self, generator):
+        """
+        Args:
+            generator: كائن Generator — يُستخدم في استدعاء _resonance_candidates و _dyn_mass.
+        """
+        self.gen = generator
+        self.goal_gravity_weight = generator.config.get(
+            'goal_gravity_weight', 0.3
+        ) if hasattr(generator, 'config') and generator.config else 0.3
+
+        # إعدادات الاستدلال من config
+        reasoning_cfg = generator.config.get('reasoning', {}) if hasattr(generator, 'config') and generator.config else {}
+        self.min_depth = reasoning_cfg.get('min_depth', 2)
+        self.convergence_threshold = reasoning_cfg.get('convergence_threshold', 0.75)
+
+        # جدول التبريد الخاص بالاستدلال (مستقل عن تبريد التوليد)
+        self.tau_schedule = [2.0, 1.5, 1.0, 0.5, 0.2]
+
+    def reason(self, prompt_tokens, prompt_pv, max_depth=5, beam_width=10):
+        """تنفيذ الاستدلال متعدد الخطوات.
+
+        Args:
+            prompt_tokens: قائمة كلمات prompt
+            prompt_pv: قائمة متجهات طورية لكلمات prompt
+            max_depth: أقصى عمق استدلالي
+            beam_width: عرض الشعاع (عدد المسارات المتوازية)
+
+        Returns:
+            dict: {
+                'chain': قائمة الكلمات في سلسلة الاستدلال,
+                'converged': هل تقارب نحو الهدف,
+                'final_similarity': تشابه جيب التمام النهائي مع الهدف,
+                'path_length': طول المسار,
+                'goal_pv': متجه الهدف,
+                'debug': معلومات تصحيح
+            }
+        """
+        # ─── استخراج goal_concept من prompt ───
+        goal_pv = self.gen.prompt_constraint.compute_goal_concept(
+            prompt_pv,
+            holographic_kb=self.gen.holographic_kb,
+        )
+        if goal_pv is None:
+            logger.warning("PathIntegralReasoner: فشل استخراج goal_concept")
+            return self._empty_result(prompt_tokens, "no_goal")
+
+        goal_norm = np.linalg.norm(goal_pv)
+        logger.debug(
+            f"  [Reasoner] goal_concept extracted  |goal|={goal_norm:.3f}  "
+            f"h_kb={'enriched' if self.gen.holographic_kb and self.gen.holographic_kb._built else 'none'}"
+        )
+
+        if not prompt_tokens:
+            return self._empty_result([], "no_tokens")
+
+        # ─── اختر أفضل كلمة بداية: أول كلمة في prompt لها حقائق KB ───
+        start_word = prompt_tokens[-1]  # fallback: last token
+        best_start = None
+        best_start_conf = 0.0
+        if self.gen.holographic_kb is not None and self.gen.holographic_kb._built:
+            for token in prompt_tokens:
+                kb_check = self.gen.holographic_kb.query_by_word(token, top_k=1)
+                if kb_check and kb_check[0][0] > best_start_conf:
+                    best_start = token
+                    best_start_conf = kb_check[0][0]
+            if best_start:
+                start_word = best_start
+                logger.debug(f"  [Reasoner] KB start: {start_word} (conf={best_start_conf:.3f})")
+        else:
+            logger.debug(f"  [Reasoner] No KB start found, fallback: {start_word}")
+        start_pv = self.gen._get_pv_fast(start_word)
+        # Only mark the start_word as used, not all prompt tokens
+        used_set = {start_word}
+        all_context_words = list(prompt_tokens)
+        all_context_pvs = [self.gen._get_pv_fast(w) for w in prompt_tokens]
+        context_ids = [self.gen.vocab.word2id.get(w) for w in prompt_tokens if w in self.gen.vocab.word2id]
+
+        beams = [(0.0, [start_word], start_pv, used_set.copy())]
+        converged = False
+        final_similarity = 0.0
+        path_length = 0
+
+        # ─── خطوات الاستدلال ───
+        for step in range(min(max_depth, len(self.tau_schedule))):
+            tau = self.tau_schedule[step]
+            self.gen.current_tau = tau
+            logger.debug(f"  [Reasoner] step={step}/{max_depth} tau={tau:.2f}")
+
+            new_beams = []
+            for beam_score, path, curr_pv, used in beams:
+                all_pv = all_context_pvs + [self.gen._get_pv_fast(w) for w in path]
+                all_ids = context_ids + [self.gen.vocab.word2id.get(w, -1) for w in path if w in self.gen.vocab.word2id]
+                all_ids = [i for i in all_ids if i is not None and i >= 0]
+                # context words for mass
+                ctx_words_for_mass = all_context_words[-5:] + path[-3:]
+
+                # ─── Candidate selection: KB-first (exact word match), gravity fallback ───
+                injected_kb_words = set()
+
+                if self.gen.holographic_kb is not None and self.gen.holographic_kb._built:
+                    # Exact word match: query recent context words + beam's last word
+                    for cw in list(all_context_words[-6:]) + ([path[-1]] if path else []):
+                        if cw:
+                            kb_results = self.gen.holographic_kb.query_by_word(cw, top_k=4)
+                            if kb_results:
+                                logger.debug(f"    [Reasoner] KB query {cw} -> {kb_results[0][1]}")
+                            for _, obj_word, _ in kb_results:
+                                if obj_word and obj_word not in used:
+                                    if self.gen.vocab.get(obj_word) is not None:
+                                        injected_kb_words.add(obj_word)
+
+                logger.debug(f"    [Reasoner] injected {len(injected_kb_words)} words: {list(injected_kb_words)[:5]}")
+
+                if injected_kb_words:
+                    # KB mode: use ONLY KB-guided words (deterministic traversal)
+                    candidates = list(injected_kb_words)
+                else:
+                    # Gravity mode: fallback to standard candidate selection
+                    candidates = self.gen._resonance_candidates(
+                        all_ids, all_pv, used, prev_word=path[-1] if path else None,
+                        beta_cur=self.gen.beta,
+                    )
+
+                if not candidates:
+                    # No candidates → keep current beam as-is
+                    new_beams.append((beam_score, path, curr_pv, used))
+                    continue
+
+                # ─── Dual gravity scoring ───
+                for w in candidates[:beam_width * 4]:  # top 40 per beam
+                    w_pv = self.gen._get_pv_fast(w)
+
+                    # Local gravity
+                    w_mass = float(self.gen._dyn_mass(w))
+                    ctx_masses = [float(self.gen._dyn_mass(cw)) for cw in ctx_words_for_mass if cw]
+                    ctx_mass = np.mean(ctx_masses) if ctx_masses else 1.0
+                    r_local = np.linalg.norm(w_pv - curr_pv) + 1e-10
+                    F_local = w_mass * ctx_mass / r_local**2 * \
+                        max(0.0, float(np.dot(w_pv, curr_pv) /
+                            (np.linalg.norm(w_pv) * np.linalg.norm(curr_pv) + 1e-10)))
+
+                    # Goal gravity
+                    r_goal = np.linalg.norm(w_pv - goal_pv) + 1e-10
+                    F_goal = w_mass / r_goal**2
+
+                    # Combined: local gravity + λ * goal + KB priority
+                    combined = F_local + self.goal_gravity_weight * F_goal
+                    if w in injected_kb_words:
+                        combined += 10.0  # KB-exact-match override
+
+                    new_beams.append((
+                        beam_score + combined,
+                        path + [w],
+                        w_pv,
+                        used | {w},
+                    ))
+
+            if not new_beams:
+                break
+
+            # Prune to beam_width
+            new_beams.sort(key=lambda x: -x[0])
+            beams = new_beams[:beam_width]
+            path_length = len(beams[0][1]) - 1
+
+            # Convergence check
+            top_pv = beams[0][2]
+            final_similarity = float(np.dot(top_pv, goal_pv) / (
+                max(np.linalg.norm(top_pv), 1e-10) *
+                max(np.linalg.norm(goal_pv), 1e-10)))
+            final_similarity = max(0.0, final_similarity)
+
+            if final_similarity > self.convergence_threshold and step >= self.min_depth:
+                converged = True
+                logger.debug(
+                    f"  [Reasoner] CONVERGED at step={step}  "
+                    f"sim={final_similarity:.4f}  path_len={path_length}"
+                )
+                break
+
+        # ─── Debug output ───
+        best_chain = beams[0][1][1:]  # strip start word
+        if not converged:
+            logger.debug(
+                f"  [Reasoner] MAX DEPTH  sim={final_similarity:.4f}  "
+                f"path_len={path_length}  chain={best_chain}"
+            )
+
+        return {
+            'chain': best_chain,
+            'converged': converged,
+            'final_similarity': float(final_similarity),
+            'path_length': path_length,
+            'goal_pv': goal_pv,
+            'goal_norm': float(goal_norm),
+            'debug': {
+                'max_depth': max_depth,
+                'beam_width': beam_width,
+                'start_word': start_word,
+                'goal_weight': self.goal_gravity_weight,
+            },
+        }
+
+    def _empty_result(self, prompt_tokens, reason):
+        return {
+            'chain': [],
+            'converged': False,
+            'final_similarity': 0.0,
+            'path_length': 0,
+            'goal_pv': None,
+            'goal_norm': 0.0,
+            'debug': {'reason': reason},
+        }

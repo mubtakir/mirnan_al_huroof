@@ -1,0 +1,308 @@
+"""
+الاندماج الهندسي للكلمة — Word Fusion Engine.
+
+الكلمة = جداء كليفورد غير تبديلي لحروفها:
+  word_mv = normalize(((L1 * L2) * L3) * ...)
+
+يدعم: اندماج خطي، اندماج هندسي (جداء كليفورد)،
+مصفوفة التفاعل (22×22)، التداخل الطوري المركب، والتحليل الكامل.
+"""
+module WordFusion
+
+using LinearAlgebra
+using ..Constants: PHASE_DIM
+using ..CliffordMath: Multivector22, from_vector, normalize!
+using ..WordPhysics: _parse_word_harakat, _build_modulated_vectors
+
+export geometric_word_fusion, linear_fusion, interaction_tensor,
+       eigen_fusion, complex_phase_interference, full_word_analysis,
+       decompose_fusion, compare_antonyms, _get_letter_vectors
+
+const FUSION_DIM_NAMES = [
+    "concentration", "internal_external", "stability_motion", "density",
+    "temperature", "time_accumulation", "time_peak", "time_discharge",
+    "motion_linear", "motion_rotary", "motion_pulse", "motion_stretch",
+    "motion_slip", "motion_air", "axis_v", "mass",
+    "hardness_solid", "penetration", "charge", "reference_self",
+    "space_extensionality", "time_causality",
+]
+
+# التخزين المؤقت
+const _mv_cache = Dict{String,Multivector22}()
+const _lin_cache = Dict{String,Vector{Float64}}()
+
+"""
+    _get_letter_vectors(word::String, db) -> Vector{Vector{Float64}}
+
+استخراج متجهات الحروف مع تعديل الحركات (الفتحة نصف ألف، الضمة نصف واو، الكسرة نصف ياء).
+"""
+function _get_letter_vectors(word::String, db)
+    parsed = _parse_word_harakat(word)
+    return _build_modulated_vectors(parsed, db)
+end
+
+# ═══ الاندماج الخطي ═══
+"""
+    linear_fusion(letter_vectors; position_weights=nothing) -> Vector{Float64}
+
+اندماج خطي مرجح حسب الموضع (فاء الكلمة = 3.5، عين = 2.5...).
+"""
+function linear_fusion(letter_vectors::Vector{<:AbstractVector}; position_weights=nothing)
+    if isempty(letter_vectors)
+        return zeros(Float64, 22)
+    end
+    lvs = [Float64.(v[1:min(22, end)]) for v in letter_vectors]
+
+    if position_weights === nothing
+        n = length(lvs)
+        pw = Float64[3.5, 2.5, 2.0]
+        for i in 1:(n - 3)
+            push!(pw, 1.5 / sqrt(i))
+        end
+        if n > 0
+            pw = pw[1:n]
+        end
+    else
+        pw = Float64.(position_weights)
+    end
+
+    weighted = zeros(Float64, 22)
+    for (i, v) in enumerate(lvs)
+        w = i <= length(pw) ? pw[i] : 1.0
+        weighted .+= v .* w
+    end
+    total_w = sum(pw[1:min(end, length(lvs))])
+    if total_w > 0
+        weighted ./= total_w
+    end
+    nrm = norm(weighted)
+    return nrm > 1e-10 ? weighted ./ nrm : weighted
+end
+
+# ═══ الاندماج الهندسي (جداء كليفورد) ═══
+"""
+    geometric_word_fusion(letter_vectors) -> Multivector22
+
+الكلمة = الجداء الهندسي المتسلسل لحروفها (غير تبديلي — يحفظ الترتيب).
+"""
+function geometric_word_fusion(letter_vectors::Vector{<:AbstractVector})
+    if isempty(letter_vectors)
+        return Multivector22()
+    end
+    mv = from_vector(Float64.(letter_vectors[1]))
+    normalize!(mv)
+
+    for vec in letter_vectors[2:end]
+        op = from_vector(Float64.(vec))
+        mv = mv * op
+        normalize!(mv)
+    end
+    return mv
+end
+
+"""
+    decompose_fusion(mv::Multivector22) -> Dict
+
+تفكيك نتيجة الاندماج الهندسي إلى مكوناتها الدلالية:
+shared_essence, emergent_intensity, vector_remnant, fusion_ratio.
+"""
+function decompose_fusion(mv::Multivector22)
+    s_abs = abs(mv.s)
+    b_norm = norm(mv.b)
+    v_norm = norm(mv.v)
+    total = s_abs + b_norm + v_norm + 1e-10
+
+    dominant_pairs = Tuple{String,String,Float64}[]
+    if b_norm > 0.01
+        abs_b = abs.(mv.b)
+        top_idx = sortperm(abs_b; rev=true)[1:min(5, end)]
+        for idx in top_idx
+            found = false
+            k = 1
+            for i in 1:22
+                for j in (i+1):22
+                    if k == idx
+                        push!(dominant_pairs, (FUSION_DIM_NAMES[i], FUSION_DIM_NAMES[j], round(mv.b[idx]; digits=4)))
+                        found = true
+                        break
+                    end
+                    k += 1
+                end
+                found && break
+            end
+        end
+    end
+
+    return Dict(
+        "shared_essence" => round(s_abs; digits=4),
+        "emergent_intensity" => round(b_norm; digits=4),
+        "vector_remnant" => round(v_norm; digits=4),
+        "fusion_ratio" => round(b_norm / total; digits=4),
+        "shared_ratio" => round(s_abs / total; digits=4),
+        "bivector_dominant_pairs" => dominant_pairs,
+        "total_magnitude" => round(total; digits=4),
+    )
+end
+
+# ═══ مصفوفة التفاعل والإسقاط الطيفي ═══
+"""
+    interaction_tensor(letter_vectors) -> Matrix{Float64}
+
+مصفوفة التفاعل 22×22 بين الحروف المتجاورة (outer products).
+"""
+function interaction_tensor(letter_vectors::Vector{<:AbstractVector})
+    if isempty(letter_vectors)
+        return zeros(Float64, 22, 22)
+    end
+    lvs = [Float64.(v[1:min(22, end)]) for v in letter_vectors]
+    if length(lvs) < 2
+        return lvs[1] * lvs[1]'
+    end
+    tensor = zeros(Float64, 22, 22)
+    count = 0
+    for i in 1:(length(lvs)-1)
+        tensor .+= lvs[i] * lvs[i+1]'
+        count += 1
+    end
+    return count > 0 ? tensor ./ count : tensor
+end
+
+"""
+    eigen_fusion(letter_vectors) -> Dict
+
+تفكيك طيفي (SVD) لمصفوفة التفاعل — الأنماط المهيمنة للاندماج.
+"""
+function eigen_fusion(letter_vectors::Vector{<:AbstractVector})
+    tensor = interaction_tensor(letter_vectors)
+    F = svd(tensor)
+    s = F.S
+    U = F.U
+    dominant_mode = U[:, 1] .* s[1]
+
+    top_dims_idx = sortperm(abs.(U[:, 1]); rev=true)[1:min(5, end)]
+    top_contrib = Tuple{String,Float64}[]
+    for i in top_dims_idx
+        push!(top_contrib, (FUSION_DIM_NAMES[i], round(U[i, 1]; digits=4)))
+    end
+
+    emergent = dominant_mode ./ (norm(dominant_mode) + 1e-10)
+    energy_conc = s[1]^2 / (sum(s .^ 2) + 1e-10)
+
+    return Dict(
+        "dominant_eigenvalue" => round(s[1]; digits=4),
+        "eigenvalue_spectrum" => [round(x; digits=4) for x in s[1:min(5, end)]],
+        "top_dimensions_eigen" => top_contrib,
+        "emergent_vector_eigen" => emergent,
+        "energy_concentration" => round(energy_conc; digits=4),
+    )
+end
+
+# ═══ التداخل الطوري المركب ═══
+"""
+    complex_phase_interference(letter_vectors) -> Dict
+
+نمذجة الكلمة كتداخل أمواج ذات طور مركب (amplitudes + phases).
+"""
+function complex_phase_interference(letter_vectors::Vector{<:AbstractVector})
+    if isempty(letter_vectors)
+        return Dict("coherence" => 0.0)
+    end
+    lvs = [Float64.(v[1:min(22, end)]) for v in letter_vectors]
+    n = length(lvs)
+
+    weights = Float64[3.5, 2.5, 2.0]
+    for i in 1:(n - 3)
+        push!(weights, 1.5 / sqrt(i))
+    end
+    if n > 0; weights = weights[1:n]; end
+
+    total = zeros(ComplexF64, 22)
+    for (i, v) in enumerate(lvs)
+        phase_vec = π .* v ./ 2.0
+        z = abs.(v) .* exp.(1im .* phase_vec)
+        total .+= z .* weights[i]
+    end
+    total ./= sum(weights)
+
+    amps = abs.(total)
+    phases = angle.(total)
+
+    constructive = Tuple{String,Float64,Float64}[]
+    destructive = Tuple{String,Float64,Float64}[]
+    for i in 1:22
+        amp = amps[i]
+        if amp > 0.15
+            push!(constructive, (FUSION_DIM_NAMES[i], round(amp; digits=4), round(phases[i]; digits=4)))
+        elseif amp < 0.05
+            push!(destructive, (FUSION_DIM_NAMES[i], round(amp; digits=4), round(phases[i]; digits=4)))
+        end
+    end
+
+    coherence = sum(amps[amps .> 0.1]) / (sum(amps) + 1e-10)
+
+    return Dict(
+        "interference_real" => [round(real(x); digits=4) for x in total],
+        "interference_imag" => [round(imag(x); digits=4) for x in total],
+        "constructive_dims" => constructive,
+        "destructive_dims" => destructive,
+        "coherence" => round(coherence; digits=4),
+    )
+end
+
+# ═══ تحليل كامل ═══
+"""
+    full_word_analysis(word::String, db) -> Dict
+
+تحليل كلمة كاملة بكل طرق الاندماج (خطي، هندسي، طيفي، طوري).
+"""
+function full_word_analysis(word::String, db)
+    lvs = _get_letter_vectors(word, db)
+    lin_vec = linear_fusion(lvs)
+    geo_mv = geometric_word_fusion(lvs)
+    geo_dec = decompose_fusion(geo_mv)
+    eigen_r = eigen_fusion(lvs)
+    phase_r = complex_phase_interference(lvs)
+
+    cos_sim = dot(lin_vec[1:22], geo_mv.v) / (norm(lin_vec[1:22]) * norm(geo_mv.v) + 1e-10)
+    parsed = _parse_word_harakat(word)
+    bare_letters = join([string(l) for (l, _) in parsed])
+
+    return Dict(
+        "word" => word, "num_letters" => length(parsed), "letters" => bare_letters,
+        "linear_geometric_cosine" => round(cos_sim; digits=4),
+        "are_methods_equivalent" => abs(cos_sim) > 0.95,
+        "linear" => Dict("vector" => lin_vec, "norm" => round(norm(lin_vec); digits=4)),
+        "geometric" => geo_dec, "eigen" => eigen_r, "phase" => phase_r,
+    )
+end
+
+"""
+    compare_antonyms(word1, word2, db) -> Dict
+
+مقارنة كلمتين متضادتين دلالياً عبر كل طرق الاندماج.
+"""
+function compare_antonyms(word1::String, word2::String, db)
+    a1 = full_word_analysis(word1, db)
+    a2 = full_word_analysis(word2, db)
+
+    lin_cos = dot(a1["linear"]["vector"], a2["linear"]["vector"]) /
+              (norm(a1["linear"]["vector"]) * norm(a2["linear"]["vector"]) + 1e-10)
+
+    eig1 = Set(first.(a1["eigen"]["top_dimensions_eigen"]))
+    eig2 = Set(first.(a2["eigen"]["top_dimensions_eigen"]))
+
+    return Dict(
+        "word1" => word1, "word2" => word2,
+        "linear_cosine_similarity" => round(lin_cos; digits=4),
+        "geometric_emergent_diff" => round(
+            abs(a1["geometric"]["emergent_intensity"] - a2["geometric"]["emergent_intensity"]); digits=4),
+        "shared_eigen_dimensions" => collect(intersect(eig1, eig2)),
+        "different_eigen_dimensions" => collect(union(setdiff(eig1, eig2), setdiff(eig2, eig1))),
+        "phase_coherence_diff" => round(
+            abs(a1["phase"]["coherence"] - a2["phase"]["coherence"]); digits=4),
+        "fusion_ratio_word1" => a1["geometric"]["fusion_ratio"],
+        "fusion_ratio_word2" => a2["geometric"]["fusion_ratio"],
+    )
+end
+
+end # module WordFusion

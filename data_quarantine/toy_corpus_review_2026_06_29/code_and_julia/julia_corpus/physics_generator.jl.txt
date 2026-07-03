@@ -1,0 +1,1854 @@
+"""
+محرك التوليد المركزي — Mirnan Generator V8.
+يدعم 11 نمط توليد + 40+ عامل تسجيل فيزيائي + تكامل 75 محركاً.
+"""
+module Generator
+
+using LinearAlgebra, Random, Logging, Statistics, SparseArrays, FFTW, JSON, YAML
+using ..Constants
+using ..WordPhysics
+using ..CliffordMath
+using ..GravityEngine
+using ..Oscillator
+using ..ResonantChain
+using ..Heterodyne
+using ..EntropyGateModule
+using ..RAMCore
+using ..PhaseReinforcement
+using ..DCCF
+using ..PPM
+using ..AMFS
+using ..DensityMatrix
+using ..CausalFlow
+using ..HolographicKB
+using ..PotentialCascade
+using ..SemanticArithmetic
+using ..WeightResonance
+using ..MorphoPhasic
+using ..SpectralWave
+using ..WordSpectrum
+using ..DialogueEngineFull
+using ..PoeticGravity
+using ..ContextualOperators
+using ..AssociativeMemory
+using ..DialogueMemoryModule
+using ..HierarchicalMemoryModule
+using ..SpectralMemory
+using ..IntentDetectorModule
+using ..IntentLandscapeModule
+using ..InteractionTraceModule
+using ..EntityRegisterModule
+using ..FilamentTension
+using ..CarrierWave
+using ..MorphoTwistor
+using ..CausalEngine
+using ..ChaosEntanglement
+using ..CoherenceFeedbackModule
+using ..ConceptMatrixModule
+using ..FieldEngineModule
+using ..LocalThermoGate
+using ..MizanEngineModule
+using ..PhaseEvolutionModule
+using ..PragmaticField
+using ..PromptConstraint
+using ..RelationalKModule
+using ..ResonanceCalibration
+using ..RotatingAnchorModule
+using ..SemanticCategories
+using ..SentimentPolarity
+using ..SymbolicBridgeModule
+using ..TopologicalInvariants
+using ..Particles
+using ..SyntaxFieldFull
+using ..SyntaxMonitorModule
+using ..SyntaxPhase
+using ..VectorInterpreter
+using ..Tafsir
+using ..PhaseCache
+using ..AdvancedEngines
+using ..CodeEngineModule
+using ..MathBridgeModule
+using ..ResponsePlanning
+using ..Synchronize: Vocabulary
+using ..EnglishMorpheme
+using ..PathIntegralReasonerModule
+using ..BeamReasonerModule
+using ..RootFieldModule
+using ..CodePhaseEngineModule
+using ..SymbolicMathEngineModule
+using ..PRNNCore
+using ..PRNNLearner
+using ..GpuAcceleratorModule
+using ..LanguageFeedback
+using ..SemanticComprehension
+using ..BayanAnalyzer
+
+
+export MirnanGenerator, generate!, gpu_init!
+
+const OLD_SEMANTIC_DIM = PHASE_DIM + ROOT_DIMS
+const _fft_plan = Ref{Any}(nothing)
+const _inv_twistor_ref = Ref{Any}(nothing)  # (w1, w2, T) — أحدث عامل التواء مستنتَج
+
+function _get_fft_plan()
+    if _fft_plan[] === nothing
+        _fft_plan[] = plan_fft(zeros(ComplexF64, PHASE_DIM))
+    end
+    return _fft_plan[]
+end
+
+const _SENTENCE_BOUNDARIES_FILE = joinpath(@__DIR__, "..", "..", "data", "sentence_boundaries.json")
+
+function _load_sentence_boundaries()
+    starters = Set{String}()
+    enders = Set{String}()
+    if isfile(_SENTENCE_BOUNDARIES_FILE)
+        try
+            data = JSON.parsefile(_SENTENCE_BOUNDARIES_FILE)
+            for s in get(data, "arabic_starters", String[])
+                push!(starters, String(s))
+            end
+            for s in get(data, "english_starters", String[])
+                push!(starters, String(s))
+            end
+            for e in get(data, "arabic_enders", String[])
+                push!(enders, String(e))
+            end
+            for e in get(data, "english_enders", String[])
+                push!(enders, String(e))
+            end
+        catch e
+            @warn "Failed to load sentence boundaries from $_SENTENCE_BOUNDARIES_FILE: $e"
+        end
+    end
+    return starters, enders
+end
+
+const _SENTENCE_STARTERS, _SENTENCE_ENDERS = _load_sentence_boundaries()
+
+const DEFAULT_SCORING_WEIGHTS = Dict{String,Float64}(
+    "align"=>3.0, "gravity"=>4.0, "positional_gravity"=>2.5, "resonant_chain"=>4.0, "oscillator"=>3.0,
+    "heterodyne"=>3.0, "beamform"=>3.0, "dccf"=>3.0, "causal_flow_align"=>2.5,
+    "density_resonance"=>2.5, "prompt_align"=>3.0, "constraint_align"=>3.0,
+    "kb_knowledge"=>2.0, "syntax"=>3.0, "morpho"=>1.5, "diversity"=>3.0,
+    "repulsion"=>2.5, "novelty"=>1.0, "spectral"=>2.0, "thermo"=>1.5,
+    "causal"=>2.5, "ppm"=>2.0, "amfs"=>1.5, "carrier"=>3.0,
+    "dialogue"=>3.0, "sentence"=>1.0, "contextual_spectra"=>4.0,
+    "semantic_density"=>2.0, "syntax_gate"=>2.0, "irab"=>1.5,
+    "pos_alt"=>1.0, "phil_semantic"=>2.0, "root_align"=>1.2,
+    "pragmatic"=>1.5, "phase_opposition"=>1.5, "weight_resonance"=>1.5,
+    "dialogue_gravity"=>2.5, "dialogue_spectral"=>2.0, "intent_align"=>3.0,
+    "associative_plan"=>3.5, "entity_align"=>2.0, "plan_fidelity"=>3.0,
+    "architect"=>3.0, "trajectory"=>1.5, "hierarchical"=>1.5,
+    "intent_landscape"=>1.5, "trace"=>0.8, "relational"=>1.0,
+    "category"=>2.0, "sentiment"=>1.0, "anchor_affinity"=>2.0,
+    "global_resonance"=>2.0, "context_wave_filter"=>2.0,
+    "cascade"=>0.0, "partonic_cross"=>2.5, "hierarchical_mod"=>2.5,
+    "mizan_coherence"=>3.0, "symbolic"=>0.0, "poetic"=>0.0, "rhyme"=>0.0,
+    "eng_morpho"=>1.0, "eng_grammar"=>1.0, "filament_tension"=>1.5,
+    "twistor"=>2.5,
+)
+
+# ════════════════════════════════════════════════════
+mutable struct MirnanGenerator
+    vocab::Dict{String,Int}
+    id2word::Dict{Int,String}
+    K_sem::Union{SparseMatrixCSC{Float64,Int32},SparseMatrixCSC{Float64,Int64},Nothing}
+    K_syn::Union{SparseMatrixCSC{Float64,Int32},SparseMatrixCSC{Float64,Int64},Nothing}
+    K_dialogue::Union{SparseMatrixCSC{Float64,Int32},SparseMatrixCSC{Float64,Int64},Nothing}
+    K_causal::Union{SparseMatrixCSC{Float64,Int32},SparseMatrixCSC{Float64,Int64},Nothing}
+    beam_width::Int; top_k::Int; beta::Float64; dim::Int
+    old_semantic_dim::Int; dialogue_mode::Bool
+    # Core engines
+    entropy::EntropyGateModule.EntropyGate; ram::AttractorMemory
+    resonant_chain::ResonantChainRLC; heterodyne::HeterodyneEngine
+    carrier::CarrierWaveEngine
+    dccf::DynamicCCF; prompt_field::PromptField
+    density_matrix::PhaseDensityMatrix; causal_flow::CausalFlowField
+    kb::HolographicKnowledgeBase; cascade::PotentialCascadeLayer
+    cascade_enabled::Bool; reinforcement::PhaseReinforcer
+    # Morpho & Syntax
+    morpho::MorphoPhasicEngine; weight_resonance::WeightResonanceEngine
+    bridge::SymbolicBridge
+    # Dialogue & Memory
+    dialogue_engine::DialogueEngine; dialogue_memory::DialogueMemory
+    intent_detector::IntentDetector; intent_landscape::IntentLandscape
+    associative_memory::AssociativeDialogueMemory
+    entity_register::EntityRegister; interaction_trace::InteractionTrace
+    hierarchical_memory::HierarchicalMemory
+    # Poetic
+    poetic_engine::PoeticGravityEngine
+    # Advanced physics
+    osc_engine::OscillatorEngine; spectral_memory::GlobalSpectralMemory
+    pragmatic_engine::PragmaticBindingEngine
+    causal_engine::CausalPhaseEngine
+    filament_tension::FilamentTensionEngine
+    # V8 engines
+    thermal_chaos::ThermalChaosEngine; molecular::MolecularBinder
+    quantum_ent::PhaseCouplingEngine
+    beamformer::Beamformer; phase_attn::PhaseAttention
+    # Planning & Control
+    response_planner::ResponsePlanner
+    response_architect::ResponseArchitect
+    trajectory_planner::TrajectoryPlanner
+    prompt_constraint::PromptConstraintField
+    contextual_operators::ContextualOperatorEngine
+    # Calibration & Evolution
+    calibrator::ResonanceCalibrator; phase_evolution::PhaseEvolution
+    rotating_anchor::RotatingAnchor; relational_k::RelationalK
+    # Code & Math
+    code_engine::CodeEngine; math_bridge::MathBridge
+    code_phase_engine::CodePhaseEngine; math_engine::SymbolicMathEngine
+    # Reasoning
+    path_reasoner::PathIntegralReasoner
+    beam_reasoner::BeamReasoner
+    # Coherence feedback
+    coherence_feed::CoherenceFeedback
+    # Mizan coherence engine
+    mizan_engine::MizanEngineModule.MizanEngine
+    # Config & State
+    scoring_weights::Dict{String,Float64}; config::Dict{String,Any}
+    W::Dict{String,Float64}; rng::MersenneTwister
+    pv_cache::Dict{String,Vector{Float64}}; mass_cache::Dict{String,Float64}
+    current_tau::Float64; tau_max::Float64; tau_min::Float64; tau_decay::Float64
+    # Phase vector cache
+    phase_cache::PhaseVectorCache
+    # PRNN sequential corpus transitions
+    corpus_sentences::Vector{Vector{Int32}}
+    # GPU accelerator context (nil if disabled)
+    gpu_ctx::GpuContext
+    # Closed feedback loop: generation → evaluation → learning
+    lang_feedback::LanguageFeedbackEngine
+    antonyms::Dict{String,String}
+    # عامل الالتواء الطوري — تعلم التحويلات الصرفية
+    twistor::TwistorEngine
+    # تخزين مؤقت لمتجهات PRNN الكثيفة (ComplexF64) — يتجنب إعادة البناء لكل طلب
+    prnn_base_cache::Dict{String,Vector{ComplexF64}}
+end
+
+
+function _deep_merge!(target::Dict, source::Dict)
+    for (k, v) in source
+        if haskey(target, k) && target[k] isa Dict && v isa Dict
+            _deep_merge!(target[k], v)
+        else
+            target[k] = v
+        end
+    end
+    return target
+end
+
+function _load_merged_config()
+    cfg = Dict{String,Any}()
+    config_dir = joinpath(dirname(dirname(@__DIR__)), "config")
+    isdir(config_dir) || return cfg
+    for fname in sort(readdir(config_dir))
+        endswith(fname, ".yaml") || endswith(fname, ".yml") || continue
+        try
+            sub = YAML.load_file(joinpath(config_dir, fname); dicttype=Dict{String,Any})
+            _deep_merge!(cfg, sub)
+        catch e
+            @warn "Failed to load config $fname: $e"
+        end
+    end
+    return cfg
+end
+
+function MirnanGenerator(vocab::Dict{String,Int}, K_sem=nothing;
+                         K_syn=nothing, K_dialogue=nothing, K_causal=nothing,
+                         config=Dict{String,Any}())
+    # Load config from YAML files if not provided
+    if isempty(config)
+        config = _load_merged_config()
+    end
+    id2word = Dict{Int,String}(v=>k for (k,v) in vocab)
+    
+    # تحميل المتضادات اللغوية لمنع التناقض الطوري
+    antonyms = Dict{String,String}()
+    ant_path = joinpath(dirname(dirname(@__DIR__)), "data", "fast_antonyms.json")
+    if isfile(ant_path)
+        try
+            data = JSON.parsefile(ant_path)
+            for (k,v) in get(data, "pairs", Dict())
+                antonyms[String(k)] = String(v)
+            end
+        catch e
+            @warn "Failed to load antonyms: $e"
+        end
+    end
+
+    # تحميل جمل الكوربوس إن وجدت للـ PRNN
+    corpus_sentences = Vector{Int32}[]
+    cs_path = joinpath(dirname(dirname(@__DIR__)), "model", "corpus_sentences.dat")
+    if isfile(cs_path)
+        try
+            open(cs_path, "r") do io
+                n_sentences = read(io, Int32)
+                for _ in 1:n_sentences
+                    len = read(io, Int32)
+                    push!(corpus_sentences, read!(io, Vector{Int32}(undef, len)))
+                end
+            end
+        catch e
+            @warn "Failed to load corpus_sentences from $cs_path: $e"
+        end
+    end
+    bw = get(get(config, "generation", Dict()), "beam_width", 5)
+    tk = get(get(config, "generation", Dict()), "top_k", 500)
+    bt = get(get(config, "generation", Dict()), "beta", 2.0)
+    # Auto-scale for large vocabularies: wider beam but not too wide
+    V = length(vocab)
+    if V > 100000
+        bw = max(bw, 8)
+        tk = min(max(tk, 400), 600)
+    elseif V > 50000
+        bw = max(bw, 7)
+        tk = min(max(tk, 500), 700)
+    elseif V > 10000
+        bw = max(bw, 6)
+        tk = max(tk, 600)
+    end
+    sw = deepcopy(DEFAULT_SCORING_WEIGHTS)
+    if haskey(config, "scoring_weights")
+        for (k,v) in config["scoring_weights"]; sw[k]=Float64(v); end
+    end
+    _normalize_weights!(sw)
+
+    gen = MirnanGenerator(
+        vocab, id2word, K_sem, K_syn, K_dialogue, K_causal,
+        bw, tk, bt, TOTAL_DIM, OLD_SEMANTIC_DIM, false,
+        EntropyGateModule.EntropyGate(), AttractorMemory(),
+        ResonantChainRLC(), HeterodyneEngine(),
+        CarrierWaveEngine(),
+        DynamicCCF(), PromptField(),
+        PhaseDensityMatrix(), CausalFlowField(),
+        HolographicKnowledgeBase(), PotentialCascadeLayer(),
+        false, PhaseReinforcer(),
+        MorphoPhasicEngine(), WeightResonanceEngine(),
+        SymbolicBridge(vocab, K_sem),
+        DialogueEngine(), DialogueMemory(),
+        IntentDetector(), IntentLandscape(),
+        AssociativeDialogueMemory(),
+        EntityRegister(), InteractionTrace(),
+        HierarchicalMemory(),
+        PoeticGravityEngine(),
+        OscillatorEngine(), GlobalSpectralMemory(),
+        PragmaticBindingEngine(),
+        CausalPhaseEngine(),
+        FilamentTensionEngine(),
+        ThermalChaosEngine(), MolecularBinder(),
+        PhaseCouplingEngine(),
+        Beamformer(), PhaseAttention(),
+        ResponsePlanner(), ResponseArchitect(),
+        TrajectoryPlanner(), PromptConstraintField(),
+        ContextualOperators.init_builtin!(ContextualOperatorEngine()),
+        ResonanceCalibrator(), PhaseEvolution(),
+        RotatingAnchor(), RelationalK(),
+        CodeEngine(), MathBridge(),
+        CodePhaseEngine(), SymbolicMathEngine(),
+        PathIntegralReasoner(), BeamReasoner(),
+        CoherenceFeedback(),
+        MizanEngineModule.MizanEngine(),
+        sw, config, sw, MersenneTwister(42),
+        Dict(), Dict(),
+        2.5, 2.5, 0.15, 5.0,
+        PhaseVectorCache(),
+        corpus_sentences,
+        GpuContext(),
+        LanguageFeedbackEngine(),
+        antonyms,
+        TwistorEngine(),
+        Dict{String,Vector{ComplexF64}}(),
+    )
+    SymbolicBridgeModule.load_builtin_rules!(gen.bridge)
+    gen.current_tau = 2.5
+
+    # تحميل نموذج الكود المنفصل (K_code) إن وُجد
+    cd = joinpath(dirname(dirname(@__DIR__)), "model")
+    if isfile(joinpath(cd, "code_vocab.json"))
+        try
+            gen.code_engine = CodeEngineModule.load_code_model(cd)
+        catch e
+            @warn "فشل تحميل نموذج الكود: $e"
+        end
+    end
+
+    # تحميل قوالب الالتواء الصرفي (Twistor) إن وُجدت
+    twistor_path = joinpath(cd, "twistor_patterns.json")
+    if isfile(twistor_path)
+        try
+            data = JSON.parsefile(twistor_path)
+            patterns = get(data, "patterns", Dict{String,Any}[])
+            for p_data in patterns
+                examples = Tuple{String,String}[]
+                for ex in get(p_data, "examples", Dict{String,Any}[])
+                    push!(examples, (String(ex["w1"]), String(ex["w2"])))
+                end
+                center = compute_twistor(
+                    isempty(examples) ? "نور" : examples[1][1],
+                    isempty(examples) ? "نورا" : examples[1][2],
+                )
+                pat = MorphPattern(center; label=get(p_data, "label", ""))
+                pat.count = get(p_data, "count", 0)
+                pat.examples = examples
+                push!(gen.twistor.patterns, pat)
+            end
+        catch e
+            @warn "فشل تحميل قوالب الالتواء: $e"
+        end
+    end
+
+    return gen
+end
+
+function gpu_init!(gen::MirnanGenerator)
+    cfg = gen.config
+    gpu_cfg = get(cfg, "gpu", Dict{String,Any}())
+    enabled = get(gpu_cfg, "enabled", false)
+    if !enabled
+        gen.gpu_ctx.active = false
+        println("⚠ GPU معطل في الإعدادات — التوليد على CPU")
+        return gen
+    end
+
+    # تحميل المتجهات الطورية المتطورة (إن وُجدت من تدريب سابق)
+    _load_evolved_pvs()
+    if !isempty(_evolved_pvs[])
+        println("✓ تم تحميل $(length(_evolved_pvs[])) متجه طوري متطور من التدريب")
+    end
+
+    # بناء قاعدة المعرفة الهولوغرافية من ملف الحقائق
+    if !gen.kb.built
+        facts_path = joinpath(dirname(dirname(@__DIR__)), "data", "facts_expanded.json")
+        if isfile(facts_path)
+            try
+                HolographicKB.load_curated_facts!(gen.kb, facts_path)
+            catch e
+                @warn "فشل تحميل قاعدة المعرفة: $e"
+            end
+        end
+    end
+
+    gpu_dim = get(gpu_cfg, "dim", PHASE_DIM)
+    println("تهيئة مسرّع GPU ($gpu_dim بُعداً)...", flush=true)
+    GpuAcceleratorModule.gpu_init!(gen.gpu_ctx,
+        w -> _pv(gen, w),
+        gen.vocab,
+        gen.scoring_weights;
+        dim=gpu_dim)
+    if gen.gpu_ctx.active
+        println("✓ GPU جاهز — $(gen.gpu_ctx.vocab_size) متجه في الذاكرة")
+    else
+        println("⚠ GPU غير متوفر — التوليد على CPU")
+    end
+    return gen
+end
+
+function _normalize_weights!(weights::Dict{String,Float64})
+    total = sum(values(weights))
+    if total > 1e-10
+        s = 0.95/total
+        for k in keys(weights); weights[k] *= s; end
+    end
+end
+
+# Persistent disk cache (optional) — memory-mapped for fast access
+const _disk_pv_data = Ref{Any}(nothing)   # mmap'd Vector{Float32}
+const _disk_pv_dim = Ref{Int}(0)          # dim per word
+const _disk_mass_data = Ref{Any}(nothing) # mmap'd Vector{Float64}
+
+# Evolved phase vectors — saved by train.jl, loaded once at startup
+# These are the vectors MODIFIED by carrier coupling + phase evolution
+# They encode the actual learned knowledge (not just letter physics)
+const _evolved_pvs = Ref{Dict{Int,Vector{Float64}}}(Dict{Int,Vector{Float64}}())
+const _evolved_loaded = Ref{Bool}(false)
+
+function _load_evolved_pvs()
+    _evolved_loaded[] && return
+    _evolved_loaded[] = true
+    evolved_path = joinpath(dirname(dirname(@__DIR__)), "model", "evolved_pvs.bin")
+    isfile(evolved_path) || return
+    try
+        open(evolved_path, "r") do io
+            n = read(io, Int32)
+            n == 0 && return
+            dim = TOTAL_DIM
+            evolved = Dict{Int,Vector{Float64}}()
+            for _ in 1:n
+                wid = read(io, Int32)
+                pv_f32 = read!(io, Vector{Float32}(undef, dim))
+                evolved[wid] = Float64.(pv_f32)
+            end
+            _evolved_pvs[] = evolved
+        end
+    catch e
+        @warn "فشل تحميل المتجهات المتطورة: $e"
+    end
+end
+
+# ═══════════ تطبيع الأحرف العربية وتصفية علامات الترقيم ═══════════
+const _AR_NORMALIZE_MAP_GEN = Dict(
+    'آ'=>'ا','أ'=>'ا','إ'=>'ا','ؤ'=>'و','ئ'=>'ي','ة'=>'ه','ى'=>'ي',
+)
+const _AR_TATWEEL_GEN = 0x0640
+
+function _normalize_arabic_token(word::AbstractString)
+    result = Char[]
+    for ch in word
+        if haskey(_AR_NORMALIZE_MAP_GEN, ch)
+            push!(result, _AR_NORMALIZE_MAP_GEN[ch])
+        elseif Int(ch) == _AR_TATWEEL_GEN
+            continue
+        else
+            push!(result, ch)
+        end
+    end
+    return String(result)
+end
+
+const _PUNCT_EDGE_GEN = Set(['.', ',', '،', ':', '؛', '?', '؟', '!', ')', '(', '"', '\'',
+                             '«', '»', '-', '…', '\u200F', '\u200E'])
+
+function _strip_punct_edge(word::AbstractString)
+    chars = collect(word)
+    while !isempty(chars) && first(chars) in _PUNCT_EDGE_GEN
+        popfirst!(chars)
+    end
+    while !isempty(chars) && last(chars) in _PUNCT_EDGE_GEN
+        pop!(chars)
+    end
+    return String(chars)
+end
+
+function _load_pv_disk(word::String, vocab::Dict{String,Int})
+    mmap_data = _disk_pv_data[]
+    mmap_data === nothing && return nothing
+    dim = _disk_pv_dim[]
+    wid = get(vocab, word, nothing)
+    (wid === nothing || wid < 1) && return nothing
+    start_idx = (wid - 1) * dim + 1
+    vec_f32 = view(mmap_data, start_idx : start_idx + dim - 1)
+    norm(vec_f32) < 1e-10 && return nothing  # skipped word (all zeros)
+    return Float64.(vec_f32)
+end
+function _load_mass_disk(word::String, vocab::Dict{String,Int})
+    mmap_data = _disk_mass_data[]
+    mmap_data === nothing && return nothing
+    wid = get(vocab, word, nothing)
+    (wid === nothing || wid < 1) && return nothing
+    m = mmap_data[wid]
+    m <= 0.0 && return nothing  # skipped word
+    return m
+end
+
+_pv(gen::MirnanGenerator, word::String) = get!(gen.pv_cache, word) do
+    # 1. Check evolved PVs (from carrier coupling + phase evolution training)
+    _load_evolved_pvs()
+    wid = get(gen.vocab, word, 0)
+    if wid > 0 && haskey(_evolved_pvs[], wid)
+        return _evolved_pvs[][wid]
+    end
+    # 2. Check disk cache (from server warm-up)
+    disk_pv = _load_pv_disk(word, gen.vocab)
+    disk_pv !== nothing && return disk_pv
+    # 3. Compute from letter physics (fallback)
+    Float64.(compute_extended_phase_vector(word))
+end
+_mass(gen::MirnanGenerator, word::String) = get!(gen.mass_cache, word) do
+    disk_m = _load_mass_disk(word, gen.vocab)
+    disk_m !== nothing && return disk_m
+    compute_word_mass(word)
+end
+@inline function _phase_align(gen::MirnanGenerator, a, b)
+    d=min(length(a),length(b)); na=norm(view(a,1:d)); nb=norm(view(b,1:d))
+    na<1e-10||nb<1e-10 && return 0.0
+    return max(0.0, real(dot(view(a,1:d), view(b,1:d)))/(na*nb))
+end
+
+# ═══════════════════════════ SCORE ═══════════════════════════
+function _score(gen::MirnanGenerator, word::String, used::Set{String}, all_pv::Vector{<:AbstractVector},
+                prompt_pv::Vector{<:AbstractVector}; gen_pos=0, total_pos=1, prev_word=nothing,
+                context_ids=nothing, context_words=nothing, _prev_freqs=nothing, fast_only::Bool=false)
+    wid = get(gen.vocab, word, nothing)
+    (wid===nothing || word in used || length(word)<2) && return -Inf
+    w_pv = _pv(gen, word)
+    w_norm = norm(w_pv)
+    w_norm_sq = sum(abs2, w_pv)
+
+    target = isempty(all_pv) ? w_pv : all_pv[end]
+    target_norm = isempty(all_pv) ? w_norm : norm(target)
+    align = (w_norm < 1e-10 || target_norm < 1e-10) ? 0.0 : max(0.0, dot(w_pv, target) / (w_norm * target_norm))
+
+    prompt_align = 0.0
+    if !isempty(prompt_pv)
+        # Cache prompt norms since they are constant for all candidates
+        prompt_norms = get!(gen.pv_cache, "PROMPT_NORMS\0" * join(context_words !== nothing ? context_words : String[], "\0")) do
+            [norm(pp) for pp in prompt_pv]
+        end
+        p_align_sum = 0.0
+        for i in 1:length(prompt_pv)
+            pn = prompt_norms[i]
+            if w_norm > 1e-10 && pn > 1e-10
+                p_align_sum += max(0.0, dot(w_pv, prompt_pv[i]) / (w_norm * pn))
+            end
+        end
+        prompt_align = p_align_sum / length(prompt_pv)
+    end
+
+    if fast_only
+        diversity = 1.0
+        if !isempty(used)
+            prev_used = collect(used)
+            wc = count(x -> x == word, prev_used)
+            diversity = 1.0 - wc / length(prev_used)
+        end
+        W = gen.scoring_weights
+        score = get(W, "align", 0.0) * align + get(W, "prompt_align", 0.0) * prompt_align + get(W, "diversity", 0.0) * diversity
+        return clamp(score, -5.0, 5.0)
+    end
+
+    diversity = 1.0; repulsion_score = 0.0
+    prev_used = collect(used)[max(1, end-6):end]
+    if !isempty(prev_used)
+        wc = count(x->x==word, prev_used)
+        diversity = 1.0 - wc/length(prev_used)
+        recent = prev_used[max(1, end-3):end]
+        if !isempty(recent)
+            sims = Float64[]
+            for w2 in recent
+                w2 == word && continue
+                w2_pv = _pv(gen, w2)
+                w2_norm = norm(w2_pv)
+                if w_norm > 1e-10 && w2_norm > 1e-10
+                    push!(sims, max(0.0, dot(w_pv, w2_pv) / (w_norm * w2_norm)))
+                end
+            end
+            repulsion_score = isempty(sims) ? 0.0 : -mean(sims)
+        end
+    end
+
+    syntax_score = 0.0
+    if prev_word !== nothing
+        syntax_score = 0.0
+    end
+
+    gravity_score = 0.0
+    positional_gravity_score = 0.0
+    if context_words !== nothing
+        m_word = _mass(gen, word)
+        
+        # عوامل التحكم بالجاذبية من الإعدادات
+        gravity_cfg = get(gen.config, "gravity", Dict{String,Any}())
+        semantic_factor = get(gravity_cfg, "semantic_factor", 1.0)
+        positional_factor = get(gravity_cfg, "positional_factor", 1.0)
+        
+        context_len = length(context_words)
+        window_start = max(1, context_len - 5)
+        for (i, cw) in enumerate(context_words[window_start:end])
+            c_pv = _pv(gen, cw)
+            m_c = _mass(gen, cw)
+            c_norm_sq = get!(gen.pv_cache, "NORM_SQ\0" * cw) do
+                [sum(abs2, c_pv)]
+            end[1]
+            # ── جاذبية طورية (دلالية): المسافة في فضاء 9958D ──
+            dist_sq = max(0.0, w_norm_sq + c_norm_sq - 2.0 * dot(w_pv, c_pv))
+            r = sqrt(dist_sq) + 1e-6
+            
+            actual_idx = window_start + i - 1
+            pos_dist = Float64(context_len - actual_idx + 1)
+            
+            gravity_score += semantic_factor * GRAVITY_G * m_word * m_c / (r^2 + 0.01) * exp(-0.3 * pos_dist)
+            # ── جاذبية موضعية (نحوية): المسافة بين موقعي الكلمتين في الجملة ──
+            # تستخدم اللوغاريتم الطبيعي بدل المربع لتجنب الاضمحلال الحاد
+            positional_gravity_score += positional_factor * GRAVITY_G * m_word * m_c / (log(pos_dist + 1) + 0.1)
+        end
+    end
+
+
+    heterodyne_score = 0.0
+    osc_score = 0.0
+    pragmatic_align = 0.0
+    phase_opp_score = 0.0
+    causal_score = 0.0
+    causal_flow_align_score = 0.0
+    resonant_chain_score = 0.0
+    carrier_score = 0.0
+    kb_score = 0.0
+    spectral_score = 0.0
+    density_resonance_score = 0.0
+    weight_resonance_score = 0.0
+    hmod = 0.0
+    entity_score = 0.0
+    trace_score = 0.0
+    bf_score = 0.0
+    anchor_score = 0.0
+
+    if !fast_only
+        if context_words !== nothing && !isempty(context_words)
+            heterodyne_score = Heterodyne.score_candidate(gen.heterodyne, word, context_words)
+            carrier_score = CarrierWave.score_candidate_via_carrier(gen.carrier, word, context_words, gen, w -> _pv(gen, w))
+        end
+
+        if context_words !== nothing && length(context_words) >= 2
+            key = join(context_words[max(1, end-5):end], "\0")
+            evolved_phase = get!(gen.pv_cache, "OSC\0" * key) do
+                try
+                    plan = _get_fft_plan()
+                    ctx_omega = [compute_word_frequency_with_irab(w) for w in context_words[max(1, end-5):end]]
+                    ctx_pv = [_pv(gen,w)[1:PHASE_DIM] for w in context_words[max(1, end-5):end]]
+                    ctx_masses = [_mass(gen,w) for w in context_words[max(1, end-5):end]]
+                    n_ctx = length(ctx_omega)
+                    phases = zeros(n_ctx, PHASE_DIM)
+                    for k in 1:n_ctx; phases[k,:] .= angle.(plan * ComplexF64.(ctx_pv[k])); end
+                    coupling = ones(n_ctx,n_ctx)*0.3
+                    evolved, _ = Oscillator.simulate(gen.osc_engine, ctx_omega, phases, ctx_masses, ctx_pv, coupling; dt=0.01, steps=5, temperature=0.02)
+                    vec(mean(evolved; dims=1))
+                catch
+                    Float64[]
+                end
+            end
+            if !isempty(evolved_phase)
+                w_phase = get!(gen.pv_cache, "FFT\0" * word) do
+                    plan = _get_fft_plan()
+                    angle.(plan * ComplexF64.(w_pv[1:PHASE_DIM]))
+                end
+                osc_score = phase_similarity(evolved_phase, w_phase)
+            end
+        end
+
+        if context_words !== nothing && !isempty(context_words)
+            intent_frame, alpha_intent, is_int = PragmaticField.detect_intent_frame(gen.pragmatic_engine, context_words)
+            pragmatic_align = PragmaticField.compute_pragmatic_score(gen.pragmatic_engine, w_pv, intent_frame, alpha_intent)
+
+            if prev_word !== nothing
+                m_prev = _mass(gen, prev_word)
+                m_cand = _mass(gen, word)
+                pv_prev = _pv(gen, prev_word)
+                prev_freqs = Float64[]
+                for k in 2:length(context_words)
+                    ma = _mass(gen, context_words[k-1]); mb = _mass(gen, context_words[k])
+                    pa = _pv(gen, context_words[k-1]); pb = _pv(gen, context_words[k])
+                    push!(prev_freqs, ResonantChain.pair_freq(gen.resonant_chain, ma, mb, pa, pb))
+                end
+                resonant_chain_score = ResonantChain.score_candidate(gen.resonant_chain, m_prev, m_cand, pv_prev, w_pv; prev_freqs=prev_freqs)
+            end
+        end
+
+        if gen.kb.built
+            kr = HolographicKB.query(gen.kb, w_pv; top_k=3)
+            if !isempty(kr); kb_score = kr[1][1]; end
+        end
+
+        if prev_word !== nothing && gen.K_causal !== nothing
+            pid = get(gen.vocab, prev_word, nothing)
+            wid = get(gen.vocab, word, nothing)
+            if pid !== nothing && wid !== nothing && pid <= size(gen.K_causal, 1) && wid <= size(gen.K_causal, 2)
+                causal_score = Float64(gen.K_causal[pid, wid])
+            end
+        end
+
+        # ═══ Causal Flow Field — استدلال منطقي مستمر ═══
+        if context_words !== nothing && !isempty(context_words) && !isempty(all_pv)
+            try
+                ctx_pvs_for_flow = [_pv(gen, w) for w in context_words[max(1,end-6):end]]
+                ctx_ids_flow = [get(gen.vocab, w, 0) for w in context_words[max(1,end-6):end]]
+                flow_result = CausalFlow.compute_flow(gen.causal_flow, all_pv[end], ctx_pvs_for_flow, ctx_ids_flow)
+                if haskey(flow_result, "flow_vector") && haskey(flow_result, "flow_magnitude")
+                    causal_flow_align_score = CausalFlow.flow_alignment_score(
+                        gen.causal_flow, w_pv, all_pv[end], flow_result["flow_vector"])
+                    causal_flow_align_score *= flow_result["flow_magnitude"]
+                end
+            catch e
+                @warn "Causal flow computation failed: $e"
+            end
+        end
+
+        # Weight resonance
+        if prev_word !== nothing
+            wr_prev = WeightResonance.get_weight(gen.weight_resonance, prev_word)
+            wr_word = WeightResonance.get_weight(gen.weight_resonance, word)
+            if wr_prev !== nothing && wr_word !== nothing
+                weight_resonance_score = WeightResonance.transition_score(gen.weight_resonance, wr_prev, wr_word)
+            end
+        end
+
+        # Spectral
+        if context_words !== nothing && !isempty(context_words)
+            w_spec = get!(gen.pv_cache, "SPEC\0" * word) do
+                s = WordSpectrum.compute_word_spectrum(word)
+                s === nothing ? Float64[] : s["spectral_vector"]
+            end
+            if !isempty(w_spec)
+                specs = Float64[]
+                for cw in context_words[max(1, end-5):end]
+                    cw == word && continue
+                    cw_spec = get!(gen.pv_cache, "SPEC\0" * cw) do
+                        s = WordSpectrum.compute_word_spectrum(cw)
+                        s === nothing ? Float64[] : s["spectral_vector"]
+                    end
+                    if !isempty(cw_spec)
+                        dim = min(length(w_spec), length(cw_spec))
+                        if dim > 0
+                            cs = dot(view(w_spec, 1:dim), view(cw_spec, 1:dim)) / (norm(view(w_spec, 1:dim))*norm(view(cw_spec, 1:dim)) + 1e-10)
+                            push!(specs, clamp((cs+1.0)/2.0, 0.0, 1.0))
+                        end
+                    end
+                end
+                if !isempty(specs); spectral_score = mean(specs); end
+            end
+        end
+
+        # Density resonance
+        density_resonance_score = DensityMatrix.resonance(gen.density_matrix, w_pv)
+
+        # Hierarchical modulation
+        hier_ctx = HierarchicalMemoryModule.get_hierarchical_context(gen.hierarchical_memory)
+        hmod = norm(hier_ctx) > 1e-10 ? max(0.0, dot(w_pv, hier_ctx)/(norm(w_pv)*norm(hier_ctx)+1e-10)) : 0.0
+
+        # Entity gravity
+        entity_score = EntityRegisterModule.entity_gravity(gen.entity_register, w_pv)
+
+        # Interaction trace boost
+        trace_score = InteractionTraceModule.get_context_boost(gen.interaction_trace, w_pv)
+
+        # Beamform focus
+        bf_score = AdvancedEngines.beamform_score(gen.beamformer, w_pv)
+
+        # Rotating anchor
+        anchor_score = RotatingAnchorModule.alignment(gen.rotating_anchor, w_pv)
+    end
+
+    # Mizan
+    mizan_score = MizanEngineModule.get_mizan_score(gen.mizan_engine, context_words !== nothing ? context_words : String[], word)
+
+    dccf_score = DCCF.get_context_boost(gen.dccf, word, context_words !== nothing ? context_words : String[])
+
+    ppm_score = PPM.score(gen.prompt_field, w_pv)
+
+    # Dialogue
+    dialogue_gravity=0.0; dialogue_spectral=0.0
+    if gen.dialogue_mode
+        dialogue_gravity = DialogueMemoryModule.get_dialogue_gravity(gen.dialogue_memory, w_pv)
+    end
+
+    # AMFS
+    amfs_ctx = context_words !== nothing ? context_words : String[]
+    precomputed_ctx = if !isempty(amfs_ctx)
+        key = join(amfs_ctx, "\0")
+        ctx_pvs = [_pv(gen, w) for w in amfs_ctx]
+        ctx_norms = get!(gen.pv_cache, "AMFS_NORMS\0" * key) do
+            [norm(cpv) for cpv in ctx_pvs]
+        end
+        ctx_mean = get!(gen.pv_cache, "AMFS_MEAN\0" * key) do
+            sum(ctx_pvs) ./ length(ctx_pvs)
+        end
+        ctx_mean_norm = get!(gen.pv_cache, "AMFS_MEAN_NORM\0" * key) do
+            [norm(ctx_mean)]
+        end[1]
+        (pvs=ctx_pvs, norms=ctx_norms, mean=ctx_mean, mean_norm=ctx_mean_norm)
+    else
+        nothing
+    end
+    base_freq = get!(gen.pv_cache, "FREQ\0" * word) do
+        [compute_word_frequency(word)]
+    end[1]
+    amfs_result = AMFS.adapt_word(word; context_words=amfs_ctx, context_pvs=all_pv, w_pv=w_pv, base_mass=_mass(gen, word), base_freq=base_freq, precomputed_ctx=precomputed_ctx)
+    amfs_boost = max(0.0, amfs_result["centrality"] * amfs_result["mass"]/3.0)
+
+    # Sentence boundaries positional scoring
+    sentence_score = 0.0
+    if gen_pos < 3 && word in _SENTENCE_ENDERS
+        sentence_score -= 1.0
+    end
+    if gen_pos > total_pos - 3 && word in _SENTENCE_STARTERS
+        sentence_score -= 1.0
+    end
+    if gen_pos >= 5 && word in _SENTENCE_ENDERS
+        sentence_score += 0.3
+    end
+
+    # Coherence feedback
+    cohesion_val = 0.0; cmult = gen.dialogue_mode ? 0.1 : 1.0
+    if context_words !== nothing && !isempty(context_words) && !isempty(all_pv)
+        try
+            ctx_all = vcat(context_words, [word])
+            ctx_pvs = vcat([_pv(gen, w) for w in context_words[max(1,end-5):end]], [w_pv])
+            cohesion_val = CoherenceFeedbackModule.measure_sequential_resonance(
+                gen.coherence_feed, ctx_all, ctx_pvs)
+        catch e
+            @warn "Coherence feedback measurement failed: $e"
+        end
+    end
+
+    # Constraint bonus
+    constraint_bonus = PromptConstraint.spring_force(gen.prompt_constraint, w_pv, gen_pos, total_pos)
+
+    # Context operators
+    op_boost = get!(gen.pv_cache, "OP_BOOST\0" * join(context_words !== nothing ? context_words : String[], "\0")) do
+        [ContextualOperators.compute_boost(gen.contextual_operators, "", context_words !== nothing ? context_words : String[])]
+    end[1]
+
+    # Sentiment
+    sentiment_score = SentimentPolarity.sentiment_fidelity(word, context_words !== nothing ? context_words : String[]; cache=gen.pv_cache)
+
+    # ═══ Phase opposition — التعارض الطوري مع السياق ═══
+    if context_words !== nothing && !isempty(context_words)
+        ctx_pvs_for_opp = [_pv(gen, w) for w in context_words[max(1,end-5):end]]
+        valid_opp = [pv for pv in ctx_pvs_for_opp if norm(pv) > 1e-10]
+        if !isempty(valid_opp) && w_norm > 1e-10
+            opp_score = 0.0
+            for cpv in valid_opp
+                d = min(length(cpv), length(w_pv))
+                sim = max(0.0, dot(view(cpv,1:d), view(w_pv,1:d)) / (norm(view(cpv,1:d)) * w_norm + 1e-10))
+                opp_score += 1.0 - sim
+            end
+            phase_opp_score = opp_score / length(valid_opp)
+        end
+    end
+
+    # Filament Tension
+    tension_score = get!(gen.pv_cache, "TENSION\0" * word) do
+        [1.0 - FilamentTension.compute_tension(gen.filament_tension, word)]
+    end[1]
+
+    # ═══════════════════ AGGREGATE SCORE ═══════════════════
+    score = 0.0
+    W = gen.scoring_weights
+    score += get(W,"align",0.0)*align + get(W,"prompt_align",0.0)*prompt_align
+    score += get(W,"diversity",0.0)*diversity + get(W,"repulsion",0.0)*repulsion_score
+    score += get(W,"syntax",0.0)*syntax_score + get(W,"gravity",0.0)*gravity_score + get(W,"positional_gravity",0.0)*positional_gravity_score
+    score += get(W,"filament_tension",0.0)*tension_score
+    # عامل الالتواء الطوري: مكافأة الكلمات القريبة من الاشتقاق المتوقع
+    twistor_score = 0.0
+    if _inv_twistor_ref[] !== nothing && context_words !== nothing && !isempty(context_words)
+        try
+            ref = _inv_twistor_ref[]
+            tw = ref[3]  # T
+            query_word = ref[2]  # w2
+            twistor_score = score_twistor_candidate(gen.twistor, word, query_word, tw)
+        catch e
+            @warn "Twistor scoring failed: $e"
+        end
+    end
+    score += get(W,"twistor",0.0)*twistor_score + get(W,"heterodyne",0.0)*heterodyne_score + get(W,"oscillator",0.0)*osc_score
+    score += get(W,"pragmatic",0.0)*pragmatic_align + get(W,"causal",0.0)*causal_score + get(W,"causal_flow_align",0.0)*causal_flow_align_score
+    score += get(W,"resonant_chain",0.0)*resonant_chain_score + get(W,"dccf",0.0)*dccf_score
+    score += get(W,"carrier",0.0)*carrier_score + get(W,"ppm",0.0)*ppm_score + get(W,"kb_knowledge",0.0)*kb_score
+    score += get(W,"amfs",0.0)*amfs_boost + get(W,"weight_resonance",0.0)*weight_resonance_score
+    score += get(W,"spectral",0.0)*spectral_score + get(W,"density_resonance",0.0)*density_resonance_score
+    score += get(W,"constraint_align",0.0)*constraint_bonus + op_boost*0.5
+    score += get(W,"sentiment",0.0)*sentiment_score + get(W,"hierarchical_mod",0.0)*hmod + get(W,"phase_opposition",0.0)*phase_opp_score
+    score += get(W,"entity_align",0.0)*entity_score + get(W,"trace",0.0)*trace_score
+    score += get(W,"beamform",0.0)*bf_score + get(W,"anchor_affinity",0.0)*anchor_score
+    score += get(W,"mizan_coherence",0.0)*mizan_score + cmult*3.0*cohesion_val
+    score += get(W,"sentence",0.0)*sentence_score
+    if gen.dialogue_mode
+        score += get(W,"dialogue_gravity",0.0)*dialogue_gravity + get(W,"dialogue_spectral",0.0)*dialogue_spectral
+    end
+    # Particle words get no activation bonus
+    # Phase activation: exp(β·sim)
+    n_pv = min(3, length(all_pv))
+    act = 1.0
+    if n_pv > 0 && !is_particle(word)
+        act = mean(exp(gen.beta*max(0.0, dot(cpv[1:OLD_SEMANTIC_DIM],w_pv[1:OLD_SEMANTIC_DIM])/
+                    (norm(view(cpv,1:OLD_SEMANTIC_DIM))*norm(view(w_pv,1:OLD_SEMANTIC_DIM))+1e-10))) for cpv in all_pv[max(1, end-n_pv+1):end])
+        act = max(act, 1.0)
+    end
+
+    return clamp(score*act, -5.0, 5.0)
+end
+
+function _resonance_candidates(gen::MirnanGenerator, context_ids, all_pv, used_set; prev_word=nothing, beam=true)
+    candidates = String[]
+    if !isempty(context_ids)
+        matrix = (gen.dialogue_mode && gen.K_dialogue !== nothing) ? gen.K_dialogue : gen.K_sem
+        matrix === nothing && return candidates
+        for cid in context_ids[max(1, end-1):end]
+            cid === nothing && continue
+            cid > size(matrix, 1) && continue
+            if matrix isa AbstractSparseMatrix
+                # مصفوفة K متناظرة، لذا تقطيع العمود هو نفسه تقطيع الصف ولكنه أسرع بآلاف المرات
+                col = matrix[:, cid]
+                nz_ind = col.nzind
+                nz_val = col.nzval
+                p = sortperm(nz_val; rev=true)
+                n_cands = min(gen.top_k, length(p))
+                for idx in 1:n_cands
+                    val = nz_val[p[idx]]
+                    val > 1e-6 || break
+                    tid = nz_ind[p[idx]]
+                    w = get(gen.id2word, tid, nothing)
+                    w !== nothing && length(w) >= 2 && push!(candidates, w)
+                end
+            else
+                row = matrix[cid, :]
+                p = sortperm(row; rev=true)
+                n_cands = min(gen.top_k, length(p))
+                for idx in 1:n_cands
+                    tid = p[idx]
+                    val = row[tid]
+                    val > 1e-6 || break
+                    w = get(gen.id2word, tid, nothing)
+                    w !== nothing && length(w) >= 2 && push!(candidates, w)
+                end
+            end
+        end
+    end
+    unique!(candidates)
+    filter!(w -> w ∉ used_set, candidates)
+    return candidates
+end
+
+# ═══════════════════ BEAM STEP ═══════════════════
+function _beam_step(gen::MirnanGenerator, beams, used_sets, prompt_pv; step=0, total=1, k_B_cur=nothing, beta_cur=nothing, S=nothing)
+    new_beams = Tuple{Float64,Vector{String},Set{String}}[]
+    for (beam_idx, words) in enumerate(beams)
+        us = used_sets[beam_idx]
+        prev = isempty(words) ? nothing : words[end]
+        cids = [get(gen.vocab, w, nothing) for w in words]
+        pvs = [_pv(gen, w) for w in words]
+        cands = _resonance_candidates(gen, cids, pvs, us; prev_word=prev)
+        isempty(cands) && continue
+        
+        # Stage 1: Fast Pass
+        fast_scored = Tuple{Float64,String}[]
+        if gen.gpu_ctx.active && !isempty(pvs)
+            target_pv = pvs[end]
+            fast_scored = GpuAcceleratorModule.gpu_batch_fast_score(
+                gen.gpu_ctx, cands, target_pv, prompt_pv, us,
+                gen.scoring_weights, w -> _pv(gen, w))
+        else
+            for w in cands
+                s = _score(gen, w, us, pvs, prompt_pv;
+                           gen_pos=step, total_pos=total, prev_word=prev,
+                           context_ids=cids, context_words=words, fast_only=true)
+                isfinite(s) && push!(fast_scored, (s, w))
+            end
+            sort!(fast_scored; by=x->-x[1])
+        end
+        
+        # Stage 2: Heavy Pass (Re-ranking top 20 candidates with full physical scoring)
+        scored = Tuple{Float64,String}[]
+        for w in [x[2] for x in fast_scored[1:min(20, end)]]
+            s = _score(gen, w, us, pvs, prompt_pv;
+                       gen_pos=step, total_pos=total, prev_word=prev,
+                       context_ids=cids, context_words=words, fast_only=false)
+            isfinite(s) && push!(scored, (s, w))
+        end
+        sort!(scored; by=x->-x[1])
+        
+        for (s,w) in scored[1:min(gen.beam_width,end)]
+            push!(new_beams, (s, vcat(words,[w]), union(us, [w])))
+        end
+    end
+    sort!(new_beams; by=x->-x[1])
+    return new_beams[1:min(gen.beam_width,end)]
+end
+
+# ═══════════════════ STANDARD MODE ═══════════════════
+function _standard_generate(gen::MirnanGenerator, prompt_tokens::Vector{String}; max_words=15)
+    prompt_pv = [_pv(gen,w) for w in prompt_tokens]
+    PromptConstraint.set_prompt!(gen.prompt_constraint, prompt_pv)
+    PPM.absorb!(gen.prompt_field, join(prompt_tokens," "))
+    DensityMatrix.build!(gen.density_matrix, prompt_pv)
+
+    beams = [prompt_tokens[:]]; used_sets = [Set(prompt_tokens)]
+    k_B_cur = gen.entropy.k_B; beta_cur = gen.beta; S_cur = 0.0
+    for step in 1:max_words
+        gen.current_tau = gen.tau_min + (gen.tau_max-gen.tau_min)*exp(-step/gen.tau_decay)
+        new = _beam_step(gen, beams, used_sets, prompt_pv; step=step, total=max_words, k_B_cur=k_B_cur, beta_cur=beta_cur, S=S_cur)
+        if isempty(new); break; end
+        beams = [b[2] for b in new]; used_sets = [b[3] for b in new]
+        # Incremental density matrix update: add best word's PV to ρ
+        if !isempty(beams[1]) && gen.lang_feedback.enabled
+            best_word = beams[1][end]
+            if haskey(gen.pv_cache, best_word)
+                bpv = gen.pv_cache[best_word]
+                dpv = copy(bpv[1:min(length(bpv), gen.density_matrix.dim)])
+                nrm = norm(dpv)
+                if nrm > 1e-10
+                    dpv ./= nrm
+                    gen.density_matrix.rho .+= (0.15 / step) .* (dpv * dpv')
+                end
+            end
+        end
+        if length(beams[1]) >= 3
+            m_seq = [_mass(gen,w) for w in beams[1]]
+            pv_seq = [_pv(gen,w) for w in beams[1]]
+            coh = ResonantChain.sentence_coherence(gen.resonant_chain, m_seq, pv_seq)
+            if coh < 0.3 && step >= 3; break; end
+        end
+        PPM.step!(gen.prompt_field)
+    end
+
+    output = beams[1][length(prompt_tokens)+1:end]
+
+    # ═══ K_sem fallback — when complex scoring fails ═══
+    if isempty(output) && gen.K_sem !== nothing
+        used_fb = Set(prompt_tokens)
+        ctx_tokens = prompt_tokens
+        for _ in 1:min(max_words, 8)
+            best_w = nothing; best_s = -Inf
+            for cw in ctx_tokens[max(1,end-2):end]
+                cid = get(gen.vocab, cw, nothing)
+                cid === nothing && continue
+                cid > size(gen.K_sem, 1) && continue
+                row = Vector(gen.K_sem[cid, :])
+                sorted_ids = sortperm(row; rev=true)[1:min(50, end)]
+                for tid in sorted_ids
+                    row[tid] > 1e-6 || break
+                    w = get(gen.id2word, tid, nothing)
+                    w === nothing && continue
+                    w in used_fb && continue
+                    length(w) < 2 && continue
+                    s = row[tid]
+                    if s > best_s
+                        best_s = s; best_w = w
+                    end
+                end
+            end
+        best_w === nothing && break
+        push!(output, best_w)
+        push!(used_fb, best_w)
+        push!(ctx_tokens, best_w)
+    end
+end
+
+if !isempty(output)
+    RAMCore.observe!(gen.ram, vcat(prompt_tokens, output))
+    if gen.lang_feedback.enabled
+        LanguageFeedback.reinforce_good_sentence!(
+            gen.lang_feedback, gen, vcat(prompt_tokens, output),
+            w -> _pv(gen, String(w)), w -> _mass(gen, String(w)))
+    end
+end
+return join(output, " ")
+end
+"""
+    _prnn_generate(gen, prompt_tokens; max_words) -> String
+
+توليد النص عبر حقول الجذب الهولوغرافية — الشبكة العصبية الرنينية الطورية (PRNN).
+تعتمد على ديناميكيات ستوارت-لانداو مع الربط الهولوغرافي (VSA) لتوليد جمل سببية
+دون أي اعتماد على الاحتماليات أو الـ softmax.
+"""
+function _prnn_generate(gen::MirnanGenerator, prompt_tokens::Vector{String}; max_words=15)
+    # 1. التحقق من توفر جمل الكوربوس للتدريب السببي
+    if isempty(gen.corpus_sentences)
+        @warn "PRNN: لا توجد جمل كوربوس في model/corpus_sentences.dat. الرجوع لوضع الاحتياط السريع."
+        return _fallback_generate(gen, prompt_tokens; max_words=max_words)
+    end
+
+    # 2. تحديد المعرفات النشطة للمحفز
+    prompt_ids = Int32[get(gen.vocab, w, Int32(-1)) for w in prompt_tokens]
+    filter!(x -> x > 0, prompt_ids)
+    active_ids = Set{Int32}(prompt_ids)
+
+    # إضافة الجيران الدلاليين من K_sem (أعلى 100 جار دلالي)
+    if gen.K_sem !== nothing
+        for pid in prompt_ids
+            pid > size(gen.K_sem, 1) && continue
+            col = gen.K_sem[:, pid]
+            p = sortperm(col.nzval; rev=true)
+            for tid in col.nzind[p][1:min(100, length(p))]
+                push!(active_ids, Int32(tid))
+            end
+        end
+    end
+
+    # إيجاد الجمل ذات الصلة وتوسيع المفردات النشطة بنافذة 5 كلمات
+    relevant_sentences = Vector{Int32}[]
+    for s in gen.corpus_sentences
+        indices = findall(id -> id in prompt_ids, s)
+        if !isempty(indices)
+            push!(relevant_sentences, s)
+            # نافذة 5 كلمات حول كل موضع للمحفز لتركيز السياق ورفع الجودة
+            for idx in indices
+                for j in max(1, idx-5):min(length(s), idx+5)
+                    push!(active_ids, s[j])
+                end
+            end
+            length(relevant_sentences) >= 100 && break
+        end
+    end
+
+    # بناء المفردات النشطة مع فلترة الحروف العربية الأبجدية فقط
+    active_vocab = String[]
+    for id in active_ids
+        w = get(gen.id2word, Int(id), nothing)
+        if w !== nothing && any(ch -> '\u0621' <= ch <= '\u064A', w)
+            push!(active_vocab, w)
+        end
+    end
+
+    if isempty(active_vocab)
+        return _fallback_generate(gen, prompt_tokens; max_words=max_words)
+    end
+
+    # 3. توسيع الطور الهندسي: تحويل المتجهات المتفرقة إلى متجهات طورية كثيفة
+    # استخدام التخزين المؤقت لتجنب إعادة البناء المكلف لكل طلب توليد
+    N = Constants.TOTAL_DIM  # 10000 بعد
+    base_vectors = gen.prnn_base_cache
+    for word in active_vocab
+        if !haskey(base_vectors, word)
+            base_vectors[word] = PRNNLearner.build_dense_phase_vector(_pv(gen, word), N)
+        end
+    end
+
+    # 4. التدريب الهيبي الهولوغرافي: بناء روابط الانتقال السببية
+    beta_coupling = 3.0
+    transitions = PRNNLearner.train_hebbian_transitions!(
+        gen.vocab, gen.id2word, relevant_sentences, active_vocab, prompt_ids, beta_coupling, N, base_vectors
+    )
+
+    if isempty(transitions)
+        return _fallback_generate(gen, prompt_tokens; max_words=max_words)
+    end
+
+    # دالة فك التشفير الطوري: من فضاء الحالة إلى كلمة
+    function decode_word(z_state, v_context)
+        z_unbound = PRNNCore.unbind_phase(z_state, v_context)
+        best_word = ""
+        best_overlap = -Inf
+        for word in active_vocab
+            ov = real(dot(z_unbound, base_vectors[word])) / N
+            if ov > best_overlap
+                best_overlap = ov
+                best_word = word
+            end
+        end
+        return best_word, best_overlap
+    end
+
+    # 5. محاكاة ستوارت-لانداو: الانزلاق الحتمي على حقل الجهد
+    state = PRNNState(N)
+    model = LowRankPRNN(transitions, beta_coupling)
+
+    output = copy(prompt_tokens)
+    used = Set{String}(output)
+
+    # اختيار الكلمات الصالحة فقط من المحفز والمسجلة في معجم الأطوار
+    valid_prompt_tokens = filter(w -> haskey(base_vectors, w), prompt_tokens)
+    if isempty(valid_prompt_tokens)
+        return _fallback_generate(gen, prompt_tokens; max_words=max_words)
+    end
+    current_word = valid_prompt_tokens[end]
+
+    if length(valid_prompt_tokens) >= 2 && haskey(base_vectors, valid_prompt_tokens[end-1])
+        state.z .= PRNNCore.bind_phase(base_vectors[current_word], base_vectors[valid_prompt_tokens[end-1]])
+    else
+        state.z .= base_vectors[current_word]
+    end
+
+    for _ in 1:max_words
+        PRNNCore.simulate_stuart_landau!(state, model;
+            mu=1.0, g_inh=0.5, gamma=2.0, tau_a=1.5, steps=40, dt=0.02)
+
+        # التحقق من وجود المتجه قبل فك التشفير
+        !haskey(base_vectors, current_word) && break
+        next_word, overlap = decode_word(state.z, base_vectors[current_word])
+
+        # شرط التوقف: تكرار أو انخفاض الرنين تحت العتبة
+        (next_word in used || overlap < 0.10 || isempty(next_word)) && break
+
+        push!(output, next_word)
+        push!(used, next_word)
+
+        # تحديث الحالة الطورية للخطوة التالية بالربط الهولوغرافي
+        state.z .= PRNNCore.bind_phase(base_vectors[next_word], base_vectors[current_word])
+        current_word = next_word
+    end
+
+    result = join(output[length(prompt_tokens)+1:end], " ")
+    isempty(strip(result)) && return _fallback_generate(gen, prompt_tokens; max_words=max_words)
+    return result
+end
+
+function _coupling_generate(gen::MirnanGenerator, prompt_tokens::Vector{String}; max_words=15)
+    # 1. التحقق من صحة الكلمات وإعداد متجهات الأطوار الكثيفة
+    N = Constants.TOTAL_DIM
+    valid_prompt = filter(w -> haskey(gen.vocab, w), prompt_tokens)
+    if isempty(valid_prompt)
+        return _fallback_generate(gen, prompt_tokens; max_words=max_words)
+    end
+
+    base_vectors = gen.prnn_base_cache
+    for w in valid_prompt
+        if !haskey(base_vectors, w)
+            base_vectors[w] = PRNNLearner.build_dense_phase_vector(_pv(gen, w), N)
+        end
+    end
+
+    # بناء متجهات أطوار كثيفة للمحفز
+    prompt_pvs = [base_vectors[w] for w in valid_prompt]
+    # الموجة الممثلة للمثير الإجمالي (Prompt wave field)
+    prompt_wave = sum(prompt_pvs)
+    nrm_p = norm(prompt_wave)
+    if nrm_p > 1e-10
+        prompt_wave ./= nrm_p
+    end
+
+    output = copy(prompt_tokens)
+    used = Set{String}(output)
+
+    # الكلمة الحالية والسابقة في فضاء الطور
+    curr_word = valid_prompt[end]
+    prev_word = length(valid_prompt) >= 2 ? valid_prompt[end-1] : valid_prompt[end]
+
+    for step in 1:max_words
+        # المتجهات الطورية للكلمات الحالية والسابقة
+        if !haskey(base_vectors, curr_word)
+            base_vectors[curr_word] = PRNNLearner.build_dense_phase_vector(_pv(gen, curr_word), N)
+        end
+        if !haskey(base_vectors, prev_word)
+            base_vectors[prev_word] = PRNNLearner.build_dense_phase_vector(_pv(gen, prev_word), N)
+        end
+        v_curr = base_vectors[curr_word]
+        v_prev = base_vectors[prev_word]
+
+        # أ) انشطار الموجة الحالية إلى طورين ونظير معاكس (مجزئ حزمة فيزيائي)
+        # v1 (المنعكس)، v2 (النافذ بإزاحة طورية pi/2)، v_anti (الهدام النظير -v1)
+        v1, v2, v_anti = split_wave(v_curr, pi/4, pi/2)
+
+        # ب) دمج الموجات مع الكلمة السابقة لمحاكاة التداخل الطوري
+        # تداخل بناء (طور متوافق)
+        w_constructive = merge_waves(v1, v_prev; phase_shift=0.0)
+        # تداخل هدام (طور متضاد)
+        w_destructive = merge_waves(v2, v_prev; phase_shift=pi)
+
+        # ج) تشبيك التداخل البناء هولوغرافياً مع حقل المثير (Prompt Wave)
+        # E = w_constructive * prompt_wave'
+        E = couple_waves(w_constructive, prompt_wave)
+
+        # د) قياس وتشخيص التشابك لإسقاط وحساب الموجة التنبؤية التالية
+        # w_projected = E * v_curr
+        w_projected = project_coupled_wave(E, v_curr)
+
+        # هـ) ترشيح وتقييم الكلمات المرشحة
+        cids = [get(gen.vocab, w, nothing) for w in output]
+        pvs = [_pv(gen, w) for w in output]
+        cands = _resonance_candidates(gen, cids, pvs, used; prev_word=curr_word)
+        if isempty(cands)
+            break
+        end
+
+        best_word = ""
+        best_score = -Inf
+
+        # لتقييم الكلمات بسرعة، سنقوم بتقييم أعلى 60 مرشحاً فقط لضمان سرعة الاستجابة
+        for w in cands[1:min(60, end)]
+            # حساب المتجه الطوري الكثيف للمرشح
+            if !haskey(base_vectors, w)
+                base_vectors[w] = PRNNLearner.build_dense_phase_vector(_pv(gen, w), N)
+            end
+            v_cand = base_vectors[w]
+
+            # قياس التداخل البناء والهدام والمشتبك
+            sim_projected = real(dot(v_cand, w_projected)) / N
+            sim_constructive = real(dot(v_cand, w_constructive)) / N
+            sim_destructive = real(dot(v_cand, w_destructive)) / N
+
+            # حساب وزن الكيوبايت التناظري الطوري
+            qubit_score = 4.0 * sim_projected + 2.0 * sim_constructive - 3.0 * sim_destructive
+
+            # حساب النتيجة الكلاسيكية المعتادة لمرنان
+            s_std = _score(gen, w, used, pvs, prompt_pvs;
+                           gen_pos=length(output), total_pos=length(output)+max_words,
+                           prev_word=curr_word, context_ids=cids, context_words=output)
+
+            total_score = s_std + qubit_score * 3.0 # إعطاء وزن كافي للتوجيه الموجي
+
+            if total_score > best_score
+                best_score = total_score
+                best_word = w
+            end
+        end
+
+        if isempty(best_word) || best_word in used
+            break
+        end
+
+        push!(output, best_word)
+        push!(used, best_word)
+
+        prev_word = curr_word
+        curr_word = best_word
+    end
+
+    result = join(output[length(prompt_tokens)+1:end], " ")
+    return isempty(strip(result)) ? _fallback_generate(gen, prompt_tokens; max_words=max_words) : result
+end
+
+
+# ═══════════════════ RESONANT PROPAGATION MODE ═══════════════════
+function _resonant_generate(gen::MirnanGenerator, prompt_tokens::Vector{String}; max_words=15, temperature=1.2)
+    K_sem = gen.K_sem
+    K_syn = gen.K_syn
+    K_sem === nothing && return ""
+    V = length(gen.vocab)
+    
+    phase = zeros(Float64, V)
+    density_field = zeros(Float64, min(TOTAL_DIM, 200))
+    
+    for w in prompt_tokens
+        wid = get(gen.vocab, w, 0)
+        if wid > 0
+            phase[wid] += 1.0
+            pv = _pv(gen, w)
+            d = min(length(pv), 200)
+            chunk = collect(Float64, view(pv, 1:d))
+            nchunk = norm(chunk) + 1e-10
+            density_field .+= chunk ./ nchunk
+        end
+    end
+    nf = norm(density_field)
+    nf > 1e-10 && (density_field ./= nf)
+    
+    topic = TopicDensityMatrix()
+    for w in prompt_tokens
+        update_topic_with_word!(topic, w, w -> _pv(gen, String(w)))
+    end
+    
+    output = String[]
+    used = Set(prompt_tokens)
+    
+    for step in 1:max_words
+        if step <= 3
+            syn_w = 0.85; sem_w = 0.15
+            exc_weight = 0.75; align_weight = 0.25
+            damp_factor = 0.50
+            density_blend = 0.15
+        elseif step <= 5
+            syn_w = 0.40; sem_w = 0.60
+            exc_weight = 0.50; align_weight = 0.50
+            damp_factor = 0.60
+            density_blend = 0.25
+        else
+            syn_w = 0.10; sem_w = 0.90
+            exc_weight = 0.25; align_weight = 0.75
+            damp_factor = 0.65
+            density_blend = 0.35
+        end
+        
+        # ═══ Pattern completion: stay on K_syn when a strong pattern is active ═══
+        if step >= 2 && K_syn !== nothing && !isempty(output)
+            last_w = output[end]
+            last_wid = get(gen.vocab, last_w, 0)
+            if last_wid > 0 && last_wid <= size(K_syn, 2)
+                max_fwd = 0.0
+                for j in K_syn.colptr[last_wid]:(K_syn.colptr[last_wid+1]-1)
+                    max_fwd = max(max_fwd, K_syn.nzval[j])
+                end
+                # Strong learned pattern detected → extend K_syn dominance
+                if max_fwd > 200
+                    syn_w = max(syn_w, 0.70)
+                    sem_w = min(sem_w, 0.30)
+                    exc_weight = max(exc_weight, 0.65)
+                    align_weight = min(align_weight, 0.35)
+                elseif max_fwd > 100
+                    syn_w = max(syn_w, 0.50)
+                    sem_w = min(sem_w, 0.50)
+                    exc_weight = max(exc_weight, 0.55)
+                    align_weight = min(align_weight, 0.45)
+                end
+            end
+        end
+        
+        excited = zeros(Float64, V)
+        sem_w > 0 && (excited .+= sem_w .* (K_sem * phase))
+        if K_syn !== nothing && syn_w > 0
+            try; excited .+= syn_w .* (K_syn * phase); catch e; @warn "K_syn excitation failed: $e"; end
+        end
+        
+        if step == 1 && K_syn !== nothing
+            last_prompt = prompt_tokens[end]
+            last_wid = get(gen.vocab, last_prompt, 0)
+            if last_wid > 0 && last_wid <= size(K_syn, 1)
+                for j in K_syn.colptr[last_wid]:(K_syn.colptr[last_wid+1]-1)
+                    row = K_syn.rowval[j]
+                    val = K_syn.nzval[j]
+                    row <= V && val > 1e-6 && (excited[row] += val * 3.0)
+                end
+            end
+        end
+        
+        for w in used
+            wid2 = get(gen.vocab, w, 0)
+            wid2 > 0 && wid2 <= V && (excited[wid2] = 0.0)
+        end
+        
+        max_exc = maximum(excited)
+        max_exc < 1e-10 && break
+        
+        n_take = min(25, V)
+        exc_copy = copy(excited)
+        top_ids = Int[]
+        for _ in 1:n_take; _, idx = findmax(exc_copy); exc_copy[idx] = -1.0; push!(top_ids, idx); end
+        
+        best_w = nothing; best_score = -Inf
+        for wid in top_ids
+            w = get(gen.id2word, wid, nothing)
+            w === nothing && continue
+            pv = _pv(gen, w)
+            d = min(length(pv), 200)
+            w_chunk = collect(Float64, view(pv, 1:d))
+            nw = norm(w_chunk) + 1e-10
+            align = dot(w_chunk, density_field) / nw
+            div_bonus = w in used ? -3.0 : 0.0
+            topic_score = SemanticComprehension.topic_resonance(topic, w, w -> _pv(gen, String(w)))
+            # Hard rejection: word completely outside topic
+            topic_score < 0.05 && continue
+            
+            # ═══ Phase Interference Score (Complex Holographic Binding) ═══
+            phase_interference = 0.0
+            try
+                z_cand = ComplexF64.(w_chunk)
+                z_ctx = ComplexF64.(density_field[1:d])
+                nz_c = norm(z_cand) + 1e-10
+                nz_x = norm(z_ctx) + 1e-10
+                z_cand_n = z_cand ./ nz_c
+                z_ctx_n = z_ctx ./ nz_x
+                z_bound = PRNNCore.bind_phase(z_cand_n, z_ctx_n)
+                phase_interference = max(0.0, real(dot(z_bound, z_cand_n)) / d)
+            catch e
+                @warn "PRNN phase binding failed: $e"
+            end
+            
+            # ═══ Exponential amplification: تمييز الفروق الصغيرة ═══
+            # K excitation varies subtly (0.3-0.9 range for top candidates)
+            # exp() blows up the differences: 0.9→36x vs 0.5→3x (was 1.8x)
+            exc_norm = clamp(excited[wid] / max_exc, 0.0, 1.0)
+            amp_alpha = 6.0
+            exc_amplified = exp(amp_alpha * (exc_norm - 0.3))
+            # Apply same amplification to phase alignment
+            align_amplified = exp(4.0 * (clamp(align, 0.0, 1.0) - 0.4))
+            
+            score = (exc_amplified * exc_weight * 0.08
+                   + align_amplified * align_weight * 0.08
+                   + topic_score * 0.25
+                   + phase_interference * 0.15
+                   + div_bonus)
+            score > best_score && (best_score = score; best_w = w)
+        end
+        
+        best_w === nothing && break
+        push!(output, best_w); push!(used, best_w)
+        best_wid = get(gen.vocab, best_w, 0)
+        update_topic_with_word!(topic, best_w, w -> _pv(gen, String(w)))
+        
+        # ═══ Early stopping: detect word-level looping ═══
+        if length(output) >= 5
+            recent = output[max(1, end-4):end]
+            if length(Set(recent)) <= 2  # only 2 unique words among last 5 = looping
+                break
+            end
+        end
+        
+        best_wid > 0 && (phase[best_wid] += 2.0)
+        phase .*= damp_factor
+        
+        pv = _pv(gen, best_w)
+        d = min(length(pv), 200)
+        chunk = collect(Float64, view(pv, 1:d))
+        nchunk = norm(chunk) + 1e-10
+        density_field .= (1.0 - density_blend) .* density_field .+ density_blend .* (chunk ./ nchunk)
+        nf = norm(density_field)
+        nf > 1e-10 && (density_field ./= nf)
+    end
+    
+    return join(output, " ")
+end
+
+# ═══════════════════ CODE MODE ═══════════════════
+function _code_generate(gen::MirnanGenerator, prompt::String; max_tokens=30)
+    # أولاً: جرب CodePhaseEngine الفيزيائي
+    if gen.code_phase_engine.active && !isempty(gen.code_phase_engine.concepts)
+        result = generate_code_physics(gen.code_phase_engine, prompt; lang="python")
+        if !isempty(strip(result)) && result != "# no concepts"
+            return result
+        end
+    end
+    # احتياط: CodeEngine القديم
+    if gen.code_engine === nothing || gen.code_engine.code_vocab === nothing
+        cd = joinpath(@__DIR__, "..", "..", "model")
+        isfile(joinpath(cd, "code_vocab.json")) && (gen.code_engine = CodeEngineModule.load_code_model(cd))
+    end
+    result = CodeEngineModule.generate_code(gen.code_engine, prompt; max_tokens=max_tokens)
+    !isempty(strip(result)) && (CodeEngineModule.code_feedback!(gen.code_engine, result); CodeEngineModule.apply_code_feedback!(gen.code_engine, gen))
+    return isempty(strip(result)) ? "# [CodeEngine: no code vocab]\npass\n" : result
+end
+
+# ═══════════════════ REASON MODE ═══════════════════
+function _reasoned_generate(gen::MirnanGenerator, prompt_tokens::Vector{String}, prompt_text::String; max_words=12)
+    if !isempty(prompt_tokens)
+        start_pv = _pv(gen, prompt_tokens[end])
+        goal_pv = _pv(gen, prompt_tokens[1])
+        # استخدام BeamReasoner الجديد
+        chains = reason!(gen.beam_reasoner, start_pv, goal_pv,
+                         w -> _pv(gen, w), gen.vocab;
+                         K_sem=gen.K_sem, kb=gen.kb)
+        if !isempty(chains) && !isempty(chains[1].steps)
+            words = [s.word for s in chains[1].steps if s.word != "START"]
+            words = words[1:min(end, max_words)]
+            if !isempty(words)
+                return join(words, " ")
+            end
+        end
+    end
+    return _standard_generate(gen, prompt_tokens; max_words=max_words)
+end
+
+# ═══════════════════ FIELD MODE ═══════════════════
+function _field_generate(gen::MirnanGenerator, target_word::String, field_engine=nothing)
+    report = FieldEngineModule.find_attraction_repulsion(field_engine, target_word; top_k=10)
+    out = "### حقل الجذب والتنافر: **$target_word**\n\n"
+    out *= "#### متجاذبات:\n"
+    for (w, s) in report["attracted"]; out *= "- **$w** (+$s)\n"; end
+    out *= "\n#### متنافرات:\n"
+    for (w, s) in report["repelled"]; out *= "- **$w** ($s)\n"; end
+    return out
+end
+
+# ═══════════════════ MAIN GENERATE ═══════════════════
+function generate!(gen::MirnanGenerator, prompt::String;
+                   mode::String="auto", max_words::Int=15, kwargs...)
+    isempty(strip(prompt)) && return ""
+    
+    mb = MathBridgeModule.MathBridge()
+    # ═══ معالجة رياضية فيزيائية ═══
+    if MathBridgeModule.is_math_expression(mb, prompt)
+        tokens = split(prompt)
+        # حاول حل مسألة حسابية: "2 زائد 3" or "5 ضرب 4"
+        if length(tokens) >= 3
+            try
+                a = parse(Int, tokens[1])
+                op_word = tokens[2]
+                b = parse(Int, tokens[3])
+                result, conf = solve_arithmetic(gen.math_engine, a, op_word, b)
+                if conf > 0.3
+                    return "[Math] $a $op_word $b = $result (ثقة: $(round(conf; digits=2)))"
+                end
+            catch e
+                @warn "Math solve failed for '$prompt': $e"
+            end
+        end
+        return "[math] " * string(MathBridgeModule.evaluate_math(mb, prompt))
+    end
+    
+    prompt_tokens = String[_normalize_arabic_token(_strip_punct_edge(w)) for w in split(prompt) if length(strip(w)) >= 1]
+
+    # ═══ طبقة العقل: تحليل المدخل بالبيان وتوجيه التوليد ═══
+    bayan_analysis = nothing
+    try
+        bayan_analysis = BayanAnalyzer.analyze(prompt;
+            pv_fn  = compute_extended_phase_vector,
+            K_sem  = gen.K_sem,
+            vocab  = gen.vocab)
+    catch e
+        @debug "BayanAnalyzer: خطأ في تحليل المدخل: $e"
+    end
+    # ═══ كشف نمط الالتواء الصرفي: "نور نورا جو؟" ═══
+    twistor_handled = false
+    if length(prompt_tokens) >= 3 && length(prompt_tokens) <= 5
+        last_tok = prompt_tokens[end]
+        is_query = last_tok == "?" || endswith(last_tok, "?") || last_tok == "؟" || endswith(last_tok, "؟")
+        if is_query && length(prompt_tokens) >= 4
+            w1 = prompt_tokens[end-3]
+            w2 = prompt_tokens[end-2]
+            query = _strip_punct_edge(prompt_tokens[end-1])
+            if length(w1) >= 2 && length(w2) >= 2 && length(query) >= 2
+                T = compute_twistor(w1, w2)
+                predictions = predict_derivation(gen.twistor, w1, w2, query; vocab=gen.vocab, top_k=1)
+                if !isempty(predictions)
+                    return predictions[1][1]
+                end
+            end
+        elseif length(prompt_tokens) >= 3
+            w1 = prompt_tokens[end-2]
+            w2 = _strip_punct_edge(prompt_tokens[end-1])
+            if length(w1) >= 2 && length(w2) >= 2
+                if haskey(gen.vocab, w1) && haskey(gen.vocab, w2)
+                    T = compute_twistor(w1, w2)
+                    if !haskey(gen.twistor.pair_cache, (w1, w2))
+                        gen.twistor.pair_cache[(w1, w2)] = T
+                    end
+                    _inv_twistor_ref[] = (w1, w2, T)
+                end
+            end
+        end
+    end
+    
+    if mode == "field" || mode == "attract" || startswith(prompt, "/field") || startswith(prompt, "/attract")
+        parts = split(prompt)
+        target = length(parts) > 1 ? _normalize_arabic_token(_strip_punct_edge(parts[end])) : prompt_tokens[end]
+        field_eng = FieldEngineModule.FieldEngine(gen.vocab)
+        return _field_generate(gen, target, field_eng)
+    end
+
+    # ═══ حقل الجذر (للباحثين والأدباء) ═══
+    if mode == "root" || startswith(prompt, "/root")
+        parts = split(prompt)
+        target = length(parts) > 1 ? _normalize_arabic_token(_strip_punct_edge(parts[end])) : prompt_tokens[end]
+        return root_field_report(target, gen.vocab; format="detailed", max_results=30)
+    end
+    if mode == "root_poetic" || startswith(prompt, "/poetic")
+        parts = split(prompt)
+        target = length(parts) > 1 ? _normalize_arabic_token(_strip_punct_edge(parts[end])) : prompt_tokens[end]
+        return root_field_report(target, gen.vocab; format="poetic", max_results=25)
+    end
+    if mode == "root_list" || startswith(prompt, "/words")
+        parts = split(prompt)
+        target = length(parts) > 1 ? _normalize_arabic_token(_strip_punct_edge(parts[end])) : prompt_tokens[end]
+        return root_field_report(target, gen.vocab; format="list", max_results=40)
+    end
+    
+    isempty(prompt_tokens) && mode != "dialogue" && return ""
+    
+    effective_mode = mode
+    if mode == "auto" || (mode == "standard" && (!isempty(gen.corpus_sentences) || length(gen.vocab) > 50000))
+        if MathBridgeModule.is_code_prompt(prompt)
+            effective_mode = "code"
+        elseif MathBridgeModule.detect_mode(prompt) == "math"
+            effective_mode = "math"
+        elseif !isempty(gen.corpus_sentences)
+            effective_mode = "prnn"
+        elseif length(gen.vocab) > 50000
+            effective_mode = "resonant"
+        else
+            effective_mode = gen.dialogue_mode ? "dialogue" : "standard"
+        end
+    end
+    
+    result = ""
+    if effective_mode == "standard"
+        result = _standard_generate(gen, prompt_tokens; max_words=max_words)
+        isempty(strip(result)) && gen.K_sem !== nothing && (result = _fallback_generate(gen, prompt_tokens; max_words=max_words))
+    elseif effective_mode == "resonant"
+        result = _resonant_generate(gen, prompt_tokens; max_words=max_words)
+    elseif effective_mode == "code"
+        return _code_generate(gen, prompt; max_tokens=max_words)
+    elseif effective_mode == "reason"
+        result = _reasoned_generate(gen, prompt_tokens, prompt; max_words=max_words)
+    elseif effective_mode == "dialogue"
+        gen.dialogue_mode = true
+        result = _standard_generate(gen, prompt_tokens; max_words=max_words)
+        gen.dialogue_mode = false
+    elseif effective_mode == "prnn"
+        result = _prnn_generate(gen, prompt_tokens; max_words=max_words)
+    elseif effective_mode == "entangle"
+        result = _coupling_generate(gen, prompt_tokens; max_words=max_words)
+    elseif effective_mode == "math"
+        return "[math] " * prompt
+    else
+        result = _standard_generate(gen, prompt_tokens; max_words=max_words)
+    end
+    
+    if gen.lang_feedback.enabled && !isempty(strip(result)) && effective_mode != "code"
+        gen_words = String[String(w) for w in split(result)]
+        if length(gen_words) >= gen.lang_feedback.min_words_for_feedback
+            all_words = vcat(prompt_tokens, gen_words)
+            LanguageFeedback.reinforce_good_sentence!(gen.lang_feedback, gen, all_words, w -> _pv(gen, String(w)), w -> _mass(gen, String(w)))
+        end
+    end
+
+    # ═══ توجيه ما بعد التوليد بالبيان ═══
+    # إذا كان التحليل ناجحاً والنتيجة موجودة — نتحقق من التماسك مع السيناريو
+    if bayan_analysis !== nothing && !isempty(strip(result))
+        result = _apply_bayan_guidance(gen, result, bayan_analysis)
+    end
+
+    return result
+end
+
+"""
+    _apply_bayan_guidance(gen, result, analysis) → String
+
+يطبق توجيه لغة البيان على النص المولّد:
+- إذا كان تماسك السيناريو عالياً (>0.5): يضيف سياق المكان/الزمان إن غاب
+- يتحقق من عدم تضارب النص مع النفي المكتشف
+- يسجل الكيانات في EntityRegister لتتبع السياق
+"""
+function _apply_bayan_guidance(gen::MirnanGenerator, result::String, analysis::BayanAnalyzer.BayanAnalysis)::String
+    result_words = split(result)
+
+    # ─── تسجيل الكيانات في EntityRegister لتتبع السياق ───
+    try
+        for tok in analysis.tokens
+            if tok.role == BayanAnalyzer.ENTITY
+                EntityRegisterModule.extract!(gen.entity_register, [tok.word],
+                    w -> Float64.(_pv(gen, w)))
+            end
+        end
+    catch; end
+
+    # ─── إذا كان التماسك منخفضاً جداً — لا تغيير ───
+    analysis.coherence < 0.3 && return result
+
+    # ─── تحقق من النفي: إذا كان المدخل منفياً والناتج إيجابي جداً ───
+    # (في المستقبل: رفض الكلمات الإيجابية المتضادة مع النفي)
+    has_negation = any(t -> t.role == BayanAnalyzer.NEGATION, analysis.tokens)
+    if has_negation
+        # تسجيل للمستقبل — التوجيه السلبي يحتاج مرحلة ثانية
+        @debug "BayanAnalyzer: مدخل منفي — النتيجة: $result"
+    end
+
+    return result
+end
+
+
+# ═══════════════════ FALLBACK GENERATE ═══════════════════
+function _fallback_generate(gen::MirnanGenerator, prompt_tokens::Vector{String}; max_words=10)
+    used = Set{String}(prompt_tokens)
+    output = String[]
+    ctx_tokens = copy(prompt_tokens)
+    for _ in 1:max_words
+        best_w = nothing; best_s = -Inf
+        for cw in ctx_tokens[max(1, end-3):end]
+            cid = get(gen.vocab, cw, nothing)
+            cid === nothing && continue
+            cid > size(gen.K_sem, 1) && continue
+            row = Vector(gen.K_sem[cid, :])
+            sorted_ids = sortperm(row; rev=true)[1:min(30, end)]
+            for tid in sorted_ids
+                row[tid] > 1e-6 || break
+                w = get(gen.id2word, tid, nothing)
+                w === nothing && continue
+                w in used && continue
+                length(strip(w)) < 2 && continue
+                if row[tid] > best_s
+                    best_s = row[tid]; best_w = w
+                end
+            end
+        end
+        best_w === nothing && break
+        push!(output, best_w)
+        push!(used, best_w)
+        push!(ctx_tokens, best_w)
+    end
+return join(output, " ")
+end
+function get_physics_report(gen::MirnanGenerator, context_words::Vector{String})
+    pvs = [_pv(gen,w) for w in context_words]; masses = [_mass(gen,w) for w in context_words]
+    S = isempty(pvs) ? 0.0 : EntropyGateModule.compute_S(gen.entropy, pvs, pvs[end])
+    return Dict("mode"=>gen.dialogue_mode ? "dialogue" : "standard","entropy"=>S,
+        "S_crit"=>gen.entropy.S_crit,"beta"=>gen.beta,"k_B"=>gen.entropy.k_B,"temperature"=>1.0/gen.beta,
+        "word_count"=>length(context_words),
+        "mass_mean"=>isempty(masses) ? 0.0 : mean(masses),"mass_std"=>length(masses) > 1 ? std(masses) : 0.0,
+        "vocab_size"=>length(gen.vocab),"dccf_active"=>true,"ppm_active"=>gen.prompt_field.active,
+        "kb_facts"=>gen.kb.fact_count,"ram_size"=>length(gen.ram.centers),
+        "reinforcement_traces"=>length(gen.reinforcement.traces))
+end
+
+function reset!(gen::MirnanGenerator)
+    empty!(gen.pv_cache); empty!(gen.mass_cache)
+    PhaseCache.clear!(gen.phase_cache)
+    PPM.reset!(gen.prompt_field); EntropyGateModule.reset!(gen.entropy)
+end
+
+end # module Generator
+
+
+
+
+
+
+

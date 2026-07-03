@@ -1,0 +1,216 @@
+{
+  "version": 1,
+  "max_candidates": 8,
+  "entries": {
+    "جهل": [
+      {
+        "term": "غفله",
+        "score": 0.96,
+        "kind": "synonym",
+        "semantic_score": 1.0,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      },
+      {
+        "term": "غفلة",
+        "score": 0.96,
+        "kind": "synonym",
+        "semantic_score": 1.0,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      }
+    ],
+    "غفله": [
+      {
+        "term": "جهل",
+        "score": 0.96,
+        "kind": "synonym",
+        "semantic_score": 1.0,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      }
+    ],
+    "غفلة": [
+      {
+        "term": "جهل",
+        "score": 0.96,
+        "kind": "synonym",
+        "semantic_score": 1.0,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      }
+    ],
+    "ظلم": [
+      {
+        "term": "جور",
+        "score": 0.96,
+        "kind": "synonym",
+        "semantic_score": 1.0,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      }
+    ],
+    "جور": [
+      {
+        "term": "ظلم",
+        "score": 0.96,
+        "kind": "synonym",
+        "semantic_score": 1.0,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      }
+    ],
+    "عدل": [
+      {
+        "term": "انصاف",
+        "score": 0.94,
+        "kind": "synonym",
+        "semantic_score": 0.95,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      },
+      {
+        "term": "عداله",
+        "score": 0.94,
+        "kind": "synonym",
+        "semantic_score": 0.95,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      }
+    ],
+    "انصاف": [
+      {
+        "term": "عدل",
+        "score": 0.94,
+        "kind": "synonym",
+        "semantic_score": 0.95,
+        "syntactic_score": 0.8,
+        "causal_score": 0.8,
+        "direct_score": 0.0
+      }
+    ],
+    "بصيره": [
+      {
+        "term": "عقل",
+        "score": 0.78,
+        "kind": "thematic",
+        "semantic_score": 0.8,
+        "syntactic_score": 0.5,
+        "causal_score": 0.6,
+        "direct_score": 0.1
+      },
+      {
+        "term": "فهم",
+        "score": 0.78,
+        "kind": "thematic",
+        "semantic_score": 0.8,
+        "syntactic_score": 0.5,
+        "causal_score": 0.6,
+        "direct_score": 0.1
+      },
+      {
+        "term": "نور",
+        "score": 0.72,
+        "kind": "thematic",
+        "semantic_score": 0.75,
+        "syntactic_score": 0.4,
+        "causal_score": 0.5,
+        "direct_score": 0.1
+      }
+    ],
+    "بصيرة": [
+      {
+        "term": "عقل",
+        "score": 0.78,
+        "kind": "thematic",
+        "semantic_score": 0.8,
+        "syntactic_score": 0.5,
+        "causal_score": 0.6,
+        "direct_score": 0.1
+      },
+      {
+        "term": "فهم",
+        "score": 0.78,
+        "kind": "thematic",
+        "semantic_score": 0.8,
+        "syntactic_score": 0.5,
+        "causal_score": 0.6,
+        "direct_score": 0.1
+      }
+    ],
+    "حيره": [
+      {
+        "term": "ظلام",
+        "score": 0.72,
+        "kind": "thematic",
+        "semantic_score": 0.75,
+        "syntactic_score": 0.4,
+        "causal_score": 0.5,
+        "direct_score": 0.1
+      }
+    ],
+    "حيرة": [
+      {
+        "term": "ظلام",
+        "score": 0.72,
+        "kind": "thematic",
+        "semantic_score": 0.75,
+        "syntactic_score": 0.4,
+        "causal_score": 0.5,
+        "direct_score": 0.1
+      }
+    ],
+    "سلطه": [
+      {
+        "term": "قوه",
+        "score": 0.82,
+        "kind": "thematic",
+        "semantic_score": 0.85,
+        "syntactic_score": 0.6,
+        "causal_score": 0.6,
+        "direct_score": 0.1
+      }
+    ],
+    "سلطة": [
+      {
+        "term": "قوة",
+        "score": 0.82,
+        "kind": "thematic",
+        "semantic_score": 0.85,
+        "syntactic_score": 0.6,
+        "causal_score": 0.6,
+        "direct_score": 0.1
+      }
+    ],
+    "تجربه": [
+      {
+        "term": "خبره",
+        "score": 0.9,
+        "kind": "synonym",
+        "semantic_score": 0.92,
+        "syntactic_score": 0.75,
+        "causal_score": 0.7,
+        "direct_score": 0.0
+      }
+    ],
+    "تجربة": [
+      {
+        "term": "خبرة",
+        "score": 0.9,
+        "kind": "synonym",
+        "semantic_score": 0.92,
+        "syntactic_score": 0.75,
+        "causal_score": 0.7,
+        "direct_score": 0.0
+      }
+    ]
+  }
+}

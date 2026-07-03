@@ -1,0 +1,29 @@
+"""ثوابت فيزيائية لكون مرنان الدلالي.
+
+الفضاء الكلي 64 بُعداً:
+- 22 طوري أساسي (PHASE_DIM)
+- 8 جذري (ROOT_DIMS) — حروف الجذر الثلاثي/الرباعي ← متجه طوري
+- 6 إضافي DDE (EXTRA_DIMS)
+- 6 نحوي (SYNTAX_DIMS)
+- 16 دلالي-فلسفي (SEMANTIC_DIMS)
+- 6 قصدي-علائقي (PRAGMATIC_DIMS)
+"""
+import numpy as np
+
+PLANCK_H = 1.0
+LIGHT_SPEED_C = 1.0
+GRAVITY_G = 1.0
+BOLTZMANN_KB = 0.1
+PHASE_DIM = 22
+ROOT_DIMS = 8
+EXTRA_DIMS = 6
+SYNTAX_DIMS = 6
+SEMANTIC_DIMS = 16
+PRAGMATIC_DIMS = 6
+TOTAL_DIM = PHASE_DIM + ROOT_DIMS + EXTRA_DIMS + SYNTAX_DIMS + SEMANTIC_DIMS + PRAGMATIC_DIMS
+
+RICH_SEMANTIC_DIMS = 29
+TOTAL_RICH_DIM = PHASE_DIM + ROOT_DIMS + EXTRA_DIMS + SYNTAX_DIMS + RICH_SEMANTIC_DIMS + PRAGMATIC_DIMS
+
+POSITION_WEIGHTS = [3.5, 2.5, 2.0, 1.5, 1.2, 1.0, 0.8, 0.6, 0.4, 0.3]
+

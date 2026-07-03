@@ -1,0 +1,454 @@
+"""
+مرنان API — خادم HTTP متكامل لخدمة الواجهة الرسومية (UI) وأطراف التوصيل (API).
+يدعم:
+- خدمة الملفات الثابتة (HTML/CSS/JS)
+- غرف المحادثة والتحكم الفيزيائي بالمعاملات
+- حقل الجذب والتنافر ودليل الحروف الفلسفي
+- الذكاء التوليفي (SIO)
+"""
+module APIServer
+using Sockets, JSON, LinearAlgebra
+using ..Mirnan
+using ..Mirnan.Physics.WordPhysics: get_letter_db
+using ..Mirnan.Physics.LetterDB: LetterEntry
+
+export start_server
+
+# ═══ معاني الحروف والأبعاد الفلسفية ═══
+const DIM_INTERPRETATIONS = [
+    (name="التركيز", positive="تركيز وانتباه", negative="تشتت وانفراط"),
+    (name="الداخل والخارج", positive="باطن وداخل", negative="ظاهر وخارج"),
+    (name="الاستقرار والحركة", positive="استقرار وثبات", negative="حركة واضطراب"),
+    (name="الكثافة", positive="كثافة وتراص", negative="خلخلة وتباعد"),
+    (name="الحرارة", positive="حرارة ونشاط", negative="برودة وخمود"),
+    (name="تراكم الزمن", positive="تراكم وامتداد زمني", negative="آنية ولحظية"),
+    (name="ذروة الزمن", positive="ذروة وحدّة زمنية", negative="انبساط زمني"),
+    (name="تفريغ الزمن", positive="تفريغ وتلاشٍ", negative="امتلاء زمني"),
+    (name="الحركة الخطية", positive="حركة مستقيمة للأمام", negative="تراجع وتردد"),
+    (name="الحركة الدورانية", positive="دوران والتفاف", negative="جمود دوراني"),
+    (name="الحركة النبضية", positive="نبض واندفاع", negative="سكون وانقطاع"),
+    (name="الحركة المطاطة", positive="تمدد وامتداد", negative="انكماش وانقباض"),
+    (name="الحركة الانزلاقية", positive="انزلاق وانسياب", negative="احتكاك ومقاومة"),
+    (name="الحركة الهوائية", positive="انطلاق هوائي", negative="سكون هوائي"),
+    (name="المحور الرأسي", positive="ارتفاع وعلو", negative="انخفاض وهبوط"),
+    (name="الكتلة", positive="ثقل ووزن", negative="خفة وانعدام وزن"),
+    (name="الصلابة", positive="صلابة وشدة", negative="ليونة ورخاوة"),
+    (name="الاختراق", positive="نفاذ واختراق", negative="منع وصد"),
+    (name="الشحنة", positive="شحنة وجاذبية", negative="تنافر وتباعد"),
+    (name="المرجعية الذاتية", positive="ذاتي واستقلالي", negative="غيري وتابع"),
+    (name="الامتداد المكاني", positive="امتداد واتساع", negative="انحسار وضيق"),
+    (name="السببية الزمنية", positive="سببية وتأثير", negative="انفعال وتأثر")
+]
+
+const LETTER_RICH_MEANINGS = Dict(
+    "ء" => (core="مفاجأة", branches=["صدمة", "خوف", "انقطاع", "بدء مفاجئ"], opposite="هدوء وترقب", standard_of="درجة المفاجأة"),
+    "ا" => (core="رفعة", branches=["علو", "حنان", "امتداد", "ألفة", "بداية"], opposite="انخفاض وهوان", standard_of="درجة الرفعة والعلو"),
+    "ب" => (core="نقل", branches=["حمل", "تشبع", "دك", "إلصاق", "تأسيس"], opposite="تفريغ وإخلاء", standard_of="درجة النقل والحمل"),
+    "ت" => (core="بناء", branches=["ترتيب", "رص", "قذف", "تكوين", "تركيب"], opposite="هدم وتفكيك", standard_of="درجة البناء والترتيب"),
+    "ث" => (core="تشتت", branches=["بعثرة", "تثبيط", "نشر", "تفريق", "كثرة"], opposite="جمع وتركيز", standard_of="درجة التشتت والانتشار"),
+    "ج" => (core="جمع", branches=["جذب", "التحام", "ضم", "تجميع", "احتواء"], opposite="تفريق وتبديد", standard_of="درجة الجمع والالتئام"),
+    "ح" => (core="حياة", branches=["انتعاش", "حث", "حركة", "نشاط", "دفء"], opposite="موات وخمود", standard_of="درجة الحياة والنشاط"),
+    "خ" => (core="خبيئة", branches=["خرق", "اختراق", "خفاء", "غور", "دخول"], opposite="ظهور وانكشاف", standard_of="درجة الخفاء والاختراق"),
+    "د" => (core="إثبات", branches=["عزم", "ثبات", "فتح", "دك", "استقرار"], opposite="نفي وزوال", standard_of="درجة الإثبات والثبات"),
+    "ذ" => (core="نفور", branches=["تلذذ", "حدة", "ذكاء", "انزعاج", "تأثر"], opposite="إقبال وسكون", standard_of="درجة النفور والحدة"),
+    "ر" => (core="تدفق", branches=["حركة", "تكرار", "جريان", "انتشار", "ارتباط"], opposite="جمود وسكون", standard_of="درجة التدفق والتكرار"),
+    "ز" => (core="انزياح", branches=["انزلاق", "تزحلق", "زوال", "مرور", "انسياب"], opposite="ثبات ورسوخ", standard_of="درجة الانزياح والانزلاق"),
+    "س" => (core="سريان", branches=["زحف", "سور", "سر", "امتداد", "تنفس"], opposite="انقطاع ووقوف", standard_of="درجة السريان والامتداد"),
+    "ش" => (core="تفرع", branches=["تشتت", "انتشار", "تشعب", "نشر", "ظهور"], opposite="توحد واندماج", standard_of="درجة التفرع والتشعب"),
+    "ص" => (core="مراقبة", branches=["إنصات", "إحكام", "ضبط", "دقة", "تثبيت"], opposite="إهمال وإغفال", standard_of="درجة المراقبة والإحكام"),
+    "ض" => (core="ضغط", branches=["كتم", "حصر", "شدة", "انقباض", "إخفاء"], opposite="إطلاق وتوسعة", standard_of="درجة الضغط والكتم"),
+    "ط" => (core="طرق", branches=["استئذان", "دخول", "إيقاع", "ضرب", "وصول"], opposite="منع وصد", standard_of="درجة الطرق والوصول"),
+    "ظ" => (core="إيهام", branches=["توهان", "غموض", "ظل", "خفاء", "التباس"], opposite="وضوح وبيان", standard_of="درجة الإيهام والغموض"),
+    "ع" => (core="مدافعة", branches=["دفع", "سعي", "اقتلاع", "عمق", "سعة"], opposite="استسلام وانقباض", standard_of="درجة المدافعة والسعة"),
+    "غ" => (core="غياب", branches=["غموض", "غور", "غيب", "خفاء", "تغلغل"], opposite="حضور وظهور", standard_of="درجة الغياب والتغلغل"),
+    "ف" => (core="انفجار", branches=["نفخ", "حفرة", "انطلاق", "تفريغ", "فتح"], opposite="انكماش وانغلاق", standard_of="درجة الانفجار والانطلاق"),
+    "ق" => (core="دقة", branches=["بعد", "عمق", "تحقيق", "ضبط", "قوة"], opposite="تقريب وإهمال", standard_of="درجة الدقة والقوة"),
+    "ك" => (core="عطاء", branches=["كفاية", "كنز", "كرم", "منح", "وفرة"], opposite="منع وبخل", standard_of="درجة العطاء والكفاية"),
+    "ل" => (core="إلمام", branches=["إحاطة", "شمول", "لامية", "اتصال", "استيعاب"], opposite="تفريق وعزل", standard_of="درجة الإلمام والشمول"),
+    "م" => (core="فهم", branches=["استيعاب", "احتواء", "ضم", "جمع", "إدراك"], opposite="جهل وتفريق", standard_of="درجة الفهم والاستيعاب"),
+    "ن" => (core="تبيين", branches=["وضوح", "خلق", "إنشاء", "ظهور", "إخراج"], opposite="إخفاء وإبهام", standard_of="درجة التبيين والوضوح"),
+    "ه" => (core="جهد", branches=["ثمرة", "نتيجة", "غاية", "نهاية", "إنتاج"], opposite="عطالة وهدر", standard_of="درجة الجهد والنتيجة"),
+    "و" => (core="تقدم", branches=["تهجم", "هجوم", "تدحرج", "تواصل", "عطف"], opposite="تراجع وانقطاع", standard_of="درجة التقدم والتواصل"),
+    "ي" => (core="توجع", branches=["إيلام", "تقهقر", "عمق", "انتهاء", "نسبة"], opposite="راحة وتقدم", standard_of="درجة التوجع والعمق")
+)
+
+# ═══ Helpers ═══
+function urldecode(s::String)
+    res = IOBuffer()
+    i = 1
+    while i <= length(s)
+        c = s[i]
+        if c == '%' && i+2 <= length(s)
+            hex_str = s[i+1:i+2]
+            try
+                val = parse(UInt8, hex_str, base=16)
+                write(res, val)
+            catch
+                write(res, '%'); write(res, hex_str)
+            end
+            i += 3
+        elseif c == '+'
+            write(res, ' ')
+            i += 1
+        else
+            write(res, c)
+            i += 1
+        end
+    end
+    return String(take!(res))
+end
+
+function parse_query(path::String)
+    params = Dict{String,String}()
+    !occursin("?", path) && return params
+    qstr = split(path, "?"; limit=2)[2]
+    for pair in split(qstr, "&")
+        if occursin("=", pair)
+            k, v = split(pair, "="; limit=2)
+            params[string(k)] = urldecode(string(v))
+        end
+    end
+    return params
+end
+
+function interpret_vector(vector::Vector{Float64}; threshold::Float64=0.3)
+    dominant = []
+    opposite = []
+    for (idx, dim) in enumerate(DIM_INTERPRETATIONS)
+        idx > length(vector) && continue
+        val = vector[idx]
+        if val > threshold
+            push!(dominant, (dim.name, dim.positive, round(val; digits=2)))
+        elseif val < -threshold
+            push!(opposite, (dim.name, dim.negative, round(val; digits=2)))
+        end
+    end
+    neutral = length(DIM_INTERPRETATIONS) - length(dominant) - length(opposite)
+    parts = String[]
+    if !isempty(dominant)
+        dom_str = join(["$(d[1]) ($(d[2]))" for d in dominant], "، ")
+        push!(parts, "ينشط في: $dom_str")
+    end
+    if !isempty(opposite)
+        opp_str = join(["$(o[1]) ($(o[2]))" for o in opposite], "، ")
+        push!(parts, "ينخفض في: $opp_str")
+    end
+    if isempty(parts)
+        push!(parts, "متجه متوازن بلا تنشيطات بارزة")
+    end
+    summary = join(parts, " | ")
+    return Dict(
+        "dominant" => dominant,
+        "opposite" => opposite,
+        "neutral_count" => neutral,
+        "summary" => summary
+    )
+end
+
+function handle_request(sock, gen, gen_lock::ReentrantLock)
+    try
+        # Read all available data with timeout
+        line = ""
+        try
+            line = readline(sock)
+        catch
+            close(sock)
+            return
+        end
+        isempty(strip(line)) && return
+        
+        # Parse HTTP request line
+        parts = split(line)
+        length(parts) < 2 && return
+        method = parts[1]
+        full_path = length(parts) >= 2 ? parts[2] : "/"
+        
+        # Split path from query
+        path = split(full_path, "?")[1]
+        
+        # Read headers
+        headers = Dict{String,String}()
+        while true
+            l = readline(sock)
+            isempty(strip(l)) && break
+            if occursin(":", l)
+                k, v = split(l, ":"; limit=2)
+                headers[strip(k)] = strip(v)
+            end
+        end
+        
+        # Read body — قراءة الـ body كـ bytes خام ثم تحويلها لـ UTF-8
+        body = ""
+        if haskey(headers, "Content-Length")
+            body_len = parse(Int, headers["Content-Length"])
+            if body_len > 0
+                raw_bytes = read(sock, body_len)
+                body = String(copy(raw_bytes))
+            end
+        end
+        
+        response_body = ""
+        content_type = "application/json"
+        status_code = "200 OK"
+        
+# ═══ Router ═══
+        # Handle CORS preflight (OPTIONS)
+        if method == "OPTIONS"
+            status_code = "204 No Content"
+            content_type = "text/plain"
+            response_body = ""
+        elseif path == "/" || path == "/index.html"
+            index_path = joinpath(dirname(dirname(@__DIR__)), "ui", "index.html")
+            if isfile(index_path)
+                response_body = read(index_path, String)
+                content_type = "text/html; charset=utf-8"
+            else
+                response_body = "<h1>Mirnan V8 UI Not Found</h1>"
+                content_type = "text/html; charset=utf-8"
+                status_code = "404 Not Found"
+            end
+            
+        elseif path == "/static/style.css" || path == "/style.css"
+            css_path = joinpath(dirname(dirname(@__DIR__)), "ui", "style.css")
+            if isfile(css_path)
+                response_body = read(css_path, String)
+                content_type = "text/css"
+            else
+                status_code = "404 Not Found"
+            end
+            
+        elseif path == "/static/script.js" || path == "/script.js"
+            js_path = joinpath(dirname(dirname(@__DIR__)), "ui", "script.js")
+            if isfile(js_path)
+                response_body = read(js_path, String)
+                content_type = "application/javascript"
+            else
+                status_code = "404 Not Found"
+            end
+            
+        elseif (path == "/api/chat" || path == "/generate") && method == "POST"
+            t0 = time()
+            data = JSON.parse(body)
+            prompt = get(data, "prompt", "")
+            mode = get(data, "mode", "auto")
+            max_words = get(data, "max_words", 15)
+
+            println("\n═══ طلب توليد ═══")
+            println("  المحفز: \"$prompt\" | الوضع: $mode | أقصى كلمات: $max_words")
+            flush(stdout)
+            
+            result = ""
+            try
+                lock(gen_lock) do
+                    # Update knobs dynamically if provided
+                    if haskey(data, "beta") && data["beta"] !== nothing
+                        gen.beta = Float64(data["beta"])
+                    end
+                    if haskey(data, "k_B") && data["k_B"] !== nothing
+                        gen.entropy.k_B = Float64(data["k_B"])
+                    end
+                    if haskey(data, "cascade") && data["cascade"] !== nothing
+                        gen.cascade_enabled = Bool(data["cascade"])
+                    end
+                    if haskey(data, "dialogue") && data["dialogue"] !== nothing
+                        gen.dialogue_mode = Bool(data["dialogue"])
+                    end
+                    result = Mirnan.generate!(gen, prompt; mode=mode, max_words=max_words)
+                end
+                dt_gen = time() - t0
+                println("  ✓ توليد مكتمل في $(round(dt_gen; digits=2))s → \"$result\"")
+                flush(stdout)
+            catch e
+                println("  ❌ خطأ في generate!: $e")
+                flush(stdout)
+                rethrow(e)
+            end
+            dt = time() - t0
+
+            # ═══ Direct K_sem fallback if generate! returned nothing ═══
+            if isempty(strip(result)) && gen.K_sem !== nothing
+                prompt_words = String[w for w in split(prompt) if length(w) >= 2]
+                used_fb = Set(prompt_words)
+                out_fb = String[]
+                ctx_fb = copy(prompt_words)
+                for _ in 1:min(max_words, 8)
+                    best_w = nothing; best_s = -Inf
+                    for cw in ctx_fb[max(1,end-2):end]
+                        cid = get(gen.vocab, cw, nothing)
+                        cid === nothing && continue
+                        cid > size(gen.K_sem, 1) && continue
+                        row = Vector{Float64}(gen.K_sem[cid, :])
+                        sorted_ids = sortperm(row; rev=true)[1:min(60, length(row))]
+                        for tid in sorted_ids
+                            row[tid] > 1e-6 || break
+                            w = get(gen.id2word, tid, nothing)
+                            w === nothing && continue
+                            w in used_fb && continue
+                            length(strip(w)) < 2 && continue
+                            if row[tid] > best_s
+                                best_s = row[tid]; best_w = w
+                            end
+                        end
+                    end
+                    best_w === nothing && break
+                    push!(out_fb, best_w)
+                    push!(used_fb, best_w)
+                    push!(ctx_fb, best_w)
+                end
+                result = join(out_fb, " ")
+            end
+
+            # Generate physics report
+            report = Mirnan.get_physics_report(gen, [String(w) for w in split(prompt)])
+
+            response_body = JSON.json(Dict(
+                "status" => "ok",
+                "result" => result,
+                "physics_report" => report,
+                "time_taken" => dt
+            ))
+
+
+        elseif path == "/api/letters" && method == "GET"
+            json_path = joinpath(dirname(dirname(@__DIR__)), "data", "letter_physics_matrix.json")
+            if isfile(json_path)
+                response_body = read(json_path, String)
+            else
+                # Fallback empty dim names
+                response_body = JSON.json(Dict("letters" => Dict(), "dim_names" => DIM_INTERPRETATIONS))
+            end
+            
+        elseif path == "/api/letters/update" && method == "POST"
+            data = JSON.parse(body)
+            letter = get(data, "letter", "")
+            vector = Float64.(get(data, "vector", []))
+            
+            # Update Letter Database in memory
+            db = get_letter_db()
+            entry = get(db.data, letter, nothing)
+            new_vector = Int8.(round.(vector))
+            if entry !== nothing
+                db.data[letter] = LetterEntry(
+                    new_vector, entry.operator, entry.activation, entry.spin,
+                    entry.articulation, entry.manner, entry.meaning
+                )
+            else
+                db.data[letter] = LetterEntry(new_vector, "0", 0.0, 0.0, "", "", "")
+            end
+            
+            # Update JSON file on disk to persist modifications
+            json_path = joinpath(dirname(dirname(@__DIR__)), "data", "letter_physics_matrix.json")
+            if isfile(json_path)
+                matrix_data = JSON.parsefile(json_path)
+                if !haskey(matrix_data, "letters"); matrix_data["letters"] = Dict(); end
+                if !haskey(matrix_data["letters"], letter); matrix_data["letters"][letter] = Dict(); end
+                matrix_data["letters"][letter]["v"] = vector
+                open(json_path, "w") do io
+                    JSON.print(io, matrix_data, 2)
+                end
+            end
+            response_body = JSON.json(Dict("status" => "success", "letter" => letter))
+            
+        elseif startswith(path, "/api/letters/rich/") && method == "GET"
+            # Extract letter from URI
+            letter_encoded = path[19:end]
+            letter = urldecode(letter_encoded)
+            db = get_letter_db()
+            vec = Float64.(Mirnan.Physics.LetterDB.get_vector(db, letter))
+            vec_interp = interpret_vector(vec)
+            rich = get(LETTER_RICH_MEANINGS, letter, (core="?", branches=String[], opposite="?", standard_of="?"))
+            
+            response_body = JSON.json(Dict(
+                "letter" => letter,
+                "vector_values" => vec,
+                "vector_interpretation" => vec_interp,
+                "operator" => Mirnan.Physics.LetterDB.get_operator(db, letter),
+                "omega_0" => round(Mirnan.Physics.LetterDB.get_omega_0(db, letter); digits=3),
+                "core_meaning" => rich.core,
+                "branches" => rich.branches,
+                "opposite" => rich.opposite,
+                "standard_of" => rich.standard_of
+            ))
+            
+        elseif startswith(path, "/api/field") && method == "GET"
+            params = parse_query(full_path)
+            target = get(params, "target", "")
+            fe = Mirnan.Physics.FieldEngineModule.FieldEngine(gen.vocab)
+            report = Mirnan.Physics.FieldEngineModule.find_attraction_repulsion(fe, target; top_k=15)
+            response_body = JSON.json(report)
+            
+        elseif path == "/api/synthesize" && method == "POST"
+            data = JSON.parse(body)
+            goal = get(data, "goal", "")
+            max_retries = get(data, "max_phase_retries", 5)
+            sio_orch = Mirnan.SIO.SIOOrchestrator(gen)
+            res = Mirnan.SIO.synthesize!(sio_orch, goal; max_retries=max_retries)
+            # Match front-end monitor updates
+            if !haskey(res, "monitor")
+                res["monitor"] = Dict("corrections_applied" => 0)
+            end
+            response_body = JSON.json(res)
+            
+        elseif path == "/api/benchmark" && method == "GET"
+            bf = joinpath(dirname(dirname(@__DIR__)), "data", "benchmark_vocab.json")
+            if isfile(bf)
+                words = JSON.parsefile(bf)
+            else
+                words = ["العلم", "نور", "الجهل", "ظلام"]
+            end
+            response_body = JSON.json(Dict("words" => words))
+            
+        elseif path == "/api/benchmark/update" && method == "POST"
+            data = JSON.parse(body)
+            words = get(data, "words", [])
+            bf = joinpath(dirname(dirname(@__DIR__)), "data", "benchmark_vocab.json")
+            open(bf, "w") do io
+                JSON.print(io, words, 2)
+            end
+            response_body = JSON.json(Dict("status" => "success"))
+            
+        elseif path == "/report"
+            report = Mirnan.get_physics_report(gen, String[])
+            response_body = JSON.json(Dict("status" => "ok", "report" => report))
+            
+        elseif path == "/modes"
+            response_body = JSON.json(Dict("modes" => ["auto", "dialogue", "creative", "wave", "standard", "quantum", "phase_resonance", "multiverse", "poetic", "code", "math", "physics", "attract", "synthesize"]))
+            
+        elseif path == "/health"
+            response_body = JSON.json(Dict("status" => "ok", "message" => "Mirnan V8 Julia API"))
+            
+        else
+            response_body = JSON.json(Dict("status" => "error", "message" => "Unknown endpoint: $path"))
+            status_code = "404 Not Found"
+        end
+        
+        # Build raw HTTP response
+        http_response = "HTTP/1.1 $status_code\r\nContent-Type: $content_type\r\nContent-Length: $(sizeof(response_body))\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With\r\nAccess-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\nAccess-Control-Max-Age: 86400\r\n\r\n" * response_body
+        write(sock, http_response)
+catch e
+        try
+            err_msg = JSON.json(Dict("status" => "error", "message" => "$e"))
+            write(sock, "HTTP/1.1 500 Internal Error\r\nContent-Type: application/json\r\nContent-Length: $(sizeof(err_msg))\r\n\r\n" * err_msg)
+        catch e2
+            @warn "Failed to send error response to client: $e2"
+        end
+    finally
+        close(sock)
+    end
+end
+
+function start_server(gen; port=8000)
+    server = listen(port)
+    gen_lock = ReentrantLock()
+    println("==================================================")
+    println("  خادم مرنان V8 يعمل الآن على: http://127.0.0.1:$port")
+    println("  افتح الرابط في المتصفح لتشغيل الواجهة الرسومية")
+    println("==================================================")
+    while true
+        sock = accept(server)
+        @async handle_request(sock, gen, gen_lock)
+    end
+end
+
+end # module APIServer
+

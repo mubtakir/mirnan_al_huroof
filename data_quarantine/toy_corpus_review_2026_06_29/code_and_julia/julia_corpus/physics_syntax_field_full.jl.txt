@@ -1,0 +1,145 @@
+"""
+الفضاء النحوي 6D — Syntax Field.
+KANA/JAR/CONJ detection + Arabic word type analysis.
+SyntaxFieldCache for memoized vectors.
+"""
+module SyntaxFieldFull
+
+using LinearAlgebra
+using ..Constants: SYNTAX_DIMS
+
+export SYNTAX_ANCHORS, compute_syntax_vector, expected_syntax, SyntaxFieldCache,
+       KANA_VERBS, JAR_PREPS_LIST, CONJUNCTIONS_LIST, NEGATIONS_LIST
+
+const SYNTAX_ANCHORS = Dict(
+    "verb" => [1.00, 0.20, 0.00, 0.00, 0.15, 0.10],
+    "noun" => [0.20, 1.00, 0.70, 0.00, 0.30, 0.40],
+    "prep" => [0.00, 0.70, 1.00, 0.00, 0.10, 0.00],
+    "part" => [0.10, 0.10, 0.00, 1.00, 0.10, 0.00],
+    "conj" => [0.20, 0.20, 0.10, 0.05, 1.00, 0.05],
+    "kana" => [0.10, 0.50, 0.00, 0.00, 0.05, 1.00],
+)
+
+const KANA_VERBS = Set([
+    "كان", "كانت", "ليس", "ليست", "أصبح", "صار", "ما زال",
+    "يكون", "تكون", "أمسى", "بات", "ليسوا",
+])
+
+const JAR_PREPS_LIST = Set([
+    "في", "من", "على", "إلى", "عن", "بـ", "لـ", "كـ", "حتى",
+    "منذ", "مذ", "رب", "واو", "تاء",
+])
+
+const CONJUNCTIONS_LIST = Set(["و", "فـ", "ثم", "أو", "أم", "بل", "لكن", "حتى"])
+
+const NEGATIONS_LIST = Set(["لا", "لم", "لن", "ما", "ليس", "غير", "إن"])
+
+function _l2(v::AbstractVector)
+    n = norm(v)
+    return n > 1e-10 ? v ./ n : v
+end
+
+"""
+    _get_syntax_anchor(word) -> Vector{Float64}
+
+مرتكز نحوي 6D: يحدد صنف الكلمة من القوائم الثابتة.
+"""
+function _get_syntax_anchor(word::String)
+    if word in KANA_VERBS
+        return SYNTAX_ANCHORS["kana"]
+    end
+    if word in JAR_PREPS_LIST
+        return SYNTAX_ANCHORS["prep"]
+    end
+    if word in NEGATIONS_LIST
+        return SYNTAX_ANCHORS["part"]
+    end
+    if word in CONJUNCTIONS_LIST
+        return SYNTAX_ANCHORS["conj"]
+    end
+    return SYNTAX_ANCHORS["noun"]  # افتراضي: اسم
+end
+
+"""
+    compute_syntax_vector(word) -> Vector{Float64}
+
+متجه نحوي 6D للكلمة (مُطبَّع).
+"""
+function compute_syntax_vector(word::String)
+    is_english = any(c -> isletter(c) && c <= 'z', word)
+    if is_english
+        return _l2(SYNTAX_ANCHORS["noun"])
+    end
+    return _l2(_get_syntax_anchor(word))
+end
+
+"""
+    expected_syntax(prev_word, vocab, K) -> Vector{Float64}
+
+النحو المتوقع بعد كلمة معينة — متوسط مرتكزات أقوى الاقترانات في K.
+"""
+function expected_syntax(prev_word::String, vocab::Dict{String,Int}, K::AbstractMatrix; id2word=nothing)
+    pid = get(vocab, prev_word, nothing)
+    if pid === nothing || pid > size(K, 1)
+        return zeros(Float64, SYNTAX_DIMS)
+    end
+    _id2word = id2word !== nothing ? id2word : Dict(v=>k for (k,v) in vocab)
+    row = K[pid, :]
+    if row isa AbstractSparseVector
+        row = Vector(row)
+    end
+    total = zeros(Float64, SYNTAX_DIMS)
+    weight_sum = 0.0
+    sorted_idx = sortperm(row; rev=true)[1:min(30, end)]
+    for tid in sorted_idx
+        row[tid] <= 1e-3 && continue
+        w = get(_id2word, tid, "")
+        anchor = _get_syntax_anchor(w)
+        total .+= row[tid] .* _l2(anchor)
+        weight_sum += row[tid]
+    end
+    if weight_sum > 1e-10
+        total ./= weight_sum
+    end
+    return _l2(total)
+end
+
+"""
+    SyntaxFieldCache
+
+تخزين مؤقت للمتجهات النحوية لتجنب إعادة الحساب.
+
+الحقول:
+- `cache`: word → syntax_vector
+- `exp_cache`: prev_word → expected_syntax
+"""
+mutable struct SyntaxFieldCache
+    cache::Dict{String,Vector{Float64}}
+    exp_cache::Dict{String,Vector{Float64}}
+    vocab::Dict{String,Int}
+    K::AbstractMatrix
+
+    function SyntaxFieldCache(vocab::Dict{String,Int}, K::AbstractMatrix)
+        return new(Dict(), Dict(), vocab, K)
+    end
+end
+
+function Base.get(cache::SyntaxFieldCache, word::String)
+    if !haskey(cache.cache, word)
+        if length(word) >= 2
+            cache.cache[word] = compute_syntax_vector(word)
+        else
+            cache.cache[word] = zeros(Float64, SYNTAX_DIMS)
+        end
+    end
+    return cache.cache[word]
+end
+
+function get_expected(cache::SyntaxFieldCache, prev_word::String)
+    if !haskey(cache.exp_cache, prev_word)
+        cache.exp_cache[prev_word] = expected_syntax(prev_word, cache.vocab, cache.K)
+    end
+    return cache.exp_cache[prev_word]
+end
+
+end # module SyntaxFieldFull

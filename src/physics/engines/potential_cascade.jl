@@ -1,0 +1,93 @@
+"""
+Potential Cascade Layer — طبقة الهوي التراكمي.
+Principle: each generated word creates a potential well in phase space.
+The next word must fall to the deepest point in the cumulative field.
+No softmax, no temperature.
+
+V_total(c) = -λ Σ_i [ m_i · max(0, cosΔφ) / (d_pos + δ)^γ ]
+"""
+module PotentialCascade
+
+using LinearAlgebra
+
+export PotentialCascadeLayer, compute_score
+
+struct PotentialCascadeLayer
+    lambda_cascade::Float64
+    gamma::Float64
+    delta::Float64
+    phase_lock_threshold::Float64
+    repulsion_strength::Float64
+    friction_decay::Float64
+
+    function PotentialCascadeLayer(;
+                                   lambda_cascade::Float64=3.0,
+                                   gamma::Float64=2.0,
+                                   delta::Float64=0.3,
+                                   phase_lock_threshold::Float64=0.65,
+                                   repulsion_strength::Float64=2.5,
+                                   friction_decay::Float64=0.3)
+        return new(lambda_cascade, gamma, delta,
+                   phase_lock_threshold, repulsion_strength, friction_decay)
+    end
+end
+
+function compute_score(layer::PotentialCascadeLayer,
+                      candidate_pv::AbstractVector,
+                      context_pvs::Vector{<:AbstractVector},
+                      context_masses::Vector{Float64},
+                      syntax_valid::Bool;
+                      used_words::Union{Vector{String},Nothing}=nothing,
+                      word_to_pv_fn::Union{Function,Nothing}=nothing)
+    if !syntax_valid
+        return -Inf
+    end
+
+    if isempty(context_pvs)
+        return 0.0
+    end
+
+    last_pv = context_pvs[end]
+    align = dot(candidate_pv, last_pv) / (norm(candidate_pv) * norm(last_pv) + 1e-10)
+    if align < layer.phase_lock_threshold
+        return -Inf
+    end
+
+    attraction = 0.0
+    n_ctx = length(context_pvs)
+    for i in 1:n_ctx
+        ctx_pv = context_pvs[i]
+        mass = context_masses[i]
+        pos_dist = n_ctx - i
+        cos_phase = dot(candidate_pv, ctx_pv) /
+                    (norm(candidate_pv) * norm(ctx_pv) + 1e-10)
+        cos_phase = max(0.0, cos_phase)
+        attraction += (mass * cos_phase) / ((pos_dist + layer.delta)^layer.gamma)
+    end
+
+    repulsion = 0.0
+    if used_words !== nothing && word_to_pv_fn !== nothing
+        for w in used_words
+            w_pv = word_to_pv_fn(w)
+            if w_pv !== nothing
+                d = norm(Float64.(candidate_pv) .- Float64.(w_pv)) + 1e-10
+                repulsion += layer.repulsion_strength / (d^2 + 1e-10)
+            end
+        end
+    end
+
+    if n_ctx > 0
+        friction = layer.friction_decay * n_ctx *
+                   norm(Float64.(candidate_pv) .- Float64.(context_pvs[end]))
+    else
+        friction = 0.0
+    end
+
+    potential = -attraction + repulsion + friction
+    if potential >= 0.0
+        return 0.0
+    end
+    return layer.lambda_cascade * abs(potential)
+end
+
+end # module PotentialCascade

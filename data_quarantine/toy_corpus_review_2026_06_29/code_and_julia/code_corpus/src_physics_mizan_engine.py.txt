@@ -1,0 +1,164 @@
+# -*- coding: utf-8 -*-
+"""
+Al-Mizan Physics Coherence Engine — محرك الميزان للاتساق الفيزيائي والدلالي
+========================================================================
+مستوحى من معمارية "رقيم" الإدراكية لتقييم معقولية التفاعلات بين الفاعل والفعل والمفعول به
+باستخدام متجهات أبعاد كليفورد والاندماج الفيزيائي.
+"""
+
+import numpy as np
+from typing import List, Tuple, Dict, Any
+
+class MizanEngine:
+    """
+    محرك الميزان لتحديد التوافق الفيزيائي والسببي للجمل في فضاء الطور 22D.
+    يقيس مدى تناسق القوة الصادرة من (الفاعل + الفعل) مع مقاومة (المفعول به).
+    """
+    def __init__(self):
+        # مؤشرات الأبعاد الفيزيائية في فضاء SPEC 22D
+        self.IDX_DENSITY = 3          # الكثافة
+        self.IDX_HARDNESS = 16        # الصلابة
+        self.IDX_PENETRATION = 17     # الاختراق
+        
+        # التراكبات المفهومية والخواص الفيزيائية المحددة لبعض الكلمات
+        # لمنع تداخل عشوائي غير فيزيائي ناتج عن تهجئة الحروف فقط
+        self.overrides = {
+            "سكين": {self.IDX_HARDNESS: 0.8, self.IDX_PENETRATION: 0.9},
+            "السكين": {self.IDX_HARDNESS: 0.8, self.IDX_PENETRATION: 0.9},
+            "حجر": {self.IDX_DENSITY: 0.5, self.IDX_HARDNESS: 0.4},
+            "الحجر": {self.IDX_DENSITY: 0.5, self.IDX_HARDNESS: 0.4},
+            "قلم": {self.IDX_HARDNESS: 0.1, self.IDX_PENETRATION: 0.1},
+            "القلم": {self.IDX_HARDNESS: 0.1, self.IDX_PENETRATION: 0.1},
+            "حديد": {self.IDX_DENSITY: 0.9, self.IDX_HARDNESS: 0.9},
+            "الحديد": {self.IDX_DENSITY: 0.9, self.IDX_HARDNESS: 0.9},
+        }
+
+    def calculate_sentence_coherence(self, verb: str, subject: str, obj: str = None) -> Dict[str, Any]:
+        """
+        تقييم التفاعل الديناميكي بين القوة الناقلة (Carrier Force) والمفعول به (Recipient Resistance).
+        تتحقق من توافق أبعاد الاختراق والصلابة للفاعل والفعل مع كثافة وصلابة المفعول به.
+        """
+        from src.physics.word_physics import compute_word_phase_vector
+        
+        # استرجاع المتجهات الطورية للكلمات كنسخ مستقلة لتفادي تعديل الذاكرة المشتركة
+        v_verb = compute_word_phase_vector(verb, method='projection').copy()
+        v_subj = compute_word_phase_vector(subject, method='projection').copy()
+        
+        # تطبيق التراكبات المفهومية المخصصة إن وجدت
+        if verb in self.overrides:
+            for idx, val in self.overrides[verb].items():
+                v_verb[idx] = val
+        if subject in self.overrides:
+            for idx, val in self.overrides[subject].items():
+                v_subj[idx] = val
+        
+        # القوة الإجمالية الصادرة عن الفاعل والفعل (مقياس القوة الحركية)
+        carrier_force = np.linalg.norm(v_verb) + np.linalg.norm(v_subj)
+        
+        if not obj:
+            # فعل لازم (لا يتعدى لمفعول به)، نعتمد على شدة فاعلية الفاعل والطلب الحركي للفعل
+            coherence = float(min(1.0, carrier_force / 4.0))
+            return {
+                "coherence": coherence,
+                "carrier_force": float(carrier_force),
+                "recipient_resistance": 0.0,
+                "details": ["فعل لازم: تم تقييم الفاعلية الحركية الذاتية."]
+            }
+            
+        v_obj = compute_word_phase_vector(obj, method='projection').copy()
+        if obj in self.overrides:
+            for idx, val in self.overrides[obj].items():
+                v_obj[idx] = val
+                
+        recipient_resistance = np.linalg.norm(v_obj)
+        
+        # حساب قوة الاختراق والقطع الفعالة (قوة الفاعل × صلابة الفاعل)
+        # القوة الفعالة = (اختراق الفعل + اختراق الفاعل) * صلابة الفاعل
+        p_force = (abs(v_verb[self.IDX_PENETRATION]) + abs(v_subj[self.IDX_PENETRATION])) * abs(v_subj[self.IDX_HARDNESS])
+        
+        # مقاومة المفعول به = كثافة المفعول به + صلابة المفعول به
+        o_resistance = abs(v_obj[self.IDX_DENSITY]) + abs(v_obj[self.IDX_HARDNESS])
+        
+        coherence = 1.0
+        details = []
+        
+        # الفحص السببي الفيزيائي للملاءمة
+        if p_force < o_resistance * 0.8:
+            # قوة الاختراق والصلابة للفاعل أقل بكثير من مقاومة المفعول به (غير متناسق فيزيائياً)
+            coherence -= 0.6
+            details.append(f"قوة الاختراق ({p_force:.2f}) غير كافية لمقاومة المفعول به ({o_resistance:.2f})")
+        elif p_force < o_resistance:
+            # متوافقة بصعوبة
+            coherence -= 0.25
+            details.append(f"قوة الاختراق ({p_force:.2f}) تقارب مقاومة المفعول به ({o_resistance:.2f})")
+        else:
+            details.append("تم 	 رنين فيزيائي متناسق بين الفاعل والمفعول به.")
+            
+        return {
+            "coherence": float(max(0.0, coherence)),
+            "carrier_force": float(carrier_force),
+            "recipient_resistance": float(recipient_resistance),
+            "details": details
+        }
+
+    def parse_svo(self, sentence_words: List[str]) -> Tuple[str, str, str]:
+        """
+        تفكيك وتحديد الفاعل والفعل والمفعول به من سياق الكلمات المولدة.
+        يدعم الجمل ذات البناء الفعلي (VSO) أو الاسمي (SVO).
+        """
+        from src.semantics.arabic_morphology_analyzer import analyze_word
+        
+        if len(sentence_words) < 2:
+            return None, None, None
+            
+        tagged = []
+        for w in sentence_words:
+            analysis = analyze_word(w)
+            word_type = analysis.get('type', 'اسم')
+            tagged.append((w, word_type))
+            
+        # تحديد أول فعل في الجملة
+        verb = None
+        verb_idx = -1
+        for idx, (w, tag) in enumerate(tagged):
+            if tag == 'فعل':
+                verb = w
+                verb_idx = idx
+                break
+                
+        if verb is None:
+            return None, None, None
+            
+        # استخراج الأسماء والصفات المصاحبة
+        nouns = [(w, tag) for w, tag in tagged if tag in ('اسم', 'صفة', 'حال')]
+        if not nouns:
+            return None, None, None
+            
+        # التحليل الهيكلي للجملة
+        if verb_idx == 0:  # جملة فعلية VSO (مثال: قطع السكين الحجر)
+            subject = nouns[0][0] if len(nouns) > 0 else None
+            obj = nouns[1][0] if len(nouns) > 1 else None
+        else:  # جملة اسمية SVO (مثال: السكين قطع الحجر)
+            before_verb = [w for w, tag in tagged[:verb_idx] if tag in ('اسم', 'صفة')]
+            after_verb = [w for w, tag in tagged[verb_idx+1:] if tag in ('اسم', 'صفة')]
+            subject = before_verb[0] if before_verb else None
+            obj = after_verb[0] if after_verb else None
+            
+        return verb, subject, obj
+
+    def get_mizan_score(self, context_words: List[str], candidate_word: str) -> float:
+        """
+        حساب معامل ملاءمة الكلمة المرشحة بناءً على اتساق الجملة في الميزان.
+        """
+        if not context_words:
+            return 0.0
+            
+        # نأخذ آخر بضع كلمات للتحليل السياقي المباشر
+        recent_words = context_words[-4:] + [candidate_word]
+        verb, subject, obj = self.parse_svo(recent_words)
+        
+        if verb and subject:
+            res = self.calculate_sentence_coherence(verb, subject, obj)
+            return res["coherence"]
+            
+        return 1.0  # حيادي إن لم يكتمل التركيب اللغوي (SVO/VSO)

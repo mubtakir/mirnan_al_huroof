@@ -1,0 +1,10 @@
+{
+  "default_summary_budget": 900,
+  "fail_open": true,
+  "log_requests": true,
+  "max_context_chars": 6000,
+  "mirnan_path": "",
+  "mode": "auto",
+  "request_timeout_ms": 15000,
+  "server_url": ""
+}

@@ -1,8 +1,8 @@
-__pycache__/
-.pytest_cache/
-*.pyc
-debug_*
-*.png
-*.bak
+model/
 *.log
-ram_state.json
+server_err.txt
+server_log*.txt
+server_output.log
+Manifest.toml
+__pycache__/
+*.pyc

@@ -1,0 +1,134 @@
+"""
+السلسلة الرنينية LC — Resonant Chain (محسّنة).
+
+كل زوج كلمات متجاورة = دائرة LC رنينية:
+- C (سعة دلالية): مساحة اللوحين ∝ الكتل، العازل ∝ cos(θ)
+- L (محاثة دلالية): قوة الاقتران من التوافق الطوري
+- f_res = 1 / (2π√(L·C))
+
+تضمين دالة زيتا: تعزيز الرنين عند cos≈0.5 (خط التوازن σ=1/2)
+"""
+
+module ResonantChain
+
+using LinearAlgebra, Statistics
+
+using ..Constants: ENHANCED_DIM
+using ..WordPhysics: compute_word_enhanced_vector, phase_similarity_enhanced
+
+export ResonantChainRLC, _spectral_convergence_filter, pair_freq, score_candidate,
+       capacitance, inductance, resonant_freq, sentence_coherence
+
+"""
+    _spectral_convergence_filter(x::Float64; s::Float64=2.0) -> Float64
+
+استجابة ترددية تعمل كمرشح تقارب طيفي — خط التوازن σ=1/2.
+"""
+function _spectral_convergence_filter(x::Float64; s::Float64=2.0)
+    delta = x - 0.5
+    return 1.0 / (1.0 + delta * delta)^(s * 0.5)
+end
+
+"""
+    ResonantChainRLC
+
+سلسلة رنينية تمثل الجملة كدوائر LC متتالية.
+
+الحقول:
+- `freq_history`: ترددات الأزواج المتجاورة
+"""
+mutable struct ResonantChainRLC
+    freq_history::Vector{Float64}
+end
+
+ResonantChainRLC() = ResonantChainRLC(Float64[])
+
+"""
+    capacitance(chain::ResonantChainRLC, mass_i, mass_j, cos_theta) -> Float64
+
+C = m₁ · m₂ · (1 + cos_θ)
+"""
+function capacitance(chain::ResonantChainRLC, mass_i::Float64, mass_j::Float64, cos_theta::Float64)
+    return max(mass_i, 1e-12) * max(mass_j, 1e-12) * (1.0 + max(cos_theta, -1.0))
+end
+
+"""
+    inductance(chain::ResonantChainRLC, pv_i, pv_j) -> Float64
+
+L = 1 / (1 + |sin(arccos(dot)·0.5)|)
+"""
+function inductance(chain::ResonantChainRLC, pv_i::AbstractVector, pv_j::AbstractVector)
+    diff = clamp(dot(pv_i, pv_j), -1.0, 1.0)
+    return 1.0 / (1.0 + abs(sin(acos(diff) * 0.5)))
+end
+
+"""
+    resonant_freq(chain::ResonantChainRLC, L, C) -> Float64
+
+f_res = 1 / (2π√(L·C))
+"""
+resonant_freq(chain::ResonantChainRLC, L::Float64, C::Float64) = 1.0 / (2.0 * π * sqrt(max(L * C, 1e-24)))
+
+"""
+    pair_freq(chain::ResonantChainRLC, mass_i, mass_j, pv_i, pv_j) -> Float64
+
+تردد الرنين لزوج كلمات.
+"""
+function pair_freq(chain::ResonantChainRLC, mass_i::Float64, mass_j::Float64,
+                   pv_i::AbstractVector, pv_j::AbstractVector)
+    cos_theta = clamp(dot(pv_i, pv_j), -1.0, 1.0)
+    C = capacitance(chain, mass_i, mass_j, cos_theta)
+    L = inductance(chain, pv_i, pv_j)
+    return resonant_freq(chain, L, C)
+end
+
+"""
+    sentence_coherence(chain::ResonantChainRLC, masses, pvs) -> Float64
+
+تماسك الجملة: 1 - √var(freqs) / √max_var.
+"""
+function sentence_coherence(chain::ResonantChainRLC, masses::AbstractVector,
+                            pvs::Vector{<:AbstractVector})
+    n = length(masses)
+    if n < 2
+        return 0.0
+    end
+    empty!(chain.freq_history)
+    for i in 1:(n-1)
+        f = pair_freq(chain, masses[i], masses[i+1], pvs[i], pvs[i+1])
+        push!(chain.freq_history, f)
+    end
+    freqs = Float64.(chain.freq_history)
+    mean_f = mean(freqs)
+    var_f = mean((freqs .- mean_f).^2)
+    max_var = mean_f > 0 ? (mean_f^2) * 0.25 : 1.0
+    coherence = 1.0 - sqrt(var_f) / (sqrt(max_var) + 1e-12)
+    return clamp(coherence, 0.0, 1.0)
+end
+
+"""
+    score_candidate(chain::ResonantChainRLC, mass_prev, mass_cand, pv_prev, pv_cand;
+                   prev_freqs=nothing) -> Float64
+
+تسجيل مرشح: Gaussian distance من متوسط الترددات السابقة × زيتا boost.
+"""
+function score_candidate(chain::ResonantChainRLC, mass_prev::Float64, mass_cand::Float64,
+                         pv_prev::AbstractVector, pv_cand::AbstractVector;
+                         prev_freqs::Union{Vector{Float64},Nothing}=nothing)
+    f_cand = pair_freq(chain, mass_prev, mass_cand, pv_prev, pv_cand)
+
+    cos_theta = clamp(dot(pv_prev, pv_cand), -1.0, 1.0)
+    zeta_boost = _spectral_convergence_filter(cos_theta)
+
+    score = 1.0
+    if prev_freqs !== nothing && !isempty(prev_freqs)
+        mean_prev = mean(prev_freqs)
+        std_prev = (length(prev_freqs) > 1 ? std(prev_freqs) : 0.0) + 1e-12
+        delta = abs(f_cand - mean_prev)
+        score = exp(-0.5 * (delta / std_prev)^2)
+    end
+
+    return score * zeta_boost
+end
+
+end # module ResonantChain

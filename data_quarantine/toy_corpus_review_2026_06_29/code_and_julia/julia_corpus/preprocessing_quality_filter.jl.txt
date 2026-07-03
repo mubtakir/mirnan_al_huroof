@@ -1,0 +1,192 @@
+"""
+المرحلة 5: فلترة الجودة — QualityFilter.
+
+يفلتر النصوص منخفضة الجودة قبل إدخالها لمرنان:
+- جمل قصيرة/طويلة جداً
+- تكرار مفرط للكلمات
+- نسبة عالية من الترقيم/الأرقام
+- نصوص مكررة (duplicates)
+- نصوص غير مفهومة
+"""
+module QualityFilter
+
+export filter_quality, filter_sentences, filter_paragraphs,
+       is_quality_text, deduplicate_texts,
+       QUALITY_PASS, QUALITY_SHORT, QUALITY_LONG, QUALITY_REPETITIVE,
+       QUALITY_NOISY, QUALITY_DUPLICATE, QUALITY_GIBBERISH
+
+const QUALITY_PASS       = "pass"
+const QUALITY_SHORT      = "too_short"
+const QUALITY_LONG       = "too_long"
+const QUALITY_REPETITIVE = "repetitive"
+const QUALITY_NOISY      = "noisy"
+const QUALITY_DUPLICATE  = "duplicate"
+const QUALITY_GIBBERISH  = "gibberish"
+
+# حدود مقبولة
+const MIN_WORDS       = 5
+const MAX_WORDS       = 200
+const MAX_REPETITION  = 0.30    # 30% كحد أقصى للتكرار
+const MAX_PUNCT_RATIO = 0.25    # 25% علامات ترقيم كحد أقصى
+const MAX_DIGIT_RATIO = 0.15    # 15% أرقام
+const MIN_MEANINGFUL  = 0.50    # 50% أحرف مفهومة كحد أدنى
+const MAX_DUPLICATE_SIM = 0.85  # تشابه > 85% = مكرر
+
+"""
+    check_quality(text::String) -> (Bool, String)
+
+يفحص جودة نص واحد. يرجع (ناجح؟, سبب الرفض).
+"""
+function check_quality(text::String)
+    stripped = strip(text)
+    isempty(stripped) && return (false, QUALITY_SHORT)
+
+    words = split(stripped)
+    n_words = length(words)
+
+    # 1. الطول
+    n_words < MIN_WORDS && return (false, QUALITY_SHORT)
+    n_words > MAX_WORDS && return (false, QUALITY_LONG)
+
+    # 2. تكرار الكلمات
+    if n_words >= 10
+        word_counts = Dict{String,Int}()
+        for w in words
+            wl = lowercase(w)
+            word_counts[wl] = get(word_counts, wl, 0) + 1
+        end
+        max_repeat = maximum(values(word_counts))
+        if max_repeat / n_words > MAX_REPETITION
+            return (false, QUALITY_REPETITIVE)
+        end
+    end
+
+    # 3. نسبة الترقيم والأرقام
+    punct_count = 0
+    digit_count = 0
+    meaningful = 0
+    for c in stripped
+        if ispunct(c)
+            punct_count += 1
+        elseif isdigit(c)
+            digit_count += 1
+        elseif isletter(c)
+            meaningful += 1
+        end
+    end
+    total = length(stripped)
+    if total > 0
+        if punct_count / total > MAX_PUNCT_RATIO
+            return (false, QUALITY_NOISY)
+        end
+        if digit_count / total > MAX_DIGIT_RATIO
+            return (false, QUALITY_NOISY)
+        end
+        if meaningful / total < MIN_MEANINGFUL
+            return (false, QUALITY_GIBBERISH)
+        end
+    end
+
+    return (true, QUALITY_PASS)
+end
+
+"""
+    filter_quality(texts::Vector{String}) -> (Vector{String}, Dict{String,Int})
+
+يفلتر مجموعة نصوص ويرجع (الناجحة, إحصائيات).
+"""
+function filter_quality(texts::Vector{String})
+    passed = String[]
+    stats = Dict{String,Int}(
+        QUALITY_PASS => 0, QUALITY_SHORT => 0, QUALITY_LONG => 0,
+        QUALITY_REPETITIVE => 0, QUALITY_NOISY => 0,
+        QUALITY_DUPLICATE => 0, QUALITY_GIBBERISH => 0,
+    )
+
+    for text in texts
+        ok, reason = check_quality(text)
+        if ok
+            push!(passed, text)
+        end
+        stats[reason] = get(stats, reason, 0) + 1
+    end
+
+    return (passed, stats)
+end
+
+"""
+    filter_sentences(sentences::Vector{String}) -> Vector{String}
+
+اختصار لفلترة الجمل فقط.
+"""
+function filter_sentences(sentences::Vector{String})
+    passed, _ = filter_quality(sentences)
+    return passed
+end
+
+"""
+    filter_paragraphs(paragraphs::Vector{String}) -> Vector{String}
+
+اختصار لفلترة الفقرات (حد أقصى أعلى للطول).
+"""
+function filter_paragraphs(paragraphs::Vector{String})
+    passed = String[]
+    for p in paragraphs
+        words = split(p)
+        if length(words) >= 5 && length(words) <= 500  # فقرات أطول مسموحة
+            ok, reason = check_quality(p)
+            if ok || reason == QUALITY_LONG  # نقبل الفقرات الطويلة
+                push!(passed, p)
+            end
+        end
+    end
+    return passed
+end
+
+"""
+    is_quality_text(text::String) -> Bool
+
+اختصار: هل النص ذو جودة مقبولة؟
+"""
+is_quality_text(text::String) = first(check_quality(text))
+
+"""
+    deduplicate_texts(texts::Vector{String}; threshold::Float64=MAX_DUPLICATE_SIM) -> Vector{String}
+
+يزيل النصوص شبه المكررة (تشابه > 85%).
+"""
+function deduplicate_texts(texts::Vector{String}; threshold::Float64=MAX_DUPLICATE_SIM)
+    n = length(texts)
+    n <= 1 && return copy(texts)
+
+    kept = trues(n)
+    for i in 1:n
+        kept[i] || continue
+        for j in (i+1):n
+            kept[j] || continue
+            sim = _jaccard_similarity(texts[i], texts[j])
+            if sim >= threshold
+                kept[j] = false
+            end
+        end
+    end
+
+    return texts[kept]
+end
+
+"""
+    _jaccard_similarity(a::String, b::String) -> Float64
+
+تشابه Jaccard بين مجموعتي كلمات.
+"""
+function _jaccard_similarity(a::String, b::String)
+    words_a = Set(lowercase.(split(a)))
+    words_b = Set(lowercase.(split(b)))
+    isempty(words_a) && isempty(words_b) && return 0.0
+    intersection = length(intersect(words_a, words_b))
+    union_len = length(union(words_a, words_b))
+    union_len == 0 && return 0.0
+    return intersection / union_len
+end
+
+end # module QualityFilter

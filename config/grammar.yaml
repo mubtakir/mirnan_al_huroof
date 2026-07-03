@@ -1,0 +1,25 @@
+# ═══ المعاملات النحوية والصرفية ═══
+
+# ═══ أوزان التسجيل النحوية والصرفية ═══
+scoring_weights:
+  syntax: 5.0
+  syntax_gate: 2.5
+  syntax_phase: 2.5
+  morpho: 1.5
+  morpho_trans: 1.2
+  irab: 1.5
+  weight_resonance: 1.5
+  sentence: 1.0
+  pos_alt: 1.0
+  phil_semantic: 2.0
+  root_align: 1.2
+  pragmatic: 1.5
+  phase_opposition: 1.5
+
+# ═══ الإنجليزية ═══
+scoring_weights_english:
+  eng_morpho: 1.0
+  eng_morpho_trans: 0.8
+  eng_grammar: 1.0
+  eng_agreement: 0.8
+  eng_stem_align: 0.8

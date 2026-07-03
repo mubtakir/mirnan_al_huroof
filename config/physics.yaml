@@ -1,0 +1,45 @@
+# ═══ المعاملات الفيزيائية — محركات النواة ═══
+# يتحكم في سلوك المحركات الفيزيائية أثناء التوليد.
+
+# ═══ DCCF — حقل الاقتران الديناميكي السياقي (بديل self-attention) ═══
+dccf:
+  decay_rate: 0.5
+  mass_threshold: 0.3
+
+# ═══ PotentialCascade — طبقة الهوي التراكمي ═══
+cascade:
+  enabled: true
+  lambda_cascade: 3.0
+  gamma: 2.0
+  delta: 0.3
+  phase_lock_threshold: 0.65
+  repulsion_strength: 2.5
+  friction_decay: 0.3
+
+# ═══ PhaseReinforcement — التعزيز الطوري الذاتي ═══
+phase_reinforcement:
+  learning_rate: 0.05
+  decay: 0.01
+
+# ═══ PromptField — تعديل الطور بالأمر ═══
+prompt_field:
+  decay_rate: 0.1
+  strength: 1.0
+
+# ═══ EntropyGate — بوابة الإنتروبيا ═══
+entropy:
+  S_crit: 1.0
+
+# ═══ محرك التغاير الترددي (Heterodyne) ═══
+heterodyne:
+  bandwidth: 0.15
+  context_window: 8
+
+# ═══ الأطياف السياقية ═══
+contextual_spectra:
+  enabled: true
+
+# ═══ CausalFlow — حقل التدفق السببي ═══
+causal_flow:
+  strength: 1.0
+  transitive_depth: 3

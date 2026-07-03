@@ -1,0 +1,49 @@
+{
+  "description": "أنماط كشف القصد في الحوار — كلمات مفتاحية وجمل كانونية",
+  "intents": {
+    "GREETING": {
+      "keywords": ["السلام عليكم","مرحبا","أهلا","صباح","مساء","تحيات","hi","hello","السلام"],
+      "canonical": ["السلام عليكم","مرحبا","أهلا","صباح الخير","مساء الخير","كيف الحال","تحياتي","السلام","hi","hello","مرحباً"]
+    },
+    "QUESTION": {
+      "keywords": ["كيف","ماذا","لماذا","أين","متى","هل","أي","ما اسم","ما الأمر","ما الخبر","what","when","where","why","how","who","which","is this","are you","do you","question","ask","tell me what","tell me how"],
+      "canonical": ["كيف","ماذا","لماذا","أين","متى","هل","من","كم","أي","أليس","أينما","كيفك","ما اسمك","ما الأمر","ما الخبر"]
+    },
+    "COMMAND": {
+      "keywords": ["افعل","اكتب","قل","احسب","اشرح","حلل","لخص","ترجم","افتح","أغلق","شغل","أطفئ","do","write","tell","explain","run","open","close","show","give"],
+      "canonical": ["افعل","اكتب","قل","أعلمني","أخبرني","احسب","اشرح","حلل","لخص","ترجم","do","write","tell","explain"]
+    },
+    "REQUEST": {
+      "keywords": ["من فضلك","لو سمحت","أريد","أرجوك","هل يمكن","ساعدني","أعني","please","can you","could you","would you","i want","i need"],
+      "canonical": ["من فضلك","لو سمحت","أريد","هل يمكن","أرجوك","هل تستطيع","أتريد","أطلب","please","can you","I want","would you"]
+    },
+    "FAREWELL": {
+      "keywords": ["مع السلامة","إلى اللقاء","وداعا","باي","في أمان الله","goodbye","bye","see you","farewell"],
+      "canonical": ["مع السلامة","إلى اللقاء","وداعا","باي","goodbye","bye","سلام","في أمان الله"]
+    },
+    "STATEMENT": {
+      "keywords": ["إن","لقد","سوف","كان","يكون","ليس","هذا","that","those"],
+      "canonical": ["إن","أن","لقد","قد","كان","يكون","ليس","سوف","سأ","هذا"]
+    },
+    "OPINION": {
+      "keywords": ["أعتقد","برأيي","أظن","أرى","يبدو","اعتقاد","من وجهة","حسب علمي","think","believe","opinion","i think"],
+      "canonical": ["أعتقد","برأيي","أظن","أرى","يبدو","من وجهة","think","believe","opinion"]
+    },
+    "SUGGESTION": {
+      "keywords": ["دعنا","لن","لم لا","ماذا لو","أقترح","يقترح","الأفضل","ربما","let's","why not","suggest","maybe","how about","what about"],
+      "canonical": ["دعنا","لن","لم لا","ماذا لو","أقترح","الأفضل","ربما","let's","suggest","maybe","how about"]
+    },
+    "COMPLAINT": {
+      "keywords": ["مشكلة","خطأ","أشتكي","شكوى","لا يعمل","سيء","مزعج","غير جيد","problem","bug","error","broken","doesn't work","not working","issue"],
+      "canonical": ["مشكلة","خطأ","أشتكي","شكوى","لا يعمل","سيء","مزعج","problem","bug","error","broken","doesn't work"]
+    },
+    "PROMISE": {
+      "keywords": ["أعدك","سأفعل","أضمن","ألتزم","موعد","أقسم","سأحرص","promise","i swear","i guarantee","i will","i shall"],
+      "canonical": ["أعدك","سأفعل","أضمن","ألتزم","موعد","أقسم","promise","i swear","i will"]
+    },
+    "THANK": {
+      "keywords": ["شكرا","شكراً","جزاك","بارك","أشكر","ممنون","thank","thanks","grateful","appreciate","much obliged"],
+      "canonical": ["شكرا","شكراً","جزاك","بارك","أشكر","ممنون","thank","thanks","grateful","appreciate"]
+    }
+  }
+}

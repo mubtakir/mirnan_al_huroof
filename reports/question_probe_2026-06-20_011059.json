@@ -1,0 +1,804 @@
+{
+  "duration_seconds": 109.875,
+  "generated_at": "2026-06-20T01:10:59.098",
+  "model_dir": "C:\\Users\\allmy\\Desktop\\aaa\\basil\\majnon\\models\\mirnan\\model",
+  "results": [
+    {
+      "accepted": true,
+      "category": "تعريفي",
+      "elapsed_seconds": 22.277999877929688,
+      "id": 1,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "الحكمة هي وضع الشيء في موضعه الصحيح.",
+      "prompt": "ما معنى الحكمة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.832589968436736,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.02700018882751465,
+      "id": 2,
+      "issues": [],
+      "output": "العلم هو ان يعرف الانسان الحقايق.",
+      "prompt": "ما هو العلم؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8384605464037198,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 3.0979998111724854,
+      "id": 3,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "من هو المعلم؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.09999990463256836,
+      "id": 4,
+      "issues": [],
+      "output": "الفضيلة هي جوهر الحكمه، ومن يوت الحكمه فقد اوتي خيرا كثيرا ونورا مبينا.",
+      "prompt": "ما هي الفضيلة؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8881297726507669,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 20.30900001525879,
+      "id": 5,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فيزياء الحرف لكلمة [الحقيقي]: الجذر/الأثر الجذري حقق، الكتلة 17.5، التناغم 0.3484، الثبات 0.3643، الجمال الطيفي 0.37. أقرب كلمات طيفيا: الحَقِيقيُّ (0.7404)، الحقيق (0.7385)، الحقيقيُّ (0.7382)، الحقيقهِ (0.7378)، الخليلي (0.7376). ثقة الاستنباط 0.7404. هذا تقدير من بنية الحروف والسياق المعجمي، لا حكما نهائيا.",
+      "prompt": "ما هو المعنى الحقيقي للحرية؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.0559999942779541,
+      "id": 6,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "def my_func():\n    pass",
+      "prompt": "ما هي العدالة؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 0.003000020980834961,
+      "id": 7,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "الانسان له جسد مادي وله روح ربانيه.",
+      "prompt": "ما هو الإنسان؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "تعريفي",
+      "elapsed_seconds": 19.763999938964844,
+      "id": 8,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فيزياء الحرف لكلمة [الحياة]: الجذر/الأثر الجذري حيا، الكتلة 15.0، التناغم 0.9998، الثبات 0.9995، الجمال الطيفي 0.9011. أقرب كلمات طيفيا: الحياه (0.75)، الحياهِ (0.7487)، الحياهَ (0.7487)، الحياهُ (0.7487)، الحَيَاهِ (0.7486). ثقة الاستنباط 0.75. هذا تقدير من بنية الحروف والسياق المعجمي، لا حكما نهائيا.",
+      "prompt": "ما معنى الحياة؟",
+      "reason_code": "G4",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 0.06099987030029297,
+      "id": 9,
+      "issues": [],
+      "output": "الإنسان يتعلم عبر الملاحظة والتجربة والتكرار، ثم تأتي المراجعة لتثبيت النتيجة.",
+      "prompt": "كيف يتعلم الإنسان؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.88332420830124,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 0.05500006675720215,
+      "id": 10,
+      "issues": [],
+      "output": "القلب يعمل عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف يعمل القلب؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8724615246616969,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 0.0710000991821289,
+      "id": 11,
+      "issues": [],
+      "output": "ذلك ننام عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف ننام؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8612605421162114,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 0.023000001907348633,
+      "id": 12,
+      "issues": [],
+      "output": "المعرفة تتكون عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف تتكون المعرفة؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.890814471321653,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 0.09200000762939453,
+      "id": 13,
+      "issues": [],
+      "output": "الخطأ نقرر عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف نقرر الصواب من الخطأ؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8720751791385292,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 0.021999835968017578,
+      "id": 14,
+      "issues": [],
+      "output": "الضوء ينتقل عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف ينتقل الضوء؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8795524697395232,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "كيفي",
+      "elapsed_seconds": 0.019999980926513672,
+      "id": 15,
+      "issues": [],
+      "output": "النباتات تنمو عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف تنمو النباتات؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8786911092139725,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.05099987983703613,
+      "id": 16,
+      "issues": [],
+      "output": "يحدث ننام بسبب ترابط السوال مع سوال، فتظهر النتيجة تبعا لهذا الترابط.",
+      "prompt": "لماذا ننام؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.886738033864072,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.056999921798706055,
+      "id": 17,
+      "issues": [],
+      "output": "يحدث نحتاج العلم بسبب ترابط السوال مع سوال، فتظهر النتيجة تبعا لهذا الترابط.",
+      "prompt": "لماذا نحتاج إلى العلم؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.9036639164281031,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.05900001525878906,
+      "id": 18,
+      "issues": [],
+      "output": "إذا زاد الجهل، ماذا يحدث؟، لأن الشرط يفتح طريق النتيجة ويربط السبب بأثره.",
+      "prompt": "إذا زاد الجهل، ماذا يحدث؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8832065111509526,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.019999980926513672,
+      "id": 19,
+      "issues": [],
+      "output": "إذا تعلم الإنسان، ماذا يحدث؟، لأن الشرط يفتح طريق النتيجة ويربط السبب بأثره.",
+      "prompt": "إذا تعلم الإنسان، ماذا يحدث؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8813907917841957,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.06600022315979004,
+      "id": 20,
+      "issues": [],
+      "output": "يحدث نتعلم أخطائنا بسبب ترابط السوال مع سوال، فتظهر النتيجة تبعا لهذا الترابط.",
+      "prompt": "لماذا نتعلم من أخطائنا؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.906887851427615,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.06599998474121094,
+      "id": 21,
+      "issues": [],
+      "output": "يحدث نبحث الحقيقة بسبب ترابط السوال مع سوال، فتظهر النتيجة تبعا لهذا الترابط.",
+      "prompt": "لماذا نبحث عن الحقيقة؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.9001914159460662,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "سببي",
+      "elapsed_seconds": 0.011999845504760742,
+      "id": 22,
+      "issues": [],
+      "output": "إذا أشرقت الشمس، ماذا يحدث؟، لأن الشرط يفتح طريق النتيجة ويربط السبب بأثره.",
+      "prompt": "إذا أشرقت الشمس، ماذا يحدث؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8885344074637596,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 0.05500006675720215,
+      "id": 23,
+      "issues": [],
+      "output": "اليوم الطقس عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف هو الطقس اليوم؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8831616516447149,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 1.5120000839233398,
+      "id": 24,
+      "issues": [],
+      "output": "منزلك.",
+      "prompt": "صف منزلك.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.7385301510032984,
+      "status": "مقبول",
+      "status_symbol": "WARN"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 0.029999971389770508,
+      "id": 25,
+      "issues": [],
+      "output": "صافية تبدو عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف تبدو السماء صافية؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8704236503081767,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 1.4700000286102295,
+      "id": 26,
+      "issues": [],
+      "output": "معلمك المفضل.",
+      "prompt": "صف معلمك المفضل.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.7981781163393198,
+      "status": "مقبول",
+      "status_symbol": "WARN"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 0.023000001907348633,
+      "id": 27,
+      "issues": [],
+      "output": "شعور السعادة عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف هو شعور السعادة؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8890142994502815,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "وصفي",
+      "elapsed_seconds": 3.6639997959136963,
+      "id": 28,
+      "issues": [],
+      "output": "الحديقة الربيع.",
+      "prompt": "صف الحديقة في الربيع.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8082057292990548,
+      "status": "مقبول",
+      "status_symbol": "WARN"
+    },
+    {
+      "accepted": true,
+      "category": "حواري",
+      "elapsed_seconds": 0.032000064849853516,
+      "id": 29,
+      "issues": [],
+      "output": "حالك يحدث عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف حالك؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8720137449634702,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 3.4160001277923584,
+      "id": 30,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "ما هو رأيك في القراءة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 3.4800000190734863,
+      "id": 31,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "هل تحب التعلم؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 3.931999921798706,
+      "id": 32,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "ما أجمل شيء في الحياة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "حواري",
+      "elapsed_seconds": 0.04699993133544922,
+      "id": 33,
+      "issues": [],
+      "output": "يومك تقضي عبر فهم السياق وتنظيم الخطوات، ثم مراجعة النتيجة.",
+      "prompt": "كيف تقضي يومك؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8737515203013748,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "حواري",
+      "elapsed_seconds": 3.134999990463257,
+      "id": 34,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "هل تؤمن بالمعرفة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.029999971389770508,
+      "id": 35,
+      "issues": [],
+      "output": "مجموع 12 + 34 هو 46.\n1. تحديد العملية: جمع.\n2. حساب 12 + 34.\n3. التحقق بإعادة الحساب.\nالتحقق: 12 + 34 = 46.\nمؤكد: نعم.",
+      "prompt": "ما هو 12 + 34؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8152322030899749,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.014000177383422852,
+      "id": 36,
+      "issues": [],
+      "output": "مساحة المربع هي 25.\n1. نحدد طول الضلع.\n2. نضرب الضلع في نفسه.\nالتحقق: 5 * 5 = 25.\nمؤكد: نعم.",
+      "prompt": "احسب مساحة مربع طول ضلعه 5.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8297336604156669,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.01699995994567871,
+      "id": 37,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "ناتج الضرب 6 * 7 هو 42.\n1. تحديد العملية: ضرب.\n2. حساب 6 * 7.\n3. التحقق بإعادة الحساب.\nالتحقق: 6 * 7 = 42.\nمؤكد: نعم.",
+      "prompt": "ما هو حاصل ضرب 6 × 7؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.823002021466699,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.013000011444091797,
+      "id": 38,
+      "issues": [
+        "weak_prompt_anchor"
+      ],
+      "output": "الباقي هو 7.\n1. نحدد الكمية الأصلية.\n2. نطرح الكمية المستخدمة.\nالتحقق: 10 - 3 = 7.\nمؤكد: نعم.",
+      "prompt": "إذا كان لديك 10 تفاحات وأكلت 3، كم تبقى؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.810349077504515,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.020999908447265625,
+      "id": 39,
+      "issues": [],
+      "output": "جذر العدد هو 4.\n1. نحدد العدد تحت الجذر.\n2. نبحث عن عدد مربعه يساويه.\nالتحقق: 4 * 4 = 16.\nمؤكد: نعم.",
+      "prompt": "ما هو جذر 16؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.842870225967336,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "حسابي",
+      "elapsed_seconds": 0.00800013542175293,
+      "id": 40,
+      "issues": [],
+      "output": "ناتج الطرح 20 - 7 هو 13.\n1. تحديد العملية: طرح.\n2. حساب 20 - 7.\n3. التحقق بإعادة الحساب.\nالتحقق: 20 - 7 = 13.\nمؤكد: نعم.",
+      "prompt": "ما هو 20 - 7؟",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8306696544564529,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "برمجي",
+      "elapsed_seconds": 0.01399993896484375,
+      "id": 41,
+      "issues": [],
+      "output": "def add(a, b):\n    return a + b",
+      "prompt": "اكتب دالة تجمع عددين في بايثون.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.869685,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "برمجي",
+      "elapsed_seconds": 0.00800013542175293,
+      "id": 42,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "for i in range(1, 11):\n    print(i)",
+      "prompt": "اكتب حلقة تكرار تطبع الأعداد من 1 إلى 10.",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "برمجي",
+      "elapsed_seconds": 0.010999917984008789,
+      "id": 43,
+      "issues": [
+        "weak_phase_coherence",
+        "weak_prompt_anchor"
+      ],
+      "output": "if number > 10:\n    print(number)",
+      "prompt": "اكتب شرطا يتحقق إذا كان الرقم أكبر من 10.",
+      "reason_code": "G6",
+      "repair_target": "coherence",
+      "score": 0.6885833072833986,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "برمجي",
+      "elapsed_seconds": 0.004999876022338867,
+      "id": 44,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "x = 1",
+      "prompt": "كيف تعرف متغيرا في جوليا؟",
+      "reason_code": "G6",
+      "repair_target": "coherence",
+      "score": 0.44,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": true,
+      "category": "برمجي",
+      "elapsed_seconds": 0.006000041961669922,
+      "id": 45,
+      "issues": [],
+      "output": "def max_two(a, b):\n    return a if a > b else b",
+      "prompt": "اكتب دالة ترجع أكبر عددين.",
+      "reason_code": "",
+      "repair_target": "coherence",
+      "score": 0.8676054545454546,
+      "status": "نجاح",
+      "status_symbol": "OK"
+    },
+    {
+      "accepted": false,
+      "category": "رأي",
+      "elapsed_seconds": 4.184999942779541,
+      "id": 46,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "ما رأيك في الذكاء الاصطناعي؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "رأي",
+      "elapsed_seconds": 4.370000123977661,
+      "id": 47,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "هل العلم مفيد دائما؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "رأي",
+      "elapsed_seconds": 4.768999814987183,
+      "id": 48,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "ما رأيك في القراءة والكتابة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "رأي",
+      "elapsed_seconds": 4.236999988555908,
+      "id": 49,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "هل التعلم واجب على الجميع؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    },
+    {
+      "accepted": false,
+      "category": "رأي",
+      "elapsed_seconds": 4.715000152587891,
+      "id": 50,
+      "issues": [
+        "missing_prompt_anchor"
+      ],
+      "output": "فشل التوليد الفيزيائي الحالي.",
+      "prompt": "ما رأيك في أهمية المعرفة في الحياة؟",
+      "reason_code": "G6",
+      "repair_target": "prompt_alignment",
+      "score": 0.44,
+      "status": "فشل",
+      "status_symbol": "FAIL"
+    }
+  ],
+  "summary": {
+    "برمجي": {
+      "acceptable": 0,
+      "failed": 0,
+      "success": 5,
+      "total": 5
+    },
+    "تعريفي": {
+      "acceptable": 0,
+      "failed": 5,
+      "success": 3,
+      "total": 8
+    },
+    "حسابي": {
+      "acceptable": 0,
+      "failed": 0,
+      "success": 6,
+      "total": 6
+    },
+    "حواري": {
+      "acceptable": 0,
+      "failed": 4,
+      "success": 2,
+      "total": 6
+    },
+    "رأي": {
+      "acceptable": 0,
+      "failed": 5,
+      "success": 0,
+      "total": 5
+    },
+    "سببي": {
+      "acceptable": 0,
+      "failed": 0,
+      "success": 7,
+      "total": 7
+    },
+    "كيفي": {
+      "acceptable": 0,
+      "failed": 0,
+      "success": 7,
+      "total": 7
+    },
+    "وصفي": {
+      "acceptable": 3,
+      "failed": 0,
+      "success": 3,
+      "total": 6
+    }
+  },
+  "totals": {
+    "acceptable": 3,
+    "failed": 14,
+    "success": 33,
+    "total": 50
+  }
+}

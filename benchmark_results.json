@@ -1,0 +1,128 @@
+{
+  "Markov": [
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Markov",
+      "repetition_penalty": 0.1,
+      "text": "كهرباء سلك سلم ميع جند جنس جني جهد مِن وَالعَينُ",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Markov",
+      "repetition_penalty": 0.1,
+      "text": "دارٍ تَكونُ غَيرُ متوفره بناء بُعدٍ ضمير مبني عَليٍّ يَدِهِ",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Markov",
+      "repetition_penalty": 0.1,
+      "text": "عَرَفَ عرق عرك عزب شخص ذو حدين تنفع اِنْ يقفز",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Markov",
+      "repetition_penalty": 0.1,
+      "text": "رقي ترك الاِنسانِ العافيه اللهِ وبركاته thanks lot You are",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Markov",
+      "repetition_penalty": 0.1,
+      "text": "رفه بدن حصر درن دعب ستر رَبَعَ ثلاثه وعشرون مايهً",
+      "unique_ratio": 1.0
+    }
+  ],
+  "Mirnan": [
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Mirnan",
+      "repetition_penalty": 0.1,
+      "text": "Welcome العفو اشكرك يسلمك appreciate العافيه صباح يحفظك شكراً شُكرُ",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Mirnan",
+      "repetition_penalty": 0.1,
+      "text": "pleasure thank Goodbye My Bye Mirnan الوضع بخير لِلَّهِ الحَياهُ",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Mirnan",
+      "repetition_penalty": 0.1,
+      "text": "يعيش الاِنسانِ يعمل اين كَريمٍ ورشه المدرسه الجواب ام تعيش",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.8571428571428572,
+      "length": 7,
+      "model": "Mirnan",
+      "repetition_penalty": 0.14285714285714285,
+      "text": "# [CodeEngine: no code vocab loaded]\npass\n",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Mirnan",
+      "repetition_penalty": 0.1,
+      "text": "الجاذبيه تحيه لَك teşekkür امان take خَيراً النظام عليكم care",
+      "unique_ratio": 1.0
+    }
+  ],
+  "Random": [
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Random",
+      "repetition_penalty": 0.1,
+      "text": "الاسلوب OUTPUT بدلاً لَيلٍ تتوقَّف جاني حواسد رايته يبذر اَعلَمُ",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Random",
+      "repetition_penalty": 0.1,
+      "text": "تَخِرَّ حاجَتَهُ الطِعانِ رَاَينَ والاستثناء صبو غدر اراد عَقَّ والشمس",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Random",
+      "repetition_penalty": 0.1,
+      "text": "تطفو دنا الحِبرُ ووجد ضبح اذنها قَبيحٌ الرضا اخذ واكمل",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Random",
+      "repetition_penalty": 0.1,
+      "text": "يقتضي قمه الخطايا وَالحَربُ بعدان الحَوادِثِ مهمتك الوُجوهِ وَكَفي ندد",
+      "unique_ratio": 1.0
+    },
+    {
+      "coherence_score": 0.9,
+      "length": 10,
+      "model": "Random",
+      "repetition_penalty": 0.1,
+      "text": "ندف فاوه بِابنِ رجن التنازع help الدرسَ هَدي نشاه قعد",
+      "unique_ratio": 1.0
+    }
+  ]
+}

@@ -1,0 +1,333 @@
+"""mirnan V8 API — Partonic Resonance Backend + SIO.
+
+يدعم 10 أنماط توليد + 4 تحسينات فيزيائية (DM, PPS, CFF, HWM) + تحكم فيزيائي حي + ذكاء توليفي.
+"""
+
+import os, sys, time
+if hasattr(sys.stdout, 'reconfigure') and "pytest" not in sys.modules:
+    sys.stdout.reconfigure(encoding='utf-8')
+import numpy as np
+import json
+import logging
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+from typing import Optional, Dict, Any, List
+
+logger = logging.getLogger('mirnan_api')
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
+import model as mirnan_model
+from src.physics.generator import Generator
+from src.physics.orchestrator import PhysicsOrchestrator
+
+mirnan_orch = None
+_sio_orch = None
+_loading = False
+
+
+def get_orch():
+    global mirnan_orch, _loading
+    if mirnan_orch is not None:
+        return mirnan_orch
+    if _loading:
+        raise HTTPException(status_code=503, detail="Model is loading, please retry in a moment")
+    _loading = True
+    try:
+        logger.info("Loading mirnan V8...")
+        t0 = time.time()
+        data = mirnan_model.load_model()
+        gen = Generator(
+            data['vocab'], data['K_sem'],
+            syntax_field=data['syntax'],
+            K_syn=data.get('K_syn'),
+            K_dialogue=data.get('K_dial'),
+        )
+        mirnan_orch = PhysicsOrchestrator(gen)
+        logger.info(f"* Loaded {len(data['vocab']):,} words in {time.time()-t0:.1f}s")
+        return mirnan_orch
+    finally:
+        _loading = False
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global mirnan_orch
+    logger.info("Loading mirnan V8 on startup...")
+    get_orch()
+    yield
+
+
+app = FastAPI(title="mirnan V8 API", description="Partonic Resonance — DM · PPS · CFF · HWM", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ═══ SIO — Synthetic Intelligence Orchestrator ═══
+
+def get_sio():
+    global _sio_orch
+    if _sio_orch is not None:
+        return _sio_orch
+    from src.sio.orchestrator import SIOOrchestrator
+    orch = get_orch()
+    _sio_orch = SIOOrchestrator(gen=orch.gen)
+    return _sio_orch
+
+
+# ═══ Request/Response Models ═══
+
+class ChatRequest(BaseModel):
+    prompt: str
+    mode: str = "auto"
+    max_words: int = 20
+    beta: Optional[float] = None
+    k_B: Optional[float] = None
+    poetic_meter: Optional[str] = None
+    poetic_rhyme: Optional[str] = None
+    cascade: Optional[bool] = None
+    cascade_strength: Optional[float] = None
+    dialogue: Optional[bool] = None
+
+
+class ChatResponse(BaseModel):
+    result: str
+    physics_report: Optional[Dict[str, Any]] = None
+    time_taken: float
+
+
+class SynthesizeRequest(BaseModel):
+    goal: str
+    max_phase_retries: int = 5
+
+
+class BenchmarkUpdateRequest(BaseModel):
+    words: List[str]
+
+
+class LetterUpdateRequest(BaseModel):
+    letter: str
+    vector: List[float]
+
+
+# ═══ Chat Endpoint ═══
+
+@app.post("/api/chat", response_model=ChatResponse)
+async def generate_chat(request: ChatRequest):
+    orch = get_orch()
+    if not orch:
+        raise HTTPException(status_code=503, detail="Model failed to load")
+
+    if not request.prompt.strip():
+        raise HTTPException(status_code=400, detail="Prompt cannot be empty")
+
+    t0 = time.time()
+    try:
+        if request.beta is not None:
+            orch.adjust_beta(request.beta)
+        if request.k_B is not None:
+            orch.adjust_k_B(request.k_B)
+
+        kwargs = {}
+        if request.poetic_meter:
+            kwargs['poetic_meter'] = request.poetic_meter
+        if request.poetic_rhyme:
+            kwargs['poetic_rhyme'] = request.poetic_rhyme
+
+        if request.cascade is not None:
+            strength = request.cascade_strength if request.cascade_strength is not None else 3.0
+            orch.set_cascade(request.cascade, strength)
+        if request.dialogue is not None:
+            orch.set_dialogue(request.dialogue)
+
+        result = orch.generate(
+            request.prompt,
+            max_words=request.max_words,
+            mode=request.mode,
+            **kwargs
+        )
+
+        physics_report = orch.get_report()
+        gen_report = orch.gen.get_physics_report(request.prompt, result)
+        physics_report.update(gen_report)
+        
+        time_taken = time.time() - t0
+
+        return ChatResponse(
+            result=result or "(empty)",
+            physics_report=physics_report,
+            time_taken=time_taken,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ═══ Benchmark Endpoints ═══
+
+@app.get("/api/benchmark")
+def get_benchmark():
+    orch = get_orch()
+    try:
+        words = orch.gen.load_benchmark_vocab()
+        return {"words": words}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/benchmark/update")
+async def update_benchmark(request: BenchmarkUpdateRequest):
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "benchmark_vocab.json")
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(request.words, f, ensure_ascii=False, indent=2)
+        return {"status": "success", "count": len(request.words)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ═══ Letter Endpoints ═══
+
+@app.get("/api/letters")
+async def get_letters():
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "letter_physics_matrix.json")
+    try:
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+            return data
+        else:
+            raise HTTPException(status_code=404, detail="Letter physics matrix file not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/letters/update")
+async def update_letter(request: LetterUpdateRequest):
+    orch = get_orch()
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "letter_physics_matrix.json")
+    try:
+        from src.physics.word_physics import get_letter_db
+        db = get_letter_db()
+        if request.letter in db.data:
+            db.data[request.letter]['vector'] = np.array(request.vector, dtype=np.float64)
+        else:
+            db.data[request.letter] = {
+                "vector": np.array(request.vector, dtype=np.float64),
+                "operator": "0", "a": 0.0, "s": 0.0, "articulation": "", "manner": "", "meaning": ""
+            }
+
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                matrix_data = json.load(f)
+        else:
+            from src.physics.letter_db import DIM_NAMES
+            matrix_data = {"letters": {}, "dim_names": DIM_NAMES}
+
+        if "letters" not in matrix_data:
+            matrix_data["letters"] = {}
+        if request.letter not in matrix_data["letters"]:
+            matrix_data["letters"][request.letter] = {}
+        matrix_data["letters"][request.letter]["v"] = request.vector
+
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(matrix_data, f, ensure_ascii=False, indent=2)
+
+        for wid, word in orch.generator.vocab.id2word.items():
+            from src.physics.particles import is_particle
+            if not is_particle(word):
+                from src.physics.word_physics import compute_word_phase_vector
+                orch.generator._all_pv[wid, :22] = compute_word_phase_vector(word)
+
+        return {"status": "success", "letter": request.letter}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/letters/rich/{letter}")
+async def get_letter_rich(letter: str):
+    from src.physics.vector_interpreter import interpret_letter
+    try:
+        result = interpret_letter(letter)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ═══ Field Endpoint ═══
+
+@app.get("/api/field")
+async def get_field(target: str, vocab_type: str = "full", use_hebbian: bool = False, top_k: int = 10):
+    orch = get_orch()
+    try:
+        report = orch.generator.find_attraction_repulsion(
+            target_word=target,
+            vocab_type=vocab_type,
+            use_hebbian=use_hebbian,
+            top_k=top_k
+        )
+        return report
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ═══ SIO Endpoints ═══
+
+@app.post("/api/synthesize")
+async def synthesize(request: SynthesizeRequest):
+    sio = get_sio()
+    try:
+        result = sio.synthesize(request.goal, max_phase_retries=request.max_phase_retries)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/sio/status")
+async def get_sio_status():
+    sio = get_sio()
+    return sio.get_status()
+
+
+# ═══ Meters ═══
+
+@app.get("/meters")
+async def list_meters():
+    return {
+        "arabic": [
+            "tawil", "madeed", "baseet", "wafir", "kamil",
+            "hazaj", "rajaz", "ramal", "saree", "monsareh",
+            "khafeef", "modare", "moqtadab", "mojtath",
+            "motakarib", "motadarak",
+        ],
+        "english": [
+            "iambic_pentameter", "trochaic_tetrameter",
+            "anapestic_trimeter", "dactylic_dimater",
+            "iambic_trimeter", "iambic_tetrameter",
+        ],
+    }
+
+
+# ═══ UI ═══
+
+ui_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "ui")
+os.makedirs(ui_dir, exist_ok=True)
+app.mount("/static", StaticFiles(directory=ui_dir), name="static")
+
+
+@app.get("/")
+async def root():
+    index_path = os.path.join(ui_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": "mirnan V8 API is running. UI not found."}

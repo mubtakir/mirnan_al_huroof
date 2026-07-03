@@ -1,0 +1,82 @@
+INPUT: ما ضد الصدق 🤝؟
+OUTPUT: الكذب ❌
+INPUT: ما ضد الأمانة 🔐؟
+OUTPUT: الخيانة 🔓
+INPUT: ما ضد الكرم 🎁؟
+OUTPUT: البخل 🪙
+INPUT: ما ضد الشجاعة 🦁؟
+OUTPUT: الجبن 🐭
+INPUT: ما ضد التواضع 🙇؟
+OUTPUT: التكبر 👑❌
+INPUT: ما ضد الصبر 🐢؟
+OUTPUT: العجلة 🐇
+INPUT: ما ضد التعاون 🤝🤝؟
+OUTPUT: الأنانية 🙋
+INPUT: ما صفة من يعطي كثيراً 🎁🎁🎁؟
+OUTPUT: كريم جداً جداً
+INPUT: ما صفة من ينتظر طويلاً ⏳⏳؟
+OUTPUT: صبور جداً
+INPUT: رتب الفصول: ☀، ❄، 🍂، 🌸
+OUTPUT: 🌸 ربيع، ☀ صيف، 🍂 خريف، ❄ شتاء
+INPUT: ما الفصل الذي يأتي بعد 🍂؟
+OUTPUT: ❄ الشتاء
+INPUT: كم ثانية في ⏰⏰؟
+OUTPUT: 60 ثانية (دقيقة)
+INPUT: ما هو 📅←📅←؟
+OUTPUT: أول أمس
+INPUT: ما هو 📅→📅→؟
+OUTPUT: بعد غد
+INPUT: ما عمر 🧒؟
+OUTPUT: طفل (5-12 سنة)
+INPUT: ما عمر 👴👴؟
+OUTPUT: شيخ كبير (70+ سنة)
+INPUT: ما هو 🐢⚡؟
+OUTPUT: أبطأ من
+INPUT: ما هو ⚡🐢؟
+OUTPUT: أسرع من
+INPUT: من يعمل في 🏥؟
+OUTPUT: 👨‍⚕️ الطبيب
+INPUT: من يعمل في 🏫؟
+OUTPUT: 👨‍🏫 المعلم
+INPUT: ماذا يحتاج 👨‍⚕️؟
+OUTPUT: 🩺 سماعة
+INPUT: ماذا يحتاج 👷؟
+OUTPUT: 🔨 مطرقة
+INPUT: ما أداة 🎨؟
+OUTPUT: 🖌 فرشاة
+INPUT: ما مكان عمل 👨‍🍳؟
+OUTPUT: 🍽 مطعم
+INPUT: ما عناصر الطبيعة الأربعة؟
+OUTPUT: 🌍 أرض، 💧 ماء، 🔥 نار، 💨 هواء
+INPUT: ما الظاهرة 🌋؟
+OUTPUT: بركان
+INPUT: ما الظاهرة 🌈؟
+OUTPUT: قوس قزح
+INPUT: من يأكل 🐰؟
+OUTPUT: 🦊 الثعلب
+INPUT: من يأكل 🌱؟
+OUTPUT: 🐰 الأرنب
+INPUT: ما الحاسة المسؤولة عن 👁؟
+OUTPUT: البصر
+INPUT: ما الحاسة المسؤولة عن 👂؟
+OUTPUT: السمع
+INPUT: ما هو عكس 💪💪💪؟
+OUTPUT: 🤒🤒🤒 مريض جداً جداً
+INPUT: ما هو 💊💊؟
+OUTPUT: جرعة دواء
+INPUT: ما أسرع وسيلة نقل 🚀🚲✈🚗؟
+OUTPUT: 🚀 الصاروخ
+INPUT: ما أبطأ وسيلة نقل 🚀🚲✈🚗؟
+OUTPUT: 🚲 الدراجة
+INPUT: ما معنى ✅؟
+OUTPUT: موافق / صحيح
+INPUT: ما معنى ⚠؟
+OUTPUT: تحذير
+INPUT: ما معنى 🚫؟
+OUTPUT: ممنوع
+INPUT: أكمل: 🌱→🐰→؟
+OUTPUT: 🦊 الثعلب
+INPUT: أكمل: 👶→👶👶→🧒→؟
+OUTPUT: 🧑 مراهق
+INPUT: أكمل: 🌅→☀⬆→☀→؟
+OUTPUT: ☀⬇ عصر

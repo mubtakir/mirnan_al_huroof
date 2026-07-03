@@ -1,0 +1,171 @@
+"""
+المرحلة 3: التطبيع الموسع — Normalizer.
+
+يطبّع النصوص العربية والإنجليزية:
+- تطبيع أشكال الحروف (آ/أ/إ → ا، ة → ه، ى → ي)
+- إزالة التشكيل (اختياري)
+- إزالة الكشيدة (ـ)
+- توحيد المسافات والأسطر
+- إزالة رموز التحكم (0x00-0x1F ما عدا \n)
+- توحيد علامات الترقيم
+"""
+module Normalizer
+
+export normalize_text, normalize_arabic, normalize_english,
+       strip_diacritics, strip_tatweel, collapse_whitespace,
+       AR_NORMALIZE_MAP, EN_NORMALIZE_MAP
+
+# ─── تطبيع الحروف العربية ───
+const AR_NORMALIZE_MAP = Dict(
+    'آ'=>'ا','أ'=>'ا','إ'=>'ا','ؤ'=>'و','ئ'=>'ي','ة'=>'ه','ى'=>'ي',
+)
+
+# روابط لام-ألف (Presentation Forms — تعالج كنصوص وليس أحرفاً مفردة)
+const _LAM_ALEF_MAP = Dict(
+    "ﻷ" => "لا", "ﻵ" => "لا", "ﻻ" => "لا",
+)
+# تشكيل عربي (يُزال اختيارياً)
+const _AR_DIACRITICS = Set([
+    0x064B,  # Fathatan
+    0x064C,  # Dammatan
+    0x064D,  # Kasratan
+    0x064E,  # Fatha
+    0x064F,  # Damma
+    0x0650,  # Kasra
+    0x0651,  # Shadda
+    0x0652,  # Sukun
+    0x0670,  # Dagger Alif
+])
+
+const TATWEEL = 0x0640  # ـ
+
+const _CONTROL_CHARS = Set{UInt32}(union(0x00:0x08, 0x0B:0x0C, 0x0E:0x1F, UInt32[0x7F]))
+
+# ─── تطبيع الإنجليزية (باستخدام نصوص لتجنب مشاكل الأحرف المركبة) ───
+const EN_NORMALIZE_MAP = Dict{String,String}(
+    "’"=>"'", "‘"=>"'", "“"=>"\"", "”"=>"\"",
+    "–"=>"-", "—"=>"-",
+    "\u2026"=>"...", "\u00A0"=>" ",
+    "\u2013"=>"-", "\u2014"=>"-",
+)
+
+# تطبيع علامات الترقيم
+const _PUNCT_NORMALIZE_MAP = Dict{String,String}(
+    "«"=>"\"", "»"=>"\"",
+)
+
+"""
+    normalize_text(text::String; strip_diacritics::Bool=false,
+                   target_lang::String="auto") -> String
+
+تطبيع كامل للنص حسب اللغة.
+"""
+function normalize_text(text::String; strip_diacritics::Bool=false,
+                         target_lang::String="auto")
+    # المرحلة 0: إزالة رموز التحكم (ما عدا \n \t)
+    chars = Char[]
+    for c in text
+        code = UInt32(c)
+        if code in _CONTROL_CHARS
+            continue
+        end
+        push!(chars, c)
+    end
+    result = String(chars)
+
+    # المرحلة 1: تطبيع علامات الترقيم
+    for (k, v) in _PUNCT_NORMALIZE_MAP
+        result = replace(result, k => v)
+    end
+
+    # المرحلة 2: تطبيع عربي
+    result = normalize_arabic(result; strip_diacritics=strip_diacritics)
+
+    # المرحلة 3: تطبيع إنجليزي
+    result = normalize_english(result)
+
+    # المرحلة 4: ضغط المسافات والأسطر
+    result = collapse_whitespace(result)
+
+    return result
+end
+
+"""
+    normalize_arabic(text::String; strip_diacritics::Bool=false) -> String
+
+يطبّع النص العربي: أشكال الحروف + إزالة الكشيدة + تشكيل (اختياري).
+"""
+function normalize_arabic(text::String; strip_diacritics::Bool=false)
+    # الخطوة 0: روابط لام-ألف (تعالج أولاً لأنها متعددة المحارف)
+    result = text
+    for (k, v) in _LAM_ALEF_MAP
+        result = replace(result, k => v)
+    end
+    # الخطوة 1: تطبيع الأحرف المفردة
+    chars = Char[]
+    for c in result
+        UInt32(c) == TATWEEL && continue
+        if strip_diacritics && UInt32(c) in _AR_DIACRITICS
+            continue
+        end
+        new_c = get(AR_NORMALIZE_MAP, c, c)
+        push!(chars, new_c)
+    end
+    return String(chars)
+end
+
+"""
+    normalize_english(text::String) -> String
+
+يطبّع النص الإنجليزي: علامات اقتباس ذكية، شرطات، فراغات.
+"""
+function normalize_english(text::String)
+    result = text
+    for (k, v) in EN_NORMALIZE_MAP
+        result = replace(result, k => v)
+    end
+    return result
+end
+
+"""
+    strip_diacritics(text::String) -> String
+
+يحذف التشكيل العربي فقط.
+"""
+function strip_diacritics(text::String)
+    chars = Char[]
+    for c in text
+        UInt32(c) in _AR_DIACRITICS && continue
+        push!(chars, c)
+    end
+    return String(chars)
+end
+
+"""
+    strip_tatweel(text::String) -> String
+
+يحذف الكشيدة العربية (ـ).
+"""
+function strip_tatweel(text::String)
+    return replace(text, Char(TATWEEL) => "")
+end
+
+"""
+    collapse_whitespace(text::String) -> String
+
+يضغط المسافات والأسطر:
+- مسافات/تبويبات متعددة ← مسافة واحدة
+- 3+ أسطر فارغة متتالية ← سطرين فقط
+- يقتص المسافات الجانبية
+"""
+function collapse_whitespace(text::String)
+    # توحيد أنواع المسافات (non-breaking space, zero-width, إلخ) إلى مسافة عادية
+    result = replace(text, r"[\u00A0\u2000-\u200F\u2028\u2029\u202F\u205F\u3000]" => " ")
+    # مسافات أفقية متعددة ← واحدة
+    result = replace(result, r"[ \t]+" => " ")
+    # أسطر فارغة متعددة ← 2 حد أقصى
+    result = replace(result, r"\n{3,}" => "\n\n")
+    return strip(result)
+end
+
+end # module Normalizer

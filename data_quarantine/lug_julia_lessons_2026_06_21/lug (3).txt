@@ -1,0 +1,1164 @@
+الدرس الحادي عشر: معالجة البيانات باستخدام DataFrames
+إذا كنت تعمل في:
+
+تحليل البيانات
+الإحصاء
+تعلم الآلة
+البيانات المالية
+الأبحاث العلمية
+فستستخدم غالباً مكتبة DataFrames.jl.
+
+وهي تشبه:
+
+pandas في Python
+data.frame في R
+الجداول في SQL
+1. تثبيت المكتبات
+من مدير الحزم:
+
+julia نسخ
+]
+add DataFrames
+add CSV
+ثم:
+
+julia نسخ
+using DataFrames
+using CSV
+2. إنشاء DataFrame
+julia نسخ
+using DataFrames
+
+df = DataFrame(
+    Name = ["Ali","Sara","Omar"],
+    Age = [25,22,30],
+    Salary = [5000,7000,6000]
+)
+النتيجة:
+
+text نسخ
+3×3 DataFrame
+
+Row Name  Age Salary
+1   Ali   25  5000
+2   Sara  22  7000
+3   Omar  30  6000
+3. عرض أول الصفوف
+julia نسخ
+first(df, 2)
+عرض آخر الصفوف:
+
+julia نسخ
+last(df, 2)
+4. معرفة أسماء الأعمدة
+julia نسخ
+names(df)
+الناتج:
+
+text نسخ
+["Name","Age","Salary"]
+5. حجم الجدول
+عدد الصفوف والأعمدة:
+
+julia نسخ
+size(df)
+مثال:
+
+text نسخ
+(3,3)
+6. الوصول إلى عمود
+julia نسخ
+df.Name
+أو:
+
+julia نسخ
+df[!, :Name]
+الناتج:
+
+text نسخ
+["Ali","Sara","Omar"]
+7. الوصول إلى عنصر
+أول صف وأول عمود:
+
+julia نسخ
+df[1, :Name]
+الناتج:
+
+text نسخ
+Ali
+ثالث صف وعمود الراتب:
+
+julia نسخ
+df[3, :Salary]
+الناتج:
+
+text نسخ
+6000
+8. إضافة عمود جديد
+julia نسخ
+df.Bonus = [500,700,600]
+أو:
+
+julia نسخ
+df[!, :Bonus] = [500,700,600]
+الجدول يصبح:
+
+text نسخ
+Name Age Salary Bonus
+9. إضافة صف جديد
+julia نسخ
+push!(df,
+    ("Mona",28,8000,800)
+)
+إذا كانت أسماء الأعمدة معروفة:
+
+julia نسخ
+push!(df,
+    (
+        Name="Mona",
+        Age=28,
+        Salary=8000,
+        Bonus=800
+    )
+)
+10. حذف عمود
+julia نسخ
+select!(df, Not(:Bonus))
+أو:
+
+julia نسخ
+df = select(df, Not(:Bonus))
+11. تصفية البيانات
+نريد الموظفين فوق 25 سنة.
+
+julia نسخ
+filter(
+    row -> row.Age > 25,
+    df
+)
+النتيجة:
+
+text نسخ
+Omar
+وغيره ممن تجاوزوا الشرط.
+
+12. اختيار أعمدة معينة
+julia نسخ
+select(df,
+    :Name,
+    :Salary
+)
+النتيجة:
+
+text نسخ
+Name Salary
+فقط.
+
+13. إعادة تسمية عمود
+julia نسخ
+rename!(
+    df,
+    :Salary => :Income
+)
+الآن:
+
+text نسخ
+Salary
+أصبحت:
+
+text نسخ
+Income
+14. الفرز Sorting
+ترتيب حسب العمر:
+
+julia نسخ
+sort(df, :Age)
+ترتيب تنازلي:
+
+julia نسخ
+sort(
+    df,
+    :Age,
+    rev=true
+)
+15. العمليات الإحصائية
+متوسط الرواتب:
+
+julia نسخ
+mean(df.Salary)
+يتطلب:
+
+julia نسخ
+using Statistics
+أكبر راتب:
+
+julia نسخ
+maximum(df.Salary)
+أصغر راتب:
+
+julia نسخ
+minimum(df.Salary)
+16. إنشاء عمود محسوب
+مثال:
+
+julia نسخ
+df.Total =
+    df.Salary .+
+    df.Bonus
+الناتج:
+
+text نسخ
+Salary Bonus Total
+17. قراءة CSV
+لدينا:
+
+text نسخ
+employees.csv
+المحتوى:
+
+csv نسخ
+Name,Age,Salary
+Ali,25,5000
+Sara,22,7000
+Omar,30,6000
+القراءة:
+
+julia نسخ
+df =
+    CSV.read(
+        "employees.csv",
+        DataFrame
+    )
+18. حفظ CSV
+julia نسخ
+CSV.write(
+    "output.csv",
+    df
+)
+19. Group By
+من أهم العمليات.
+
+لدينا:
+
+text نسخ
+Department Salary
+IT         5000
+IT         7000
+HR         3000
+HR         4000
+إنشاء الجدول:
+
+julia نسخ
+df = DataFrame(
+    Department =
+        ["IT","IT","HR","HR"],
+    Salary =
+        [5000,7000,3000,4000]
+)
+التجميع:
+
+julia نسخ
+g =
+    groupby(
+        df,
+        :Department
+    )
+متوسط الرواتب لكل قسم:
+
+julia نسخ
+combine(
+    g,
+    :Salary => mean
+)
+الناتج:
+
+text نسخ
+Department Salary_mean
+HR         3500
+IT         6000
+20. عدة إحصاءات دفعة واحدة
+julia نسخ
+combine(
+    g,
+
+    :Salary => mean,
+
+    :Salary => maximum,
+
+    :Salary => minimum
+)
+21. القيم المفقودة
+Julia تستخدم:
+
+julia نسخ
+missing
+مثال:
+
+julia نسخ
+df = DataFrame(
+    Name=["Ali","Sara"],
+    Age=[25, missing]
+)
+فحص:
+
+julia نسخ
+ismissing(
+    df[2,:Age]
+)
+إزالة الصفوف المفقودة:
+
+julia نسخ
+dropmissing(df)
+استبدالها:
+
+julia نسخ
+coalesce.(
+    df.Age,
+    0
+)
+22. مثال واقعي
+نفترض ملف مبيعات:
+
+csv نسخ
+Product,Quantity,Price
+Laptop,3,1000
+Phone,5,500
+Tablet,2,700
+قراءة:
+
+julia نسخ
+sales =
+    CSV.read(
+        "sales.csv",
+        DataFrame
+    )
+إضافة إجمالي المبيعات:
+
+julia نسخ
+sales.Total =
+    sales.Quantity .*
+    sales.Price
+إجمالي الإيرادات:
+
+julia نسخ
+sum(
+    sales.Total
+)
+أهم الدوال التي ستستخدمها يومياً
+julia نسخ
+DataFrame()
+
+CSV.read()
+
+CSV.write()
+
+select()
+
+filter()
+
+sort()
+
+groupby()
+
+combine()
+
+dropmissing()
+
+rename!()
+
+push!()
+تمرين
+أنشئ DataFrame:
+
+julia نسخ
+students = DataFrame(
+    Name=["Ali","Sara","Omar"],
+    Math=[90,85,70],
+    Physics=[88,95,75]
+)
+ثم:
+
+أضف عمود Average.
+احسب متوسط كل طالب.
+اعرض الطلاب الذين متوسطهم أكبر من 80.
+رتب الجدول حسب Average تنازلياً.
+ما بعد DataFrames؟
+أمامنا عدة مسارات احترافية مهمة:
+
+الرسوم البيانية (Plots و Makie).
+الجبر الخطي المتقدم.
+البرمجة المتوازية Multithreading.
+التعلم الآلي باستخدام MLJ.jl.
+الشبكات العصبية باستخدام Flux.jl.
+المعادلات التفاضلية باستخدام DifferentialEquations.jl.
+أنصح بالانتقال أولاً إلى الرسوم البيانية Visualization لأنها أداة ستحتاجها في جميع المجالات اللاحقة.
+الدرس الثاني عشر: الرسوم البيانية (Visualization) في Julia
+بعد معالجة البيانات، تأتي خطوة أساسية:
+
+كيف نفهم البيانات بصرياً؟
+
+الرسوم البيانية تساعد على:
+
+اكتشاف الأنماط.
+اكتشاف الأخطاء.
+تحليل النتائج.
+عرض الأبحاث والتقارير.
+أشهر مكتبات الرسم في Julia هي:
+
+Plots.jl
+Makie.jl
+سنبدأ بـ Plots.jl لأنها الأبسط للمبتدئين.
+
+1. تثبيت المكتبة
+من مدير الحزم:
+
+julia نسخ
+]
+add Plots
+ثم:
+
+julia نسخ
+using Plots
+2. أول رسم
+julia نسخ
+using Plots
+
+x = [1,2,3,4,5]
+
+y = [1,4,9,16,25]
+
+plot(x,y)
+هذا يرسم منحنى يربط النقاط.
+
+3. إضافة عنوان
+julia نسخ
+plot(
+    x,
+    y,
+    title = "Square Function"
+)
+4. تسمية المحاور
+julia نسخ
+plot(
+    x,
+    y,
+
+    xlabel = "x",
+
+    ylabel = "y"
+)
+5. إضافة وسيلة إيضاح
+julia نسخ
+plot(
+    x,
+    y,
+
+    label = "x²"
+)
+6. رسم دالة رياضية
+لدينا:
+
+genui{"math_block_widget_always_prefetch_v2":{"content":"y=x^2"}}
+
+التطبيق:
+
+julia نسخ
+using Plots
+
+x = 0:0.1:10
+
+y = x.^2
+
+plot(x,y)
+لاحظ:
+
+julia نسخ
+.^
+تطبق التربيع على كل عنصر.
+
+7. رسم عدة منحنيات
+julia نسخ
+x = 0:0.1:10
+
+y1 = x.^2
+
+y2 = x.^3
+julia نسخ
+plot(
+    x,
+    y1,
+
+    label="x²"
+)
+
+plot!(
+    x,
+    y2,
+
+    label="x³"
+)
+الدالة:
+
+julia نسخ
+plot!
+تضيف للرسم الحالي.
+
+8. رسم نقاط Scatter
+julia نسخ
+scatter(
+    x,
+    y
+)
+مفيد للبيانات التجريبية.
+
+9. رسم أعمدة Bar Chart
+julia نسخ
+names = [
+    "Ali",
+    "Sara",
+    "Omar"
+]
+
+scores = [
+    90,
+    85,
+    95
+]
+
+bar(
+    names,
+    scores
+)
+10. الرسم الدائري Pie Chart
+بعد تثبيت:
+
+julia نسخ
+using Plots
+julia نسخ
+pie(
+    ["A","B","C"],
+    [20,30,50]
+)
+11. Histogram
+من أهم الرسوم الإحصائية.
+
+julia نسخ
+x = randn(1000)
+
+histogram(x)
+ينشئ توزيعاً للبيانات.
+
+12. رسم الجيب
+لدينا:
+
+julia نسخ
+x = 0:0.01:2π
+
+y = sin.(x)
+
+plot(x,y)
+لاحظ:
+
+julia نسخ
+sin.(x)
+لأن x متجه.
+
+13. رسم الجيب وجيب التمام
+julia نسخ
+x = 0:0.01:2π
+
+plot(
+    x,
+    sin.(x),
+
+    label="sin"
+)
+
+plot!(
+    x,
+    cos.(x),
+
+    label="cos"
+)
+14. حفظ الرسم
+julia نسخ
+savefig(
+    "plot.png"
+)
+أو:
+
+julia نسخ
+savefig(
+    "result.pdf"
+)
+15. تخصيص الحجم
+julia نسخ
+plot(
+    x,
+    y,
+
+    size=(800,600)
+)
+16. رسم مصفوفة بيانات
+julia نسخ
+data = rand(10,3)
+
+plot(data)
+يرسم الأعمدة الثلاثة تلقائياً.
+
+17. Heatmap
+مفيد للمصفوفات.
+
+julia نسخ
+A = rand(20,20)
+
+heatmap(A)
+يعرض القيم بالألوان.
+
+18. Surface Plot ثلاثي الأبعاد
+لدينا:
+
+julia نسخ
+x = range(-5,5,length=100)
+
+y = range(-5,5,length=100)
+
+z = [
+    sin(xx)*cos(yy)
+    for xx in x,
+        yy in y
+]
+julia نسخ
+surface(
+    x,
+    y,
+    z
+)
+19. Animation
+يمكن إنشاء رسوم متحركة.
+
+julia نسخ
+anim =
+    @animate for i=1:100
+
+        plot(
+            sin.(x .+ i/10)
+        )
+
+    end
+حفظ:
+
+julia نسخ
+gif(
+    anim,
+    "wave.gif"
+)
+20. الرسم مع DataFrame
+لدينا:
+
+julia نسخ
+using DataFrames
+
+df = DataFrame(
+
+    Year=[2020,2021,2022,2023],
+
+    Sales=[100,150,180,250]
+)
+الرسم:
+
+julia نسخ
+plot(
+    df.Year,
+    df.Sales
+)
+21. مثال عملي كامل
+julia نسخ
+using CSV
+
+using DataFrames
+
+using Plots
+قراءة البيانات:
+
+julia نسخ
+df =
+    CSV.read(
+        "sales.csv",
+        DataFrame
+    )
+رسم المبيعات:
+
+julia نسخ
+plot(
+    df.Month,
+
+    df.Sales,
+
+    title="Monthly Sales",
+
+    xlabel="Month",
+
+    ylabel="Sales"
+)
+حفظ:
+
+julia نسخ
+savefig(
+    "sales.png"
+)
+متى نستخدم Makie؟
+إذا احتجت:
+
+رسوم ثلاثية الأبعاد متقدمة.
+تفاعلية عالية.
+تطبيقات علمية كبيرة.
+رسوم احترافية للأبحاث.
+فغالباً تستخدم:
+
+Makie.jl
+
+أهم أنواع الرسوم
+الرسم	الاستخدام
+plot	منحنيات
+scatter	نقاط
+bar	أعمدة
+histogram	توزيع
+pie	نسب
+heatmap	مصفوفات
+surface	ثلاثي الأبعاد
+تمرين
+ارسم الدوال التالية على نفس الشكل:
+
+genui{"math_block_widget_always_prefetch_v2":{"content":"y=x"} }
+
+و
+
+genui{"math_block_widget_always_prefetch_v2":{"content":"y=x^2"} }
+
+و
+
+genui{"math_block_widget_always_prefetch_v2":{"content":"y=x^3"} }
+
+للمجال:
+
+julia نسخ
+-5:0.1:5
+وأضف:
+
+عنواناً للرسم.
+أسماء للمحاور.
+وسيلة إيضاح لكل منحنى.
+الخطوة التالية
+بعد أن أصبحت قادراً على:
+
+البرمجة.
+الأنواع.
+الأداء.
+معالجة البيانات.
+الرسوم.
+فإن الباب الطبيعي التالي هو:
+
+الجبر الخطي المتقدم (Linear Algebra)
+وسنتعلم:
+
+المتجهات Vectors.
+المصفوفات Matrices.
+القيم الذاتية Eigenvalues.
+المتجهات الذاتية Eigenvectors.
+التحليل LU.
+التحليل QR.
+التحليل SVD.
+وهذه هي الأسس الرياضية لمعظم خوارزميات الذكاء الاصطناعي والتعلم الآلي والحوسبة العلمية.
+الدرس الثالث عشر: الجبر الخطي المتقدم (Advanced Linear Algebra)
+الجبر الخطي هو القلب الرياضي لكثير من المجالات:
+
+الذكاء الاصطناعي
+التعلم العميق
+معالجة الصور
+معالجة الإشارات
+المحاكاة الفيزيائية
+الإحصاء
+التحسين Optimization
+في Julia توجد معظم الأدوات داخل المكتبة القياسية:
+
+julia نسخ
+using LinearAlgebra
+1. المتجهات Vectors
+إنشاء متجه:
+
+julia نسخ
+v = [1,2,3]
+طوله:
+
+julia نسخ
+length(v)
+الناتج:
+
+text نسخ
+3
+2. معيار المتجه (Norm)
+يعطينا طول المتجه.
+
+في Julia:
+
+julia نسخ
+using LinearAlgebra
+
+v = [3,4]
+
+norm(v)
+الناتج:
+
+text نسخ
+5.0
+3. الجداء النقطي Dot Product
+لدينا:
+
+julia نسخ
+a = [1,2,3]
+b = [4,5,6]
+حساب:
+
+julia نسخ
+dot(a,b)
+الناتج:
+
+text نسخ
+32
+لأن:
+
+text نسخ
+1×4 + 2×5 + 3×6
+4. الجداء الخارجي Outer Product
+julia نسخ
+a = [1,2]
+b = [3,4]
+julia نسخ
+a * b'
+الناتج:
+
+text نسخ
+2×2 Matrix
+3 4
+6 8
+5. ضرب مصفوفة في متجه
+julia نسخ
+A = [
+    1 2
+    3 4
+]
+
+v = [10,20]
+julia نسخ
+A * v
+الناتج:
+
+text نسخ
+[50,110]
+6. مصفوفة الوحدة
+julia نسخ
+using LinearAlgebra
+
+Matrix(I, 3, 3)
+الناتج:
+
+text نسخ
+1 0 0
+0 1 0
+0 0 1
+7. الرتبة Rank
+لدينا:
+
+julia نسخ
+A = [
+    1 2
+    2 4
+]
+julia نسخ
+rank(A)
+الناتج:
+
+text نسخ
+1
+لأن الصف الثاني مضاعف للأول.
+
+8. المحدد Determinant
+لدينا:
+
+julia نسخ
+A = [
+    1 2
+    3 4
+]
+julia نسخ
+det(A)
+الناتج:
+
+text نسخ
+-2.0
+9. المعكوس Inverse
+julia نسخ
+inv(A)
+لكن الأفضل عددياً غالباً:
+
+بدلاً من:
+
+julia نسخ
+inv(A) * b
+اكتب:
+
+julia نسخ
+A \ b
+10. حل نظام خطي
+لدينا:
+
+مثال:
+
+julia نسخ
+A = [
+    2 1
+    1 -1
+]
+
+b = [5,1]
+julia نسخ
+x = A \ b
+الناتج:
+
+text نسخ
+[2.0,1.0]
+11. Eigenvalues
+من أهم المفاهيم الرياضية.
+
+لدينا:
+
+julia نسخ
+A = [
+    2 0
+    0 3
+]
+julia نسخ
+eigen(A)
+النتيجة تحتوي:
+
+text نسخ
+eigenvalues
+eigenvectors
+استخراج القيم الذاتية:
+
+julia نسخ
+E = eigen(A)
+
+E.values
+الناتج:
+
+text نسخ
+[2,3]
+12. Eigenvectors
+julia نسخ
+E.vectors
+في المثال السابق:
+
+text نسخ
+[1 0
+ 0 1]
+ما هي القيمة الذاتية؟
+إذا وجد متجه:
+
+text نسخ
+v
+يحقق:
+
+فإن:
+
+text نسخ
+λ
+قيمة ذاتية.
+
+13. التحليل LU
+مهم جداً في حل الأنظمة.
+
+julia نسخ
+A = rand(4,4)
+
+F = lu(A)
+المصفوفات:
+
+julia نسخ
+F.L
+julia نسخ
+F.U
+بحيث:
+
+text نسخ
+A = L × U
+تقريباً.
+
+14. التحليل QR
+مهم في الانحدار الخطي والطرق العددية.
+
+julia نسخ
+F = qr(A)
+يعطينا:
+
+text نسخ
+Q
+R
+بحيث:
+
+text نسخ
+A = Q × R
+15. التحليل SVD
+من أهم التحليلات في علوم البيانات.
+
+julia نسخ
+F = svd(A)
+يعطينا:
+
+text نسخ
+U
+S
+V
+بحيث:
+
+text نسخ
+A = U * Diagonal(S) * V'
+لماذا SVD مهم؟
+يستخدم في:
+
+PCA
+ضغط الصور
+أنظمة التوصية
+معالجة النصوص
+التعلم الآلي
+16. القيم المفردة Singular Values
+julia نسخ
+F.S
+مثال:
+
+text نسخ
+[5.4, 2.1, 0.3]
+17. الأثر Trace
+مجموع عناصر القطر الرئيسي.
+
+julia نسخ
+tr(A)
+18. القطر Diagonal
+إنشاء:
+
+julia نسخ
+Diagonal([1,2,3])
+الناتج:
+
+text نسخ
+1 0 0
+0 2 0
+0 0 3
+استخراج القطر:
+
+julia نسخ
+diag(A)
+19. المصفوفات المتناظرة
+julia نسخ
+issymmetric(A)
+إذا:
+
+text نسخ
+A = A'
+20. المصفوفات الموجبة التعريف
+julia نسخ
+isposdef(A)
+تستخدم كثيراً في الإحصاء والتحسين.
+
+مثال عملي: PCA مبسط
+نفترض:
+
+julia نسخ
+X = rand(100,5)
+حساب التباين:
+
+julia نسخ
+C = cov(X)
+القيم الذاتية:
+
+julia نسخ
+E = eigen(C)
+أكبر قيمة ذاتية:
+
+julia نسخ
+maximum(E.values)
+تعطينا أهم اتجاه في البيانات.
+
+مثال عملي: ضغط مصفوفة
+julia نسخ
+A = rand(100,100)
+
+F = svd(A)
+الاحتفاظ بأول 10 مركبات:
+
+julia نسخ
+k = 10
+
+A2 =
+    F.U[:,1:k] *
+    Diagonal(F.S[1:k]) *
+    F.V[:,1:k]'
+نحصل على تقريب جيد باستخدام بيانات أقل.
+
+أهم الدوال في الجبر الخطي
+julia نسخ
+norm()
+
+dot()
+
+det()
+
+inv()
+
+rank()
+
+eigen()
+
+lu()
+
+qr()
+
+svd()
+
+tr()
+
+Diagonal()
+نصيحة احترافية
+عند العمل العددي:
+
+❌ لا تكتب:
+
+julia نسخ
+inv(A) * b
+✅ اكتب:
+
+julia نسخ
+A \ b
+لأنه:
+
+أسرع.
+أكثر دقة عددياً.
+أقل استهلاكاً للذاكرة.
+تمرين
+لدينا:
+
+julia نسخ
+A = [
+    4 1
+    2 3
+]
+
+b = [1,2]
+احسب:
+
+المحدد det(A)
+المعكوس inv(A)
+الحل A \ b
+القيم الذاتية eigen(A)
+تحليل LU

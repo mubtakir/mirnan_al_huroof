@@ -1,0 +1,268 @@
+"""IntentDetector — كشف القصد عبر المتجهات الطورية + الكلمات المفتاحية.
+
+كل intent له متجه طوري ثابت من عبارات كانونية + كلمات مفتاحية أولية.
+الاستدلال هرمي: كلمة مفتاحية → يقين عال | غير ذلك → أقرب متجه طوري.
+
+لا تدريب. لا backprop. مجرد إسقاط في فضاء 64D.
+"""
+import numpy as np
+from src.physics.constants import PHASE_DIM, ROOT_DIMS, EXTRA_DIMS
+from src.physics.word_physics import compute_extended_phase_vector
+
+INTENT_DIM = PHASE_DIM + ROOT_DIMS + EXTRA_DIMS  # 36D للتمييز
+
+# كلمات مفتاحية أولية — يقين عال (1.0) إذا وُجدت
+_INTENT_KEYWORDS = {
+    "GREETING": ["السلام عليكم", "مرحبا", "أهلا", "صباح", "مساء", "تحيات", "hi", "hello",
+                 "السلام"],
+    "QUESTION": ["كيف", "ماذا", "لماذا", "أين", "متى", "هل", "أي",
+                 "ما اسم", "ما الأمر", "ما الخبر", "what", "when", "where", "why", "how",
+                 "who", "which", "is this", "are you", "do you",
+                 "question", "ask", "tell me what", "tell me how"],
+    "COMMAND": ["افعل", "اكتب", "قل", "احسب", "اشرح", "حلل", "لخص", "ترجم",
+                "افتح", "أغلق", "شغل", "أطفئ", "do", "write", "tell", "explain",
+                "run", "open", "close", "show", "give"],
+    "REQUEST": ["من فضلك", "لو سمحت", "أريد", "أرجوك", "هل يمكن",
+                "ساعدني", "أعني", "please", "can you", "could you", "would you",
+                "i want", "i need"],
+    "FAREWELL": ["مع السلامة", "إلى اللقاء", "وداعا", "باي", "في أمان الله",
+                 "goodbye", "bye", "see you", "farewell"],
+    "OPINION": ["أعتقد", "برأيي", "أظن", "أرى", "يبدو", "اعتقاد",
+                "من وجهة", "حسب علمي", "think", "believe", "opinion", "i think"],
+    "SUGGESTION": ["دعنا", "لن", "لم لا", "ماذا لو", "أقترح", "يقترح",
+                   "الأفضل", "ربما", "let's", "why not", "suggest", "maybe",
+                   "how about", "what about"],
+    "COMPLAINT": ["مشكلة", "خطأ", "أشتكي", "شكوى", "لا يعمل", "سيء", "مزعج",
+                  "لا يعمل", "غير جيد", "problem", "bug", "error", "broken",
+                  "doesn't work", "not working", "issue"],
+    "PROMISE": ["أعدك", "سأفعل", "أضمن", "ألتزم", "موعد",
+                "أقسم", "سأحرص", "promise", "i swear", "i guarantee",
+                "i will", "i shall"],
+    "THANK": ["شكرا", "شكراً", "جزاك", "بارك", "أشكر", "ممنون",
+              "thank", "thanks", "grateful", "appreciate", "much obliged"],
+}
+
+# تمثيلات كل intent: جمل كانونية تعبر عن القصد
+_INTENT_CANONICAL = {
+    "GREETING": [
+        "السلام عليكم", "مرحبا", "أهلا", "صباح الخير", "مساء الخير",
+        "كيف الحال", "تحياتي", "السلام", "hi", "hello", "مرحباً",
+    ],
+    "QUESTION": [
+        "كيف", "ماذا", "لماذا", "أين", "متى", "هل",
+        "من", "كم", "أي", "أليس", "أينما",
+        "كيفك", "ما اسمك", "ما الأمر", "ما الخبر",
+    ],
+    "COMMAND": [
+        "افعل", "اكتب", "قل", "أعلمني", "أخبرني",
+        "احسب", "اشرح", "حلل", "لخص", "ترجم",
+        "do", "write", "tell", "explain",
+    ],
+    "REQUEST": [
+        "من فضلك", "لو سمحت", "أريد", "هل يمكن",
+        "أرجوك", "هل تستطيع", "أتريد", "أطلب",
+        "please", "can you", "I want", "would you",
+    ],
+    "FAREWELL": [
+        "مع السلامة", "إلى اللقاء", "وداعا", "باي",
+        "goodbye", "bye", "سلام", "في أمان الله",
+    ],
+    "STATEMENT": [
+        "إن", "أن", "لقد", "قد", "كان",
+        "يكون", "ليس", "سوف", "سأ", "هذا",
+    ],
+    "OPINION": [
+        "أعتقد", "برأيي", "في رأي", "أظن", "أرى",
+        "من وجهة نظري", "يبدو", "الاعتقاد", "حسب علمي",
+        "i think", "i believe", "in my opinion", "it seems",
+    ],
+    "SUGGESTION": [
+        "لن", "دعنا", "لم لا", "ماذا لو", "أقترح",
+        "الأفضل", "ربما", "يمكننا", "يقترح",
+        "let's", "why not", "suggest", "maybe we should",
+    ],
+    "COMPLAINT": [
+        "أشتكي", "مشكلة", "خطأ", "سيء", "لا يعمل",
+        "متعب", "صعب", "مزعج", "غير جيد",
+        "complain", "problem", "bug", "doesn't work",
+    ],
+    "PROMISE": [
+        "أعدك", "سأفعل", "سأحرص", "أضمن", "ألتزم",
+        "بكل تأكيد", "سأحاول", "لن أخذلك", "موعد",
+        "promise", "i will", "i swear", "i guarantee",
+    ],
+    "THANK": [
+        "شكرا", "جزاك الله", "بارك الله", "أشكرك",
+        "متشكر", "ممنون", "thank you", "thanks", "appreciate",
+        "much obliged", "grateful",
+    ],
+}
+
+
+class IntentDetector:
+    """يكتشف قصد جملة المستخدم بإسقاطها على متجهات الأغراض الثابتة."""
+
+    def __init__(self):
+        self.intent_names = list(_INTENT_CANONICAL.keys())
+        self._intent_pvs = {}
+        self._build_intent_attractors()
+
+    def _phrase_pv(self, phrase):
+        """حساب متجه طوري لجملة (متوسط كلماتها)."""
+        words = phrase.split()
+        if not words:
+            return None
+        pvs = []
+        for w in words:
+            try:
+                pv = compute_extended_phase_vector(w)
+                pvs.append(pv)
+            except Exception:
+                continue
+        if not pvs:
+            return None
+        avg = np.mean(pvs, axis=0)
+        nrm = np.linalg.norm(avg)
+        if nrm > 1e-10:
+            avg = avg / nrm
+        return avg
+
+    def _build_intent_attractors(self):
+        """بناء متجه جاذب لكل intent من متوسط عباراته الكانونية."""
+        for intent_name, phrases in _INTENT_CANONICAL.items():
+            pvs = []
+            for phrase in phrases:
+                pv = self._phrase_pv(phrase)
+                if pv is not None:
+                    pvs.append(pv)
+            if pvs:
+                attractor = np.mean(pvs, axis=0)
+                nrm = np.linalg.norm(attractor)
+                if nrm > 1e-10:
+                    attractor = attractor / nrm
+                self._intent_pvs[intent_name] = attractor
+
+    def detect(self, text):
+        """كشف القصد عبر الطور أولاً، مع تعزيز بالكلمات المفتاحية.
+
+        الفلسفة: القصد ليس كلمة — بل موجة. متجه الطور للجملة يُسقط
+        على متجهات الأقاصد الكانونية. الكلمات المفتاحية تُعزّز الثقة
+        لكنها لا تُحدد القصد وحدها.
+
+        Returns dict:
+            intent: القصد المكتشف
+            confidence: 0.0–1.0
+            distances: مسافة لكل intent
+        """
+        if not text:
+            return {"intent": "STATEMENT", "confidence": 0.0, "distances": {}}
+
+        # ١) الإسقاط الطوري — الأساس
+        input_pv = self._phrase_pv(text)
+        if input_pv is None:
+            return {"intent": "STATEMENT", "confidence": 0.0, "distances": {}}
+
+        distances = {}
+        for name, attractor in self._intent_pvs.items():
+            cos_sim = float(np.mean(np.cos(input_pv[:INTENT_DIM] - attractor[:INTENT_DIM])))
+            distances[name] = cos_sim
+
+        # ٢) تعزيز الكلمات المفتاحية (يعزز الثقة، لا يحدد القصد)
+        text_lower = text.lower()
+        words_set = set(text_lower.split())
+        keyword_boost = {}
+        for intent_name, kws in _INTENT_KEYWORDS.items():
+            for kw in sorted(kws, key=len, reverse=True):
+                multi = kw.split()
+                if len(multi) > 1:
+                    if kw in text_lower:
+                        keyword_boost[intent_name] = keyword_boost.get(intent_name, 0) + 1
+                        break
+                else:
+                    if kw in words_set:
+                        keyword_boost[intent_name] = keyword_boost.get(intent_name, 0) + 1
+                        break
+
+        # تعزيز المسافة الطورية للقصد المطابق كلماتياً
+        for intent_name, boost in keyword_boost.items():
+            if intent_name in distances:
+                distances[intent_name] += boost * 0.15  # تعزيز خفيف
+
+        best = max(distances, key=distances.get)
+        raw_confidence = distances[best]
+        min_dist = min(distances.values())
+        confidence = max(0.0, min(1.0, (raw_confidence - min_dist + 0.3)))
+
+        return {
+            "intent": best,
+            "confidence": confidence,
+            "distances": distances,
+        }
+
+        # 2) المتجهات الطورية
+        input_pv = self._phrase_pv(text)
+        if input_pv is None:
+            return {"intent": "STATEMENT", "confidence": 0.0, "distances": {}}
+
+        distances = {}
+        for name, attractor in self._intent_pvs.items():
+            cos_sim = float(np.mean(np.cos(input_pv[:INTENT_DIM] - attractor[:INTENT_DIM])))
+            distances[name] = cos_sim
+
+        best = max(distances, key=distances.get)
+        confidence = max(0.0, (distances[best] - min(distances.values())))
+
+        return {
+            "intent": best,
+            "confidence": round(min(confidence * 5.0, 1.0), 4),
+            "distances": {k: round(v, 4) for k, v in distances.items()},
+        }
+
+    def get_intent_pv(self, intent_name):
+        return self._intent_pvs.get(intent_name)
+
+    def get_default_response_target(self, intent_name):
+        """إرجاع متجه طوري هدف للرد بناءً على القصد.
+
+        لكل intent، نأخذ آخر كلمة في عباراته الكانونية كهدف للرد.
+        """
+        phrases = _INTENT_CANONICAL.get(intent_name, [])
+        if not phrases:
+            return None
+        # نأخذ آخر كلمة من أول عبارة كانتقدير سريع
+        last_words = []
+        for p in phrases[:3]:
+            ws = p.split()
+            if ws:
+                try:
+                    pv = compute_extended_phase_vector(ws[-1])
+                    last_words.append(pv)
+                except Exception:
+                    continue
+        if not last_words:
+            return None
+        target = np.mean(last_words, axis=0)
+        nrm = np.linalg.norm(target)
+        if nrm > 1e-10:
+            target = target / nrm
+        return target
+
+    def intent_label_ar(self, intent_name):
+        labels = {
+            "GREETING": "تحية",
+            "QUESTION": "سؤال",
+            "COMMAND": "أمر",
+            "REQUEST": "طلب",
+            "FAREWELL": "وداع",
+            "STATEMENT": "خبر",
+            "OPINION": "رأي",
+            "SUGGESTION": "اقتراح",
+            "COMPLAINT": "شكوى",
+            "PROMISE": "وعد",
+            "THANK": "شكر",
+        }
+        return labels.get(intent_name, intent_name)
+
+    @property
+    def intents(self):
+        return list(self._intent_pvs.keys())

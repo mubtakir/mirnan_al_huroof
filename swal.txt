@@ -1,0 +1,21 @@
+
+cd C:\Users\allmy\Desktop\aaa\basil\majnon
+& "C:\Users\allmy\AppData\Local\Programs\Julia-1.12.6\bin\julia.exe" --project=models\mirnan models\mirnan\ask_mirnan.jl
+
+
+
+& "C:\Users\allmy\AppData\Local\Programs\Julia-1.12.6\bin\julia.exe" --project=models\mirnan models\mirnan\ask_mirnan.jl "C:\path\to\questions.txt"
+
+
+exit()
+
+لتجربة المسبار بعد إعادة تشغيل الخادم:
+
+cd C:\Users\allmy\Desktop\aaa\basil\majnon
+& "C:\Users\allmy\AppData\Local\Programs\Julia-1.12.6\bin\julia.exe" --project=models\mirnan models\mirnan\ask_mirnan.jl models\mirnan\probes\yesno_generalization.txt
+
+cd C:\Users\allmy\Desktop\aaa\basil\majnon
+& "C:\Users\allmy\AppData\Local\Programs\Julia-1.12.6\bin\julia.exe" --project=models\mirnan models\mirnan\ask_mirnan.jl models\mirnan\probes\explanatory_generalization.txt
+
+cd C:\Users\allmy\Desktop\aaa\basil\majnon
+& "C:\Users\allmy\AppData\Local\Programs\Julia-1.12.6\bin\julia.exe" --project=models\mirnan models\mirnan\ask_mirnan.jl models\mirnan\probes\explanatory_generalization.txt

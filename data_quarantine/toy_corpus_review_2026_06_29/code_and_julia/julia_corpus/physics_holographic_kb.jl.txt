@@ -1,0 +1,572 @@
+"""
+الذاكرة الهولوغرافية المعرفية — Holographic Knowledge Base.
+
+بنك مرشحات رنّان (Resonant Filter Bank) لتخزين واسترجاع المعرفة بالتراكب الكمومي.
+- كل حقيقة = (subject_pv, relation, object_pv)
+- الاستعلام = تراكب موزون لجميع الحقائق دفعة واحدة
+- الإجابة = reconstructed vector عبر weighted sum
+"""
+module HolographicKB
+
+using LinearAlgebra
+using JSON
+
+export HolographicKnowledgeBase, RELATION_TYPES, build_holographic_kb, query, query_by_word, reconstruct_vector, store_fact!, clear!
+
+const RELATION_TYPES = Dict(
+    "IS_A" => 0,
+    "HAS_PROPERTY" => 1,
+    "LOCATED_IN" => 2,
+    "CAPABLE_OF" => 3,
+    "PART_OF" => 4,
+    "SYNONYM" => 5,
+    "CURATED" => 6,
+    "CAPITAL_OF" => 7,
+    "MADE_OF" => 8,
+    "USED_FOR" => 9,
+    "BECOMES_WHEN" => 10,
+    "PRODUCES" => 11,
+)
+
+"""
+    HolographicKnowledgeBase
+
+بنك مرشحات رنّان — ذاكرة معرفية هولوغرافية.
+
+الحقول:
+- `data_dir`: مجلد البيانات
+- `banks`: بنوك الحقائق مقسمة حسب نوع العلاقة
+- `fact_count`: عدد الحقائق المخزنة
+- `built`: هل تم البناء؟
+"""
+mutable struct HolographicKnowledgeBase
+    data_dir::String
+    banks::Dict{String,Dict{String,Vector}}
+    fact_count::Int
+    built::Bool
+
+    function HolographicKnowledgeBase(; data_dir::String="data")
+        return new(data_dir, Dict{String,Dict{String,Vector}}(), 0, false)
+    end
+end
+
+"""
+    store_fact!(kb::HolographicKnowledgeBase, subj_pv, obj_pv, rel_type;
+                subj_word="", obj_word="") -> Bool
+
+تخزين حقيقة: (subject, relation, object).
+يمنع التكرار عبر (subject_word, object_word).
+"""
+function store_fact!(kb::HolographicKnowledgeBase, subj_pv::AbstractVector,
+                     obj_pv::AbstractVector, rel_type::String;
+                     subj_word::String="", obj_word::String="")
+    if !haskey(RELATION_TYPES, rel_type)
+        return false
+    end
+
+    if !haskey(kb.banks, rel_type)
+        kb.banks[rel_type] = Dict(
+            "keys" => Vector{Float64}[],
+            "values" => Vector{Float64}[],
+            "subj_words" => String[],
+            "obj_words" => String[],
+        )
+    end
+
+    bank = kb.banks[rel_type]
+
+    # Dedup
+    for i in 1:length(bank["subj_words"])
+        if bank["subj_words"][i] == subj_word && bank["obj_words"][i] == obj_word
+            return false
+        end
+    end
+
+    push!(bank["keys"], Float64.(subj_pv))
+    push!(bank["values"], Float64.(obj_pv))
+    push!(bank["subj_words"], subj_word)
+    push!(bank["obj_words"], obj_word)
+    kb.fact_count += 1
+    kb.built = true
+    return true
+end
+
+"""
+    query(kb::HolographicKnowledgeBase, query_pv; rel_type=nothing, top_k=10,
+          sharpening=3.0, cutoff=0.0) -> Vector{Tuple{Float64,String,String}}
+
+استعلام بنك المرشحات — تراكب موزون لجميع الحقائق المطابقة.
+
+ترجع قائمة (confidence, object_word, relation_type).
+"""
+function query(kb::HolographicKnowledgeBase, query_pv::AbstractVector;
+               rel_type::Union{String,Nothing}=nothing, top_k::Int=10,
+               sharpening::Float64=3.0, cutoff::Float64=0.0)
+    if !kb.built
+        return Tuple{Float64,String,String}[]
+    end
+
+    query_norm = norm(query_pv)
+    if query_norm < 1e-10
+        return Tuple{Float64,String,String}[]
+    end
+    q = Float64.(query_pv) ./ query_norm
+
+    rel_types = rel_type === nothing ? collect(keys(kb.banks)) : [rel_type]
+    all_results = Tuple{Float64,String,String}[]
+
+    for rt in rel_types
+        if !haskey(kb.banks, rt)
+            continue
+        end
+        bank = kb.banks[rt]
+        keys = bank["keys"]
+        values = bank["values"]
+        obj_words = bank["obj_words"]
+
+        if isempty(keys)
+            continue
+        end
+
+        keys_matrix = reduce(hcat, keys)'  # (n_keys, dim)
+        keys_norms = [norm(k) for k in keys]
+        keys_normed = copy(keys_matrix)
+        for i in 1:size(keys_normed, 1)
+            if keys_norms[i] > 1e-10
+                keys_normed[i, :] ./= keys_norms[i]
+            end
+        end
+
+        resonances = keys_normed * q
+        sharpened = exp.(sharpening .* resonances)
+        total = sum(sharpened)
+        if total < 1e-10
+            continue
+        end
+        sharpened ./= total
+
+        dynamic_cutoff = max(cutoff, 2.0 / max(length(keys), 1))
+        above = sharpened .> dynamic_cutoff
+
+        for i in findall(above)
+            obj_word = i <= length(obj_words) ? obj_words[i] : ""
+            if length(obj_word) >= 2
+                push!(all_results, (sharpened[i], obj_word, rt))
+            end
+        end
+    end
+
+    sort!(all_results; by=x -> -x[1])
+    return all_results[1:min(top_k, end)]
+end
+
+"""
+    query_by_word(kb::HolographicKnowledgeBase, query_word; rel_type=nothing, top_k=10) -> Vector
+
+استعلام بالكلمة المباشرة (اتجاه واحد: فاعل → مفعول).
+"""
+function query_by_word(kb::HolographicKnowledgeBase, query_word::String;
+                       rel_type::Union{String,Nothing}=nothing, top_k::Int=10)
+    if !kb.built
+        return Tuple{Float64,String,String}[]
+    end
+
+    rel_types = rel_type === nothing ? collect(keys(kb.banks)) : [rel_type]
+    all_results = Tuple{Float64,String,String}[]
+
+    for rt in rel_types
+        if !haskey(kb.banks, rt)
+            continue
+        end
+        bank = kb.banks[rt]
+        for i in 1:length(bank["subj_words"])
+            if bank["subj_words"][i] == query_word
+                obj_word = i <= length(bank["obj_words"]) ? bank["obj_words"][i] : ""
+                push!(all_results, (1.0, obj_word, rt))
+            end
+        end
+    end
+
+    sort!(all_results; by=x -> -x[1])
+    return all_results[1:min(top_k, end)]
+end
+
+"""
+    reconstruct_vector(kb::HolographicKnowledgeBase, query_pv; rel_type=nothing) -> Union{Vector{Float64},Nothing}
+
+إعادة بناء متجه المفعول من استعلام الفاعل عبر التراكب الموزون.
+"""
+function reconstruct_vector(kb::HolographicKnowledgeBase, query_pv::AbstractVector;
+                            rel_type::Union{String,Nothing}=nothing)
+    if !kb.built
+        return nothing
+    end
+
+    q = Float64.(query_pv) / max(norm(query_pv), 1e-10)
+    rel_types = rel_type === nothing ? collect(keys(kb.banks)) : [rel_type]
+    reconstructed = zeros(Float64, length(q))
+    total_weight = 0.0
+
+    for rt in rel_types
+        if !haskey(kb.banks, rt)
+            continue
+        end
+        bank = kb.banks[rt]
+        keys = bank["keys"]
+        values = bank["values"]
+
+        if isempty(keys)
+            continue
+        end
+
+        resonances = Float64[clamp(dot(k, q) / (norm(k) * norm(q) + 1e-10), -1.0, 1.0)
+                             for k in keys]
+        weights = exp.(3.0 .* resonances)
+        weights ./= (sum(weights) + 1e-10)
+
+        for i in 1:length(weights)
+            if weights[i] > 0.01
+                reconstructed .+= weights[i] .* values[i]
+                total_weight += weights[i]
+            end
+        end
+    end
+
+    if total_weight > 1e-10
+        reconstructed ./= total_weight
+        nrm = norm(reconstructed)
+        if nrm > 1e-10
+            reconstructed ./= nrm
+        end
+        return reconstructed
+    end
+    return nothing
+end
+
+using NPZ
+
+"""
+    clear!(kb::HolographicKnowledgeBase)
+
+مسح كامل.
+"""
+function clear!(kb::HolographicKnowledgeBase)
+    empty!(kb.banks)
+    kb.fact_count = 0
+    kb.built = false
+end
+
+"""
+    save!(kb::HolographicKnowledgeBase, filename::String="holographic_kb.npz")
+
+حفظ البنك إلى ملف NPZ.
+"""
+function save!(kb::HolographicKnowledgeBase, filename::String="holographic_kb.npz")
+    path = joinpath(kb.data_dir, filename)
+    mkpath(kb.data_dir)
+    
+    save_dict = Dict{String, Any}()
+    for (rt, bank) in kb.banks
+        if !isempty(bank["keys"])
+            save_dict["K_$rt"] = reduce(hcat, bank["keys"])'  # save as matrix
+            save_dict["V_$rt"] = reduce(hcat, bank["values"])'
+            save_dict["SW_$rt"] = bank["subj_words"]
+            save_dict["OW_$rt"] = bank["obj_words"]
+        end
+    end
+    save_dict["fact_count"] = Int32[kb.fact_count]
+    
+    try
+        npzwrite(path, save_dict)
+        @info "Saved holographic KB ($(kb.fact_count) facts) to $path"
+    catch e
+        @warn "Failed to save holographic KB: $e"
+    end
+end
+
+"""
+    load!(kb::HolographicKnowledgeBase, filename::String="holographic_kb.npz") -> Bool
+
+تحميل البنك من ملف NPZ.
+"""
+function load!(kb::HolographicKnowledgeBase, filename::String="holographic_kb.npz")
+    path = joinpath(kb.data_dir, filename)
+    if !isfile(path)
+        return false
+    end
+    try
+        data = npzread(path)
+        empty!(kb.banks)
+        kb.fact_count = Int(get(data, "fact_count", [0])[1])
+        
+        for rt in keys(RELATION_TYPES)
+            k_key = "K_$rt"
+            if haskey(data, k_key)
+                k_mat = data[k_key]
+                v_mat = data["V_$rt"]
+                sw = data["SW_$rt"]
+                ow = data["OW_$rt"]
+                
+                keys_vec = [Vector{Float64}(k_mat[i, :]) for i in 1:size(k_mat, 1)]
+                vals_vec = [Vector{Float64}(v_mat[i, :]) for i in 1:size(v_mat, 1)]
+                
+                kb.banks[rt] = Dict(
+                    "keys" => keys_vec,
+                    "values" => vals_vec,
+                    "subj_words" => String[String(w) for w in sw],
+                    "obj_words" => String[String(w) for w in ow]
+                )
+            end
+        end
+        kb.built = !isempty(kb.banks)
+        @info "Loaded holographic KB ($(kb.fact_count) facts) from $path"
+        return kb.built
+    catch e
+        @warn "Failed to load holographic KB from $path: $e"
+        return false
+    end
+end
+
+"""
+    build_from_texts!(kb::HolographicKnowledgeBase, texts, vocab, pv_fn; max_facts=500) -> Int
+
+استخراج الحقائق من النصوص الخام وتخزينها.
+"""
+function build_from_texts!(kb::HolographicKnowledgeBase, texts, vocab, pv_fn; max_facts=500)
+    stored = 0
+    seen = Set{Tuple{String,String,String}}()
+    
+    stop_words = Set([
+        "هو", "هي", "في", "كان", "كانت", "على", "عن", "من", "إلى", "مع", "أن", "إن",
+        "لم", "لن", "لا", "ما", "هذا", "هذه", "ذلك", "تلك", "كل", "بعض",
+        "the", "is", "a", "an", "in", "of", "to", "for", "with", "and", "or",
+        "not", "this", "that", "these", "those", "it", "its"
+    ])
+    
+    v_dict = vocab isa Dict ? vocab : (hasproperty(vocab, :word2id) ? vocab.word2id : Dict())
+    
+    for text in texts
+        if stored >= max_facts
+            break
+        end
+        text_str = String(text)
+        if length(text_str) < 20
+            continue
+        end
+        
+        sentences = split(text_str, r"[.!?\n]+")
+        for sent in sentences
+            if stored >= max_facts
+                break
+            end
+            sent_clean = strip(sent)
+            if length(sent_clean) < 6
+                continue
+            end
+            
+            words = [String(w) for w in split(sent_clean) if length(w) >= 2]
+            if length(words) < 3
+                continue
+            end
+            
+            rel_type = nothing
+            if "هو" in words || "هي" in words
+                rel_type = "IS_A"
+            elseif "في" in words
+                rel_type = "LOCATED_IN"
+            elseif "يستطيع" in words || "يمكنه" in words || "يمكنها" in words
+                rel_type = "CAPABLE_OF"
+            elseif "جزء" in words || ("من" in words && length(words) >= 4)
+                rel_type = "PART_OF"
+            end
+            
+            if rel_type === nothing
+                continue
+            end
+            
+            non_particles = String[]
+            for w in words
+                if w in stop_words
+                    continue
+                end
+                has_letter = any(c -> isletter(c) || ('\u0600' <= c <= '\u06ff'), w)
+                if !has_letter
+                    continue
+                end
+                if length(w) >= 3
+                    push!(non_particles, w)
+                end
+            end
+            
+            if length(non_particles) < 2
+                continue
+            end
+            
+            subj = non_particles[1]
+            obj = non_particles[end]
+            
+            if subj == obj
+                continue
+            end
+            if (subj, rel_type, obj) in seen
+                continue
+            end
+            if !haskey(v_dict, subj) || !haskey(v_dict, obj)
+                continue
+            end
+            
+            subj_pv = pv_fn(subj)
+            obj_pv = pv_fn(obj)
+            if subj_pv === nothing || obj_pv === nothing
+                continue
+            end
+            if norm(subj_pv) < 0.01 || norm(obj_pv) < 0.01
+                continue
+            end
+            
+            if store_fact!(kb, subj_pv, obj_pv, rel_type, subj_word=subj, obj_word=obj)
+                push!(seen, (subj, rel_type, obj))
+                stored += 1
+            end
+        end
+    end
+    
+    save!(kb)
+    @info "Built holographic KB from texts: $stored facts stored"
+    return stored
+end
+
+"""
+    load_curated_facts!(kb::HolographicKnowledgeBase, json_path::String, vocab, pv_fn) -> Int
+
+تحميل حقائق منسقة من ملف JSON.
+"""
+function load_curated_facts!(kb::HolographicKnowledgeBase, json_path::String, vocab, pv_fn)
+    if !isfile(json_path)
+        @warn "Curated facts file not found: $json_path"
+        return 0
+    end
+    
+    v_dict = vocab isa Dict ? vocab : (hasproperty(vocab, :word2id) ? vocab.word2id : Dict())
+    
+    stored = 0
+    try
+        data = JSON.parsefile(json_path)
+        facts = get(data, "facts", [])
+        for fact in facts
+            subj = get(fact, "subject", "")
+            obj = get(fact, "object", "")
+            if isempty(subj) || isempty(obj)
+                continue
+            end
+            if !haskey(v_dict, subj) || !haskey(v_dict, obj)
+                continue
+            end
+            
+            subj_pv = pv_fn(subj)
+            obj_pv = pv_fn(obj)
+            if subj_pv === nothing || obj_pv === nothing
+                continue
+            end
+            
+            if store_fact!(kb, subj_pv, obj_pv, "CURATED", subj_word=subj, obj_word=obj)
+                stored += 1
+            end
+            
+            # prefixed "الـ" version
+            prefixed = "ال" * subj
+            if haskey(v_dict, prefixed) && prefixed != subj
+                prefixed_pv = pv_fn(prefixed)
+                if prefixed_pv !== nothing
+                    if store_fact!(kb, prefixed_pv, obj_pv, "CURATED", subj_word=prefixed, obj_word=obj)
+                        stored += 1
+                    end
+                end
+            end
+            
+            # English lowercase/capitalized variants
+            if !isempty(subj) && islowercase(subj[1])
+                cap = uppercase(subj[1]) * subj[2:end]
+                if haskey(v_dict, cap) && cap != subj
+                    cap_pv = pv_fn(cap)
+                    if cap_pv !== nothing
+                        if store_fact!(kb, cap_pv, obj_pv, "CURATED", subj_word=cap, obj_word=obj)
+                            stored += 1
+                        end
+                    end
+                end
+            end
+        end
+    catch e
+        @warn "Failed to load curated facts from $json_path: $e"
+    end
+    
+    save!(kb)
+    @info "Loaded curated facts: $stored facts loaded"
+    return stored
+end
+
+"""
+    find_closest_words(kb::HolographicKnowledgeBase, query_pv::AbstractVector, vocab, pv_matrix;
+                        rel_type=nothing, top_k=10, sharpening=3.0) -> Vector{Tuple{String,Float64,String}}
+
+استعلام وإرجاع أقرب كلمات معجمية عبر مطابقة المتجه المُعاد بناؤه.
+"""
+function find_closest_words(kb::HolographicKnowledgeBase, query_pv::AbstractVector, vocab, pv_matrix;
+                            rel_type::Union{String,Nothing}=nothing, top_k::Int=10, sharpening::Float64=3.0)
+    hologram_results = query(kb, query_pv; rel_type=rel_type, top_k=top_k * 3, sharpening=sharpening)
+    if isempty(hologram_results)
+        return Tuple{String,Float64,String}[]
+    end
+    
+    v_dict = vocab isa Dict ? vocab : (hasproperty(vocab, :word2id) ? vocab.word2id : Dict())
+    
+    word_scores = Tuple{String,Float64,String}[]
+    for (confidence, word, rt) in hologram_results
+        if length(word) >= 2 && haskey(v_dict, word)
+            wid = v_dict[word]
+            if wid <= size(pv_matrix, 1)
+                word_pv = pv_matrix[wid, :]
+                sim = dot(word_pv, query_pv) / (max(norm(word_pv), 1e-10) * max(norm(query_pv), 1e-10))
+                combined_score = confidence * max(0.0, Float64(sim))
+                push!(word_scores, (word, combined_score, rt))
+            end
+        end
+    end
+    
+    sort!(word_scores; by=x -> -x[2])
+    deduped = Dict{String,Tuple{Float64,String}}()
+    for (w, s, rt) in word_scores
+        if !haskey(deduped, w) || s > deduped[w][1]
+            deduped[w] = (s, rt)
+        end
+    end
+    
+    res = Tuple{String,Float64,String}[]
+    for (w, (s, rt)) in deduped
+        push!(res, (w, s, rt))
+    end
+    sort!(res; by=x -> -x[2])
+    return res[1:min(top_k, end)]
+end
+
+"""
+    build_holographic_kb(vocab, pv_fn, corpus_texts=nothing, data_dir="data", max_facts=500, curated_path=nothing) -> HolographicKnowledgeBase
+
+بناء أو تحميل بنك المرشحات الرنّان.
+"""
+function build_holographic_kb(vocab, pv_fn, corpus_texts=nothing, data_dir="data", max_facts=500, curated_path=nothing)
+    kb = HolographicKnowledgeBase(data_dir=data_dir)
+    if load!(kb)
+        return kb
+    end
+    if corpus_texts !== nothing
+        build_from_texts!(kb, corpus_texts, vocab, pv_fn, max_facts=max_facts)
+    end
+    if curated_path !== nothing
+        load_curated_facts!(kb, curated_path, vocab, pv_fn)
+    end
+    return kb
+end
+
+end # module HolographicKB

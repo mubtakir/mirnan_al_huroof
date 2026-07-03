@@ -1,0 +1,66 @@
+INPUT: ما هو مسمى العدد 5 للمذكر؟
+OUTPUT: خمسة
+INPUT: ما هو مسمى العدد 3 للمؤنث؟
+OUTPUT: ثلاث
+INPUT: ماذا تسمى هذه الرموز "..."؟
+OUTPUT: ثلاث نقاط
+INPUT: ماذا تسمى هذه الرموز "*"؟
+OUTPUT: خمس نجمات
+INPUT: صف المسافة ". ."
+OUTPUT: مسافة صغيرة
+INPUT: صف المسافة ". ."
+OUTPUT: مسافة كبيرة جداً
+INPUT: صف الاتجاه "———"
+OUTPUT: أفقي
+INPUT: صف الاتجاه "│"
+OUTPUT: عمودي
+INPUT: صف الشكل "○"
+OUTPUT: دائرة
+INPUT: صف الشكل "□"
+OUTPUT: مربع
+INPUT: صف الحجم "▪"
+OUTPUT: صغير جداً
+INPUT: صف الحجم "⬛"
+OUTPUT: كبير جداً
+INPUT: صف السرعة ">>>"
+OUTPUT: سريع
+INPUT: صف الامتلاء "□"
+OUTPUT: فارغ تماماً
+INPUT: صف الامتلاء "■"
+OUTPUT: ممتلئ
+INPUT: صف الصوت "."
+OUTPUT: هادئ جداً
+INPUT: صف الحرارة "❅❅❅"
+OUTPUT: بارد جداً
+INPUT: ما هو عكس "كبير"؟
+OUTPUT: صغير
+INPUT: ما هو عكس "طويل"؟
+OUTPUT: قصير
+INPUT: ما هو عكس "بعيد"؟
+OUTPUT: قريب
+INPUT: ما هو عكس "فاتح"؟
+OUTPUT: غامق
+INPUT: ما هو عكس "سريع"؟
+OUTPUT: بطيء
+INPUT: ما هو عكس "قوي"؟
+OUTPUT: ضعيف
+INPUT: قارن بين ○ و ● من حيث الوزن
+OUTPUT: ○ أخف من ●
+INPUT: قارن بين ▪ و ⬛ من حيث الحجم
+OUTPUT: ▪ أصغر من ⬛
+INPUT: قارن بين A و B في "A B"
+OUTPUT: A قريب من B
+INPUT: قارن بين A و B في "A B"
+OUTPUT: A بعيد عن B
+INPUT: هل هذا منتظم "• • •"؟
+OUTPUT: نعم، منتظم
+INPUT: هل هذا منتظم "• • • •"؟
+OUTPUT: لا، عشوائي
+INPUT: هل هذا متماثل "←|→"؟
+OUTPUT: نعم، متماثل كلياً
+INPUT: هل هذا متماثل "○|□"؟
+OUTPUT: لا، غير متماثل
+INPUT: كم بعداً للشكل "□"؟
+OUTPUT: بعدان
+INPUT: كم بعداً للشكل "⬛"؟
+OUTPUT: ثلاثة أبعاد

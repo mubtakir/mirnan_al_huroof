@@ -1,0 +1,1431 @@
+ممتاز. سأتعامل معك كطالب يريد إتقان لغة Julia بشكل منهجي، من الصفر حتى المستوى الاحترافي، مع التركيز على الفهم العميق والتطبيق العملي وأفضل الممارسات المستخدمة في المشاريع الحقيقية.
+
+خطة التعلم الكاملة
+المرحلة الأولى: الأساسيات
+مقدمة إلى Julia
+
+ما هي Julia؟
+لماذا تم تطويرها؟
+متى نستخدمها؟
+مقارنة مع Python و MATLAB و R
+تثبيت البيئة
+
+تثبيت Julia
+استخدام REPL
+استخدام Jupyter Notebooks
+استخدام VS Code
+المتغيرات وأنواع البيانات
+
+Numbers
+Strings
+Characters
+Booleans
+Type System
+العمليات الأساسية
+
+العمليات الحسابية
+المقارنات
+العمليات المنطقية
+التحكم في سير البرنامج
+
+if / elseif / else
+ternary operator
+short-circuit evaluation
+الحلقات التكرارية
+
+for
+while
+break
+continue
+المرحلة الثانية: البرمجة المنظمة
+الدوال Functions
+
+تعريف الدوال
+Multiple Dispatch
+Anonymous Functions
+Keyword Arguments
+المجموعات Collections
+
+Arrays
+Tuples
+Named Tuples
+Dictionaries
+Sets
+التعامل مع النصوص
+
+String Processing
+Regular Expressions
+إدارة الأخطاء
+
+try
+catch
+finally
+throw
+المرحلة الثالثة: البرمجة المتوسطة
+الأنواع المخصصة Types
+Struct
+Mutable Struct
+البرمجة متعددة الأنماط
+Abstract Types
+Parametric Types
+الوحدات Modules
+إنشاء مكتبات خاصة
+إدارة الحزم Packages
+Pkg
+Project.toml
+Manifest.toml
+المرحلة الرابعة: الأداء والاحتراف
+فهم Compiler الخاص بـ Julia
+
+Type Stability
+
+Memory Allocation
+
+Profiling
+
+Benchmarking
+
+كتابة كود سريع جداً
+
+المرحلة الخامسة: البرمجة العلمية
+الجبر الخطي
+الإحصاء
+معالجة البيانات
+الرسوم البيانية
+المعادلات التفاضلية
+المحاكاة العلمية
+المرحلة السادسة: علوم البيانات والذكاء الاصطناعي
+DataFrames.jl
+CSV.jl
+MLJ.jl
+Flux.jl
+Deep Learning
+GPU Computing
+المرحلة السابعة: المستوى المتقدم جداً
+Metaprogramming
+Macros
+Generated Functions
+Multiple Dispatch المتقدم
+Parallel Computing
+Distributed Computing
+Multithreading
+بناء حزم احترافية
+الدرس الأول: التعرف على Julia
+ما هي Julia؟
+Julia هي لغة برمجة حديثة مفتوحة المصدر صُممت للحوسبة العلمية والأداء العالي.
+
+هدفها الجمع بين:
+
+سهولة كتابة Python
+سرعة C/C++
+قدرات MATLAB الرياضية
+إمكانيات R الإحصائية
+أول برنامج
+julia نسخ
+println("Hello, World!")
+الناتج:
+
+text نسخ
+Hello, World!
+المتغيرات
+في Julia لا تحتاج غالباً إلى تحديد النوع يدوياً:
+
+julia نسخ
+name = "Ahmed"
+age = 25
+height = 1.75
+التحقق من النوع:
+
+julia نسخ
+typeof(name)
+typeof(age)
+typeof(height)
+الناتج:
+
+julia نسخ
+String
+Int64
+Float64
+الطباعة
+julia نسخ
+name = "Ali"
+
+println(name)
+أو:
+
+julia نسخ
+println("Hello ", name)
+أو باستخدام interpolation:
+
+julia نسخ
+println("Hello $name")
+العمليات الحسابية
+julia نسخ
+a = 10
+b = 3
+
+a + b
+a - b
+a * b
+a / b
+a ^ b
+a % b
+النتائج:
+
+text نسخ
+13
+7
+30
+3.333333
+1000
+1
+التعليقات
+سطر واحد:
+
+julia نسخ
+# هذا تعليق
+عدة أسطر:
+
+julia نسخ
+#=
+هذا تعليق
+متعدد الأسطر
+=#
+تمرين 1
+اكتب برنامجاً:
+
+يخزن اسمك في متغير.
+يخزن عمرك في متغير.
+يطبع:
+text نسخ
+My name is ...
+I am ... years old
+مثال:
+
+julia نسخ
+name = "Ahmed"
+age = 30
+
+println("My name is $name")
+println("I am $age years old")
+معلومة مهمة جداً
+أقوى ميزة في Julia ليست السرعة فقط، بل نظام Multiple Dispatch الذي سنصل إليه لاحقاً، وهو أحد الأسباب الرئيسية التي تجعل Julia مختلفة جذرياً عن معظم اللغات الأخرى.
+
+في الدرس التالي سنبدأ بالتعمق في أنواع البيانات (Types) ونتعلم كيف يعمل نظام الأنواع في Julia، وهو أساس كتابة برامج سريعة واحترافية.
+الدرس الثاني: نظام الأنواع (Type System) في Julia
+يُعد نظام الأنواع في Julia من أهم أسباب قوتها وأدائها العالي. حتى لو كنت تكتب كوداً بسيطاً، فإن فهم الأنواع مبكراً سيساعدك كثيراً لاحقاً.
+
+1. ما هو النوع (Type)؟
+كل قيمة في Julia لها نوع يحدد:
+
+كيفية تخزينها في الذاكرة.
+العمليات المسموح بها عليها.
+كيفية تعامل المترجم معها.
+مثال:
+
+julia نسخ
+x = 10
+typeof(x)
+الناتج:
+
+julia نسخ
+Int64
+مثال آخر:
+
+julia نسخ
+y = 3.14
+typeof(y)
+الناتج:
+
+julia نسخ
+Float64
+2. الأنواع العددية الأساسية
+الأعداد الصحيحة
+julia نسخ
+a = 42
+typeof(a)
+غالباً:
+
+julia نسخ
+Int64
+الأعداد العشرية
+julia نسخ
+b = 2.5
+typeof(b)
+الناتج:
+
+julia نسخ
+Float64
+الأعداد المركبة
+Julia تدعمها مباشرة:
+
+julia نسخ
+z = 3 + 4im
+طباعة:
+
+julia نسخ
+println(z)
+الناتج:
+
+text نسخ
+3 + 4im
+النوع:
+
+julia نسخ
+typeof(z)
+3. النصوص Strings
+julia نسخ
+name = "Julia"
+typeof(name)
+الناتج:
+
+julia نسخ
+String
+طول النص
+julia نسخ
+length(name)
+دمج النصوص
+julia نسخ
+first = "Hello"
+second = "World"
+
+first * " " * second
+الناتج:
+
+text نسخ
+Hello World
+لاحظ أن الدمج يتم باستخدام:
+
+julia نسخ
+*
+وليس + كما في بعض اللغات.
+
+4. المحارف Characters
+محرف واحد:
+
+julia نسخ
+c = 'A'
+النوع:
+
+julia نسخ
+typeof(c)
+الناتج:
+
+julia نسخ
+Char
+فرق مهم:
+
+julia نسخ
+'A'      # Char
+"A"      # String
+5. القيم المنطقية Boolean
+julia نسخ
+flag = true
+أو:
+
+julia نسخ
+flag = false
+النوع:
+
+julia نسخ
+typeof(flag)
+الناتج:
+
+julia نسخ
+Bool
+6. التحويل بين الأنواع
+من عدد صحيح إلى عشري
+julia نسخ
+x = 10
+
+Float64(x)
+الناتج:
+
+text نسخ
+10.0
+من عشري إلى صحيح
+julia نسخ
+y = 3.9
+
+Int(y)
+الناتج:
+
+text نسخ
+3
+يتم حذف الجزء العشري.
+
+من نص إلى عدد
+julia نسخ
+parse(Int, "123")
+الناتج:
+
+text نسخ
+123
+julia نسخ
+parse(Float64, "3.14")
+الناتج:
+
+text نسخ
+3.14
+7. القيم الخاصة
+اللانهاية
+julia نسخ
+Inf
+سالب اللانهاية
+julia نسخ
+-Inf
+ليست رقماً
+julia نسخ
+NaN
+مثال:
+
+julia نسخ
+0.0 / 0.0
+الناتج:
+
+text نسخ
+NaN
+8. التحقق من النوع
+هل القيمة عدد صحيح؟
+julia نسخ
+x = 10
+
+isa(x, Int64)
+الناتج:
+
+julia نسخ
+true
+هل القيمة نص؟
+julia نسخ
+isa("hello", String)
+9. التسلسل الهرمي للأنواع
+يمكن معرفة النوع الأعلى:
+
+julia نسخ
+supertype(Int64)
+غالباً:
+
+julia نسخ
+Signed
+ثم:
+
+julia نسخ
+supertype(Signed)
+ثم:
+
+julia نسخ
+Integer
+وهكذا.
+
+بشكل مبسط:
+
+text نسخ
+Number
+│
+├── Integer
+│   └── Int64
+│
+└── AbstractFloat
+    └── Float64
+فهم هذا التسلسل مهم جداً عندما نصل إلى Multiple Dispatch.
+
+10. أمثلة عملية
+آلة حاسبة بسيطة
+julia نسخ
+a = 15
+b = 4
+
+println("Sum = $(a+b)")
+println("Difference = $(a-b)")
+println("Product = $(a*b)")
+println("Division = $(a/b)")
+تحويل درجات الحرارة
+julia نسخ
+celsius = 25
+
+fahrenheit = celsius * 9/5 + 32
+
+println(fahrenheit)
+الناتج:
+
+text نسخ
+77.0
+تمارين
+التمرين 1
+أنشئ المتغيرات التالية:
+
+julia نسخ
+name
+age
+salary
+ثم اطبع نوع كل متغير باستخدام:
+
+julia نسخ
+typeof(...)
+التمرين 2
+حوّل النص:
+
+julia نسخ
+"250"
+إلى عدد صحيح.
+
+التمرين 3
+احسب مساحة دائرة نصف قطرها 5:
+
+ثم اكتب برنامج Julia يطبق ذلك.
+
+ما سنتعلمه في الدرس القادم
+سندخل إلى المصفوفات Arrays، وهي من أكثر البنى استخداماً في Julia، ومنها يبدأ العمل الحقيقي في الحوسبة العلمية وتحليل البيانات. سنتعلم:
+
+إنشاء المصفوفات.
+الفهرسة Indexing.
+التقطيع Slicing.
+التعديل على العناصر.
+العمليات المتجهية السريعة.
+الدرس الثالث: المصفوفات Arrays في Julia
+المصفوفات هي العمود الفقري للحوسبة العلمية وتحليل البيانات في Julia. كثير من قوة Julia تأتي من قدرتها على تنفيذ العمليات على المصفوفات بسرعة عالية جداً.
+
+1. إنشاء مصفوفة
+مصفوفة أعداد صحيحة
+julia نسخ
+numbers = [1, 2, 3, 4, 5]
+طباعة المصفوفة:
+
+julia نسخ
+println(numbers)
+الناتج:
+
+text نسخ
+[1, 2, 3, 4, 5]
+مصفوفة نصوص
+julia نسخ
+names = ["Ali", "Sara", "Omar"]
+مصفوفة قيم عشرية
+julia نسخ
+scores = [10.5, 12.7, 9.8]
+2. معرفة نوع المصفوفة
+julia نسخ
+typeof(numbers)
+الناتج تقريباً:
+
+text نسخ
+Vector{Int64}
+ومعناها:
+
+Vector = مصفوفة أحادية البعد
+Int64 = نوع العناصر
+3. الفهرسة Indexing
+نقطة مهمة جداً:
+
+Julia تبدأ العد من 1 وليس من 0.
+
+julia نسخ
+numbers = [10, 20, 30, 40]
+أول عنصر:
+
+julia نسخ
+numbers[1]
+الناتج:
+
+text نسخ
+10
+العنصر الثالث:
+
+julia نسخ
+numbers[3]
+الناتج:
+
+text نسخ
+30
+4. آخر عنصر
+بدلاً من معرفة الطول:
+
+julia نسخ
+numbers[end]
+الناتج:
+
+text نسخ
+40
+قبل الأخير:
+
+julia نسخ
+numbers[end-1]
+الناتج:
+
+text نسخ
+30
+5. تعديل العناصر
+julia نسخ
+numbers = [1,2,3]
+تغيير العنصر الثاني:
+
+julia نسخ
+numbers[2] = 100
+تصبح:
+
+text نسخ
+[1,100,3]
+6. طول المصفوفة
+julia نسخ
+length(numbers)
+مثال:
+
+julia نسخ
+length([1,2,3,4,5])
+الناتج:
+
+text نسخ
+5
+7. التقطيع Slicing
+استخراج جزء من المصفوفة:
+
+julia نسخ
+numbers = [10,20,30,40,50]
+من الثاني إلى الرابع:
+
+julia نسخ
+numbers[2:4]
+الناتج:
+
+text نسخ
+[20,30,40]
+أول ثلاثة عناصر
+julia نسخ
+numbers[1:3]
+من العنصر الثالث حتى النهاية
+julia نسخ
+numbers[3:end]
+8. إضافة عناصر
+إضافة عنصر في النهاية
+julia نسخ
+push!(numbers, 60)
+تصبح:
+
+text نسخ
+[10,20,30,40,50,60]
+إضافة عدة عناصر
+julia نسخ
+append!(numbers, [70,80,90])
+9. حذف عناصر
+حذف آخر عنصر:
+
+julia نسخ
+pop!(numbers)
+حذف عنصر بموقع معين:
+
+julia نسخ
+deleteat!(numbers, 2)
+يحذف العنصر الثاني.
+
+10. المرور على العناصر
+باستخدام for
+julia نسخ
+for x in numbers
+    println(x)
+end
+مع الفهرس
+julia نسخ
+for i in eachindex(numbers)
+    println("Index=$i Value=$(numbers[i])")
+end
+11. العمليات على المصفوفات
+julia نسخ
+a = [1,2,3]
+b = [10,20,30]
+جمع عنصر بعنصر
+julia نسخ
+a .+ b
+الناتج:
+
+text نسخ
+[11,22,33]
+ضرب عنصر بعنصر
+julia نسخ
+a .* b
+الناتج:
+
+text نسخ
+[10,40,90]
+تربيع جميع العناصر
+julia نسخ
+a .^ 2
+الناتج:
+
+text نسخ
+[1,4,9]
+لماذا النقطة (.)؟
+في Julia:
+
+julia نسخ
+a + b
+قد تعني عملية جبرية مختلفة لبعض الأنواع.
+
+أما:
+
+julia نسخ
+a .+ b
+فتعني:
+
+طبق العملية على كل عنصر مقابل العنصر المناظر له.
+
+وتسمى Broadcasting وهي من أهم مفاهيم Julia.
+
+12. إنشاء مصفوفات خاصة
+أصفار
+julia نسخ
+zeros(5)
+الناتج:
+
+text نسخ
+[0.0,0.0,0.0,0.0,0.0]
+آحاد
+julia نسخ
+ones(5)
+أعداد عشوائية
+julia نسخ
+rand(5)
+أعداد صحيحة عشوائية
+julia نسخ
+rand(1:100, 5)
+مثال:
+
+text نسخ
+[14, 88, 2, 51, 77]
+13. الدوال الإحصائية
+julia نسخ
+numbers = [10,20,30,40,50]
+المجموع:
+
+julia نسخ
+sum(numbers)
+الناتج:
+
+text نسخ
+150
+المتوسط:
+
+julia نسخ
+mean(numbers)
+يتطلب غالباً:
+
+julia نسخ
+using Statistics
+أكبر قيمة:
+
+julia نسخ
+maximum(numbers)
+أصغر قيمة:
+
+julia نسخ
+minimum(numbers)
+14. البحث داخل المصفوفة
+julia نسخ
+x = [5,10,15,20]
+هل 10 موجودة؟
+
+julia نسخ
+10 in x
+الناتج:
+
+text نسخ
+true
+هل 99 موجودة؟
+
+julia نسخ
+99 in x
+الناتج:
+
+text نسخ
+false
+مثال عملي
+حساب متوسط درجات الطلاب:
+
+julia نسخ
+using Statistics
+
+grades = [90,85,88,95,78]
+
+avg = mean(grades)
+
+println("Average = $avg")
+println("Max = $(maximum(grades))")
+println("Min = $(minimum(grades))")
+تمرين 1
+أنشئ المصفوفة:
+
+julia نسخ
+numbers = [5,10,15,20,25]
+ثم:
+
+اطبع العنصر الثالث.
+اطبع آخر عنصر.
+أضف الرقم 30.
+احسب المجموع.
+تمرين 2
+أنشئ مصفوفتين:
+
+julia نسخ
+a = [1,2,3,4]
+b = [5,6,7,8]
+ثم احسب:
+
+julia نسخ
+a .+ b
+a .* b
+a .^ 2
+معلومة احترافية
+من أهم أسباب سرعة Julia أن عمليات الـ Broadcasting مثل:
+
+julia نسخ
+result = sin.(a) .+ cos.(b) .* 2
+يستطيع المترجم دمجها في حلقة واحدة فعّالة دون إنشاء مصفوفات مؤقتة كثيرة، وهو ما يسمى Loop Fusion.
+
+في الدرس القادم سننتقل إلى المصفوفات ثنائية الأبعاد (Matrices) ونتعلم أساسيات الجبر الخطي، وهو المجال الذي تتألق فيه Julia بشكل خاص.
+الدرس الرابع: المصفوفات ثنائية الأبعاد (Matrices)
+في Julia، المصفوفة (Matrix) هي مجموعة عناصر مرتبة في صفوف وأعمدة. وهي أساس الجبر الخطي، التعلم الآلي، المحاكاة العلمية، ومعالجة الصور.
+
+1. إنشاء مصفوفة
+julia نسخ
+A = [
+    1 2 3
+    4 5 6
+    7 8 9
+]
+أو:
+
+julia نسخ
+A = [1 2 3;
+     4 5 6;
+     7 8 9]
+الناتج:
+
+text نسخ
+3×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+ 7  8  9
+2. معرفة الأبعاد
+julia نسخ
+size(A)
+الناتج:
+
+julia نسخ
+(3, 3)
+أي:
+
+3 صفوف
+3 أعمدة
+عدد الصفوف:
+
+julia نسخ
+size(A, 1)
+عدد الأعمدة:
+
+julia نسخ
+size(A, 2)
+3. الوصول إلى العناصر
+الصيغة:
+
+julia نسخ
+A[الصف, العمود]
+مثال:
+
+julia نسخ
+A[2,3]
+الناتج:
+
+text نسخ
+6
+لأن العنصر موجود في:
+
+الصف الثاني
+العمود الثالث
+4. تعديل عنصر
+julia نسخ
+A[1,2] = 100
+تصبح:
+
+text نسخ
+1 100 3
+4 5   6
+7 8   9
+5. استخراج صف كامل
+الرمز : يعني "كل العناصر".
+
+الصف الثاني:
+
+julia نسخ
+A[2,:]
+الناتج:
+
+text نسخ
+[4, 5, 6]
+6. استخراج عمود كامل
+العمود الثالث:
+
+julia نسخ
+A[:,3]
+الناتج:
+
+text نسخ
+[3,6,9]
+7. استخراج جزء من المصفوفة
+أول صفين وأول عمودين:
+
+julia نسخ
+A[1:2, 1:2]
+الناتج:
+
+text نسخ
+2×2 Matrix:
+1 2
+4 5
+8. مصفوفات خاصة
+مصفوفة أصفار
+julia نسخ
+zeros(3,4)
+3 صفوف و4 أعمدة.
+
+مصفوفة آحاد
+julia نسخ
+ones(2,5)
+مصفوفة عشوائية
+julia نسخ
+rand(3,3)
+9. مصفوفة الوحدة Identity Matrix
+julia نسخ
+using LinearAlgebra
+
+I(3)
+أو عملياً:
+
+julia نسخ
+Matrix(I, 3, 3)
+الناتج:
+
+text نسخ
+1 0 0
+0 1 0
+0 0 1
+10. جمع المصفوفات
+julia نسخ
+A = [1 2;
+     3 4]
+
+B = [5 6;
+     7 8]
+
+A + B
+الناتج:
+
+text نسخ
+6  8
+10 12
+11. ضرب عنصر بعنصر
+julia نسخ
+A .* B
+الناتج:
+
+text نسخ
+5   12
+21  32
+12. الضرب المصفوفي الحقيقي
+julia نسخ
+A * B
+الناتج:
+
+text نسخ
+19 22
+43 50
+لاحظ الفرق:
+
+العملية	المعنى
+.*	عنصر × عنصر
+*	ضرب مصفوفي
+هذه من أهم النقاط في Julia.
+
+13. النقل (Transpose)
+إذا كانت:
+
+julia نسخ
+A = [1 2 3]
+فإن:
+
+julia نسخ
+A'
+تعطي:
+
+text نسخ
+1
+2
+3
+أي تحويل الصف إلى عمود.
+
+14. المحدد Determinant
+لدينا:
+
+julia نسخ
+using LinearAlgebra
+
+A = [1 2;
+     3 4]
+المحدد:
+
+julia نسخ
+det(A)
+الناتج:
+
+text نسخ
+-2.0
+15. المعكوس Inverse
+julia نسخ
+inv(A)
+الناتج تقريباً:
+
+text نسخ
+-2.0   1.0
+ 1.5  -0.5
+16. حل نظام معادلات خطية
+النظام:
+
+في Julia:
+
+julia نسخ
+using LinearAlgebra
+
+A = [2 1;
+     1 -1]
+
+b = [5, 1]
+
+x = A \ b
+الناتج:
+
+text نسخ
+2.0
+1.0
+أي:
+
+text نسخ
+x = 2
+y = 1
+هذه العملية من أكثر العمليات استخداماً في الهندسة والعلوم.
+
+17. التكرار على عناصر المصفوفة
+julia نسخ
+for row in 1:size(A,1)
+    for col in 1:size(A,2)
+        println(A[row,col])
+    end
+end
+18. مثال عملي
+حساب متوسط درجات 3 طلاب في 4 مواد:
+
+julia نسخ
+grades = [
+    90 85 88 92
+    78 80 75 82
+    95 91 94 97
+]
+متوسط كل طالب:
+
+julia نسخ
+using Statistics
+
+mean(grades, dims=2)
+متوسط كل مادة:
+
+julia نسخ
+mean(grades, dims=1)
+تمرين
+أنشئ المصفوفة:
+
+julia نسخ
+A = [
+    2 4 6
+    1 3 5
+    7 8 9
+]
+ثم:
+
+اطبع العنصر الموجود في الصف الثالث والعمود الثاني.
+
+اطبع العمود الأول بالكامل.
+
+اطبع الصف الثاني بالكامل.
+
+احسب:
+
+A + A
+A .* A
+احسب حجم المصفوفة باستخدام size.
+
+ما بعد ذلك
+الخطوة التالية هي أهم نقطة في تعلم Julia فعلياً:
+
+الدوال Functions.
+
+هناك ستتعلم:
+
+تعريف الدوال.
+إرجاع القيم.
+الوسائط الاختيارية.
+Keyword Arguments.
+Anonymous Functions.
+وأهم ميزة في Julia: Multiple Dispatch، وهي القلب الحقيقي للغة.
+الدرس الخامس: الدوال Functions في Julia
+الدوال هي الوسيلة الأساسية لتنظيم البرامج. كلما كبر المشروع، زادت أهمية تقسيمه إلى دوال صغيرة وواضحة.
+
+في Julia، الدوال ليست مجرد أداة لتنظيم الكود، بل هي أساس ميزة Multiple Dispatch التي تميز اللغة.
+
+1. أبسط دالة
+julia نسخ
+function greet()
+    println("Hello")
+end
+استدعاء الدالة:
+
+julia نسخ
+greet()
+الناتج:
+
+text نسخ
+Hello
+2. دالة تستقبل معاملات
+julia نسخ
+function greet(name)
+    println("Hello $name")
+end
+الاستخدام:
+
+julia نسخ
+greet("Ali")
+greet("Sara")
+الناتج:
+
+text نسخ
+Hello Ali
+Hello Sara
+3. إرجاع قيمة
+julia نسخ
+function add(a, b)
+    return a + b
+end
+الاستخدام:
+
+julia نسخ
+result = add(10, 20)
+
+println(result)
+الناتج:
+
+text نسخ
+30
+ملاحظة مهمة
+في Julia آخر تعبير يتم إرجاعه تلقائياً.
+
+لذلك يمكن كتابة:
+
+julia نسخ
+function add(a,b)
+    a + b
+end
+وستعمل بنفس الطريقة.
+
+4. الصيغة المختصرة
+بدلاً من:
+
+julia نسخ
+function square(x)
+    x^2
+end
+يمكن كتابة:
+
+julia نسخ
+square(x) = x^2
+الاستخدام:
+
+julia نسخ
+square(5)
+الناتج:
+
+text نسخ
+25
+5. دوال متعددة الأسطر
+julia نسخ
+function rectangle_area(width, height)
+
+    area = width * height
+
+    return area
+
+end
+6. تحديد الأنواع
+يمكن فرض نوع المعاملات:
+
+julia نسخ
+function add(a::Int64, b::Int64)
+    a + b
+end
+مثال:
+
+julia نسخ
+add(5,7)
+إذا مررت نصاً:
+
+julia نسخ
+add("A","B")
+سيظهر خطأ لأن الدالة تقبل أعداداً صحيحة فقط.
+
+7. المعاملات الاختيارية
+julia نسخ
+function power(x, n=2)
+    x^n
+end
+الاستخدام:
+
+julia نسخ
+power(5)
+الناتج:
+
+text نسخ
+25
+julia نسخ
+power(5,3)
+الناتج:
+
+text نسخ
+125
+8. Keyword Arguments
+هذه من أكثر الميزات استخداماً.
+
+julia نسخ
+function create_user(name; age=0, city="Unknown")
+
+    println("Name: $name")
+    println("Age: $age")
+    println("City: $city")
+
+end
+الاستخدام:
+
+julia نسخ
+create_user("Ali")
+julia نسخ
+create_user("Ali", age=30)
+julia نسخ
+create_user("Ali", city="Istanbul")
+julia نسخ
+create_user("Ali", age=30, city="Istanbul")
+9. الدوال المجهولة Anonymous Functions
+بدلاً من إنشاء دالة كاملة:
+
+julia نسخ
+x -> x^2
+هذه دالة مجهولة.
+
+مثال:
+
+julia نسخ
+f = x -> x^2
+
+f(10)
+الناتج:
+
+text نسخ
+100
+مثال عملي
+julia نسخ
+map(x -> x^2, [1,2,3,4])
+الناتج:
+
+text نسخ
+[1,4,9,16]
+10. دوال متعددة القيم
+يمكن إرجاع أكثر من قيمة.
+
+julia نسخ
+function calc(a,b)
+
+    sum_value = a+b
+    mul_value = a*b
+
+    return sum_value, mul_value
+
+end
+الاستخدام:
+
+julia نسخ
+s,m = calc(4,5)
+
+println(s)
+println(m)
+الناتج:
+
+text نسخ
+9
+20
+11. التمرير بعدد غير محدد من المعاملات
+julia نسخ
+function total(values...)
+    sum(values)
+end
+الاستخدام:
+
+julia نسخ
+total(1,2,3)
+الناتج:
+
+text نسخ
+6
+julia نسخ
+total(1,2,3,4,5)
+الناتج:
+
+text نسخ
+15
+12. Multiple Dispatch
+هنا تبدأ قوة Julia الحقيقية.
+
+يمكن إنشاء عدة دوال بنفس الاسم.
+
+نسخة للأعداد الصحيحة:
+
+julia نسخ
+describe(x::Int64) =
+    println("Integer")
+نسخة للأعداد العشرية:
+
+julia نسخ
+describe(x::Float64) =
+    println("Float")
+نسخة للنصوص:
+
+julia نسخ
+describe(x::String) =
+    println("String")
+الاستخدام:
+
+julia نسخ
+describe(10)
+الناتج:
+
+text نسخ
+Integer
+julia نسخ
+describe(3.14)
+الناتج:
+
+text نسخ
+Float
+julia نسخ
+describe("Hello")
+الناتج:
+
+text نسخ
+String
+هذا ليس Overloading تقليدياً كما في لغات أخرى، بل نظام متكامل تعتمد عليه Julia بالكامل.
+
+13. معرفة الدوال المتاحة
+إذا عرفنا:
+
+julia نسخ
+describe(x::Int64) = println("Integer")
+
+describe(x::Float64) = println("Float")
+يمكن معرفة النسخ المتوفرة:
+
+julia نسخ
+methods(describe)
+14. مثال عملي احترافي
+حساب مساحة أشكال مختلفة بنفس اسم الدالة.
+
+المربع:
+
+julia نسخ
+area(side::Number) =
+    side^2
+المستطيل:
+
+julia نسخ
+area(width::Number,
+     height::Number) =
+     width * height
+الاستخدام:
+
+julia نسخ
+area(5)
+الناتج:
+
+text نسخ
+25
+julia نسخ
+area(5,10)
+الناتج:
+
+text نسخ
+50
+لاحظ أن Julia اختارت الدالة المناسبة تلقائياً.
+
+أفضل الممارسات
+بدلاً من:
+
+julia نسخ
+function calculate(type,x,y)
+
+    if type=="square"
+        ...
+    elseif type=="rectangle"
+        ...
+    end
+
+end
+في Julia يفضل:
+
+julia نسخ
+area(x)
+area(x,y)
+أو:
+
+julia نسخ
+area(shape::Square)
+area(shape::Rectangle)
+وهذا ما سنراه لاحقاً عند دراسة الأنواع المخصصة.
+
+تمرين
+أنشئ الدوال التالية:
+
+julia نسخ
+square(x)
+تعيد مربع العدد.
+
+julia نسخ
+cube(x)
+تعيد مكعب العدد.
+
+julia نسخ
+average(a,b,c)
+تعيد المتوسط الحسابي.
+
+أنشئ نسختين من الدالة:
+
+julia نسخ
+showtype(x::Int64)
+showtype(x::String)
+واجعل كل نسخة تطبع نوع القيمة.
+
+الدرس القادم
+سننتقل إلى موضوع بالغ الأهمية:
+
+Structures (struct) والأنواع المخصصة
+
+وهناك ستتعلم كيف تبني أنواعك الخاصة مثل:
+
+julia نسخ
+Person
+Student
+Car
+Vector3D
+MatrixNode
+Particle
+ومن هناك يبدأ بناء البرامج والمكتبات الاحترافية الحقيقية في Julia.

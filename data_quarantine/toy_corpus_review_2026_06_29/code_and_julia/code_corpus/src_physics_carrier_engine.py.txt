@@ -1,0 +1,278 @@
+# -*- coding: utf-8 -*-
+"""CarrierWaveEngine — محرك الموجة الحاملة لكل كلمة.
+
+الفكرة الفيزيائية:
+  - كل كلمة = موجة حاملة (carrier wave) بتردد ω₀.
+  - في كل جملة تظهر فيها، الكلمات الأخرى في نفس الجملة = إشارات محمّلة (modulation).
+  - عبر الزمن، الكلمة تتراكم كل محمولاتها من كل الجمل التي ظهرت فيها.
+  
+  مثال: "الملك" ظهرت في:
+    ج1: "الملك هو من يحكم البلاد" → محمولات: يحكم، البلاد
+    ج2: "الملك له سلطة ومال"       → محمولات: سلطة، مال
+  الطيف الكامل لـ "الملك" = {يحكم، البلاد، سلطة، مال}
+  
+  عند التوليد في سياق "السلطة":
+  - نستخدم التغاير الترددي لاستخراج "سلطة" و"مال" من الطيف
+  - نتجاهل "يحكم" و"البلاد" لأنها لا ترن مع ترددات السياق الحالي
+
+المبدأ يشبه راديو AM:
+  - الموجة الحاملة = الكلمة نفسها (التردد الأساسي)
+  - التضمين = كل الكلمات المرافقة في كل الجمل
+  - المستقبل = محرك التوليد الذي يفك التضمين حسب السياق
+"""
+
+import os
+import numpy as np
+from scipy import sparse
+from collections import defaultdict
+from src.physics.word_physics import compute_word_frequency, phase_similarity, compute_word_phase_vector
+from src.physics.constants import PHASE_DIM
+
+
+class CarrierWaveEngine:
+    """نموذج الموجة الحاملة — كل كلمة تحمل طيف رفيقاتها."""
+
+    def __init__(self, bandwidth=0.15, min_modulation_strength=0.01):
+        self.bandwidth = bandwidth
+        self.min_strength = min_modulation_strength
+        self._freq_cache = {}
+        self._carrier_spectra = {}   # word_id -> {companion_id: strength}
+        self._carrier_freqs = {}     # word_id -> frequency
+        self._mod_frequencies = {}   # companion_id -> modulation_frequency
+        self.is_built = False
+
+    def get_word_freq(self, word):
+        if word not in self._freq_cache:
+            self._freq_cache[word] = compute_word_frequency(word)
+        return self._freq_cache[word]
+
+    def build_from_corpus(self, corpus_texts, vocab):
+        """بناء أطياف الموجة الحاملة من النصوص.
+
+        لكل كلمة تظهر في النصوص:
+          - نجمع كل الكلمات التي ظهرت معها في نفس الجملة.
+          - نحسب لكل رفيقة: التردد + قوة التضمين.
+          - قوة التضمين تتناسب مع عدد مرات الظهور المشترك.
+
+        هذا يختلف عن K-matrix:
+          - K-matrix: نافذة صغيرة (5 كلمات)، أزواج فقط.
+          - CarrierWave: الجملة كاملة، كل الكلمات محمّلة على الحاملة.
+        """
+        print("[CarrierWave] Building modulation spectra from corpus...")
+        cooc = defaultdict(lambda: defaultdict(float))
+        total_sentences = 0
+
+        for text in corpus_texts:
+            for line in text.split('\n'):
+                tokens = line.split()
+                if len(tokens) < 2:
+                    continue
+                total_sentences += 1
+                ids = []
+                for t in tokens:
+                    wid = vocab.get(t)
+                    if wid is not None:
+                        ids.append(wid)
+
+                n = len(ids)
+                for i in range(n):
+                    carrier_id = ids[i]
+                    for j in range(n):
+                        if i == j:
+                            continue
+                        companion_id = ids[j]
+                        distance = abs(i - j)
+                        decay = 1.0 / (1.0 + distance * 0.15)
+                        cooc[carrier_id][companion_id] += decay
+
+        for carrier_id, companions in cooc.items():
+            total = sum(companions.values())
+            if total == 0:
+                continue
+
+            spectrum = {}
+            for comp_id, raw_strength in companions.items():
+                normalized = raw_strength / total
+                if normalized >= self.min_strength:
+                    spectrum[comp_id] = normalized
+
+            if spectrum:
+                self._carrier_spectra[carrier_id] = spectrum
+
+        for wid in self._carrier_spectra:
+            word = vocab.id2word.get(wid, '')
+            if word:
+                self._carrier_freqs[wid] = self.get_word_freq(word)
+
+        for wid in range(len(vocab)):
+            word = vocab.id2word.get(wid, '')
+            if word:
+                self._mod_frequencies[wid] = self.get_word_freq(word)
+
+        self.is_built = True
+        n_carriers = len(self._carrier_spectra)
+        print(f"[CarrierWave] Built spectra for {n_carriers:,} carrier words from {total_sentences} sentences")
+
+    def get_carrier_spectrum(self, carrier_id):
+        """إرجاع طيف التضمين لكلمة حاملة.
+
+        Returns:
+            dict: {companion_id: modulation_strength}
+        """
+        return self._carrier_spectra.get(carrier_id, {})
+
+    def get_carrier_freq(self, carrier_id):
+        return self._carrier_freqs.get(carrier_id, 1.0)
+
+    def get_modulation_freq(self, companion_id):
+        return self._mod_frequencies.get(companion_id, 1.0)
+
+    def demodulate(self, carrier_id, context_ids, top_k=None, vocab=None, get_pv_fn=None):
+        spectrum = self.get_carrier_spectrum(carrier_id)
+        if not spectrum or not context_ids:
+            return []
+
+        scored = []
+        for comp_id, modulation_strength in spectrum.items():
+            combined_score = modulation_strength * 0.25
+            if get_pv_fn and vocab:
+                try:
+                    comp_pv = get_pv_fn(vocab.id2word.get(comp_id, ''))
+                    ctx_aligns = []
+                    for ctx_id in context_ids[-8:]:
+                        ctx_pv = get_pv_fn(vocab.id2word.get(ctx_id, ''))
+                        if comp_pv is not None and ctx_pv is not None:
+                            sim = float(np.dot(comp_pv[:PHASE_DIM], ctx_pv[:PHASE_DIM]) /
+                                       max(np.linalg.norm(comp_pv[:PHASE_DIM]) * np.linalg.norm(ctx_pv[:PHASE_DIM]), 1e-10))
+                            ctx_aligns.append(max(0.0, sim))
+                    if ctx_aligns:
+                        combined_score = modulation_strength * (0.25 + 0.75 * np.mean(ctx_aligns))
+                except (np.linalg.LinAlgError, ValueError, KeyError):
+                    pass
+
+            if combined_score > 0.01:
+                scored.append((comp_id, combined_score))
+
+        scored.sort(key=lambda x: x[1], reverse=True)
+        if top_k is not None:
+            scored = scored[:top_k]
+        return scored
+
+    def score_candidate_via_carrier(self, candidate_id, context_ids, vocab, get_pv_fn=None):
+        if not context_ids or candidate_id is None:
+            return 0.0
+
+        best_score = 0.0
+        candidate_word = vocab.id2word.get(candidate_id, '')
+        cand_pv = get_pv_fn(candidate_word) if get_pv_fn else None
+
+        for ctx_id in context_ids[-6:]:
+            if ctx_id == candidate_id:
+                continue
+            spectrum = self.get_carrier_spectrum(ctx_id)
+            if candidate_id not in spectrum:
+                continue
+
+            modulation_strength = spectrum[candidate_id]
+            ctx_word = vocab.id2word.get(ctx_id, '')
+            ctx_pv = get_pv_fn(ctx_word) if get_pv_fn else None
+
+            if cand_pv is not None and ctx_pv is not None:
+                sim = float(np.dot(cand_pv[:PHASE_DIM], ctx_pv[:PHASE_DIM]) /
+                           max(np.linalg.norm(cand_pv[:PHASE_DIM]) * np.linalg.norm(ctx_pv[:PHASE_DIM]), 1e-10))
+                sim = max(0.0, sim)
+            else:
+                sim = 0.3
+
+            score = modulation_strength * (0.2 + 0.8 * sim)
+            best_score = max(best_score, score)
+
+        return best_score
+
+    def save(self, path):
+        """حفظ الأطياف إلى ملف."""
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        data = {
+            'carrier_spectra': {str(k): {str(ck): cv for ck, cv in v.items()}
+                                for k, v in self._carrier_spectra.items()},
+            'carrier_freqs': {str(k): float(v) for k, v in self._carrier_freqs.items()},
+            'mod_frequencies': {str(k): float(v) for k, v in self._mod_frequencies.items()},
+        }
+        np.savez_compressed(path, **{k: v for k, v in data.items()})
+        print(f"[CarrierWave] Saved to {path}")
+
+    def load(self, path, vocab=None):
+        """تحميل الأطياف من ملف."""
+        if not os.path.exists(path):
+            return False
+        data = np.load(path, allow_pickle=True)
+        self._carrier_spectra = {int(k): {int(ck): float(cv) for ck, cv in v.item().items()}
+                                  for k, v in data['carrier_spectra'].item().items()}
+        self._carrier_freqs = {int(k): float(v) for k, v in data['carrier_freqs'].item().items()}
+        self._mod_frequencies = {int(k): float(v) for k, v in data['mod_frequencies'].item().items()}
+        self.is_built = True
+        print(f"[CarrierWave] Loaded from {path} ({len(self._carrier_spectra)} carriers)")
+        return True
+
+    def clear_cache(self):
+        self._freq_cache.clear()
+        self._carrier_freqs.clear()
+        self._mod_frequencies.clear()
+
+    def bootstrap_from_vocab(self, vocab):
+        """بناء أطياف أولية خفيفة من المعجم مباشرة (بدون نصوص تدريبية).
+
+        يستخدم فئات الكلمات الدلالية كبديل عن التلازم السياقي:
+        كل كلمة تصبح حاملة لكل الكلمات التي تتشابه معها طورياً.
+        """
+        if self.is_built:
+            return
+        from src.physics.word_physics import compute_word_phase_vector, phase_similarity
+
+        n = len(vocab)
+        if n == 0:
+            return
+
+        import random
+        sample_size = min(n, 5000)
+        sampled_ids = random.sample(range(n), sample_size)
+
+        for carrier_id in sampled_ids:
+            carrier_word = vocab.id2word.get(carrier_id, '')
+            if not carrier_word or len(carrier_word) < 2:
+                continue
+            try:
+                cpv = compute_word_phase_vector(carrier_word)
+            except Exception:
+                continue
+
+            spectrum = {}
+            for comp_id in sampled_ids:
+                if comp_id == carrier_id:
+                    continue
+                comp_word = vocab.id2word.get(comp_id, '')
+                if not comp_word or len(comp_word) < 2:
+                    continue
+                try:
+                    mpv = compute_word_phase_vector(comp_word)
+                except Exception:
+                    continue
+                sim = phase_similarity(cpv, mpv)
+                if sim > 0.3:
+                    spectrum[comp_id] = float(sim * 0.5)
+
+            if spectrum:
+                self._carrier_spectra[carrier_id] = spectrum
+
+        for wid in self._carrier_spectra:
+            word = vocab.id2word.get(wid, '')
+            if word:
+                self._carrier_freqs[wid] = self.get_word_freq(word)
+
+        for wid in range(n):
+            word = vocab.id2word.get(wid, '')
+            if word:
+                self._mod_frequencies[wid] = self.get_word_freq(word)
+
+        self.is_built = True
+        print(f"[CarrierWave] Bootstrapped {len(self._carrier_spectra)} carriers from vocab")

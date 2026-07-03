@@ -1,0 +1,202 @@
+{
+  "version": 2,
+  "note": "Structured semantic relation facts. These records are not answers and do not contain reusable evidence sentences. Training imports them into al_nisba and al_istinbat as relation fields only.",
+  "records": [
+    {
+      "id": "fact_science_light",
+      "relation_type": "analogy",
+      "subject": "علم",
+      "object": "نور",
+      "marker": "يشبه",
+      "polarity": 1,
+      "terms": ["علم", "نور", "مصباح", "ضوء", "كشف", "خفاء", "طريق", "صواب"],
+      "focus_terms": ["كشف", "خفاء", "هداية", "طريق"]
+    },
+    {
+      "id": "fact_mercy_power",
+      "relation_type": "causal",
+      "subject": "رحمة",
+      "object": "قوة",
+      "marker": "تهذب",
+      "polarity": 1,
+      "terms": ["رحمة", "قوة", "حق", "تعدي", "تهذيب"],
+      "focus_terms": ["تهذيب", "حق", "منع التعدي"]
+    },
+    {
+      "id": "fact_power_injustice",
+      "relation_type": "transform",
+      "subject": "قوة",
+      "object": "ظلم",
+      "marker": "تتحول",
+      "polarity": 1,
+      "terms": ["قوة", "ظلم", "رحمة", "عدل", "تعدي", "حق"],
+      "context_terms": ["غياب الرحمة", "غياب العدل"],
+      "focus_terms": ["ظلم", "تعدي", "حماية الحق"]
+    },
+    {
+      "id": "fact_knowledge_power",
+      "relation_type": "transform",
+      "subject": "معرفة",
+      "object": "قوة",
+      "marker": "تتحول",
+      "polarity": 1,
+      "terms": ["معرفة", "قوة", "خبرة", "عمل", "تأثير"],
+      "context_terms": ["خبرة", "عمل"],
+      "focus_terms": ["قدرة", "تأثير"]
+    },
+    {
+      "id": "fact_experience_ability",
+      "relation_type": "transform",
+      "subject": "خبرة",
+      "object": "قدرة",
+      "marker": "تصبح",
+      "polarity": 1,
+      "terms": ["خبرة", "تجربة", "قدرة", "عمل", "إتقان"],
+      "context_terms": ["عمل متقن"],
+      "focus_terms": ["قدرة", "إتقان"]
+    },
+    {
+      "id": "fact_knowledge_effect",
+      "relation_type": "transform",
+      "subject": "معرفة",
+      "object": "أثر",
+      "marker": "تصير",
+      "polarity": 1,
+      "terms": ["معرفة", "أثر", "واقع", "فهم", "عمل", "قرار", "سلوك"],
+      "context_terms": ["فهم", "عمل"],
+      "focus_terms": ["واقع", "قرار", "سلوك"]
+    },
+    {
+      "id": "fact_light_darkness",
+      "relation_type": "prevention",
+      "subject": "ضوء",
+      "object": "ظلام",
+      "marker": "يطرد",
+      "polarity": 1,
+      "terms": ["ضوء", "ظلام", "رؤية", "طريق", "حيرة", "كشف"],
+      "focus_terms": ["كشف", "رؤية", "زوال الحيرة"]
+    },
+    {
+      "id": "fact_work_understanding",
+      "relation_type": "need",
+      "subject": "عمل",
+      "object": "فهم",
+      "marker": "يحتاج",
+      "polarity": 1,
+      "terms": ["عمل", "فهم", "خطأ", "صواب", "فعل", "نتيجة"],
+      "focus_terms": ["توجيه الفعل", "منع الخطأ", "صواب"]
+    },
+    {
+      "id": "fact_learning_work",
+      "relation_type": "causal",
+      "subject": "تعلم",
+      "object": "عمل",
+      "marker": "يرتبط",
+      "polarity": 1,
+      "terms": ["تعلم", "علم", "عمل", "فهم", "تطبيق", "نفع"],
+      "focus_terms": ["تطبيق", "فعل نافع"]
+    },
+    {
+      "id": "fact_society_justice",
+      "relation_type": "need",
+      "subject": "مجتمع",
+      "object": "عدالة",
+      "marker": "يحتاج",
+      "polarity": 1,
+      "terms": ["مجتمع", "عدالة", "حقوق", "نزاع", "سلام"],
+      "focus_terms": ["صون الحقوق", "تقليل النزاع", "ثبات السلام"]
+    },
+    {
+      "id": "fact_power_reason",
+      "relation_type": "need",
+      "subject": "قوة",
+      "object": "عقل",
+      "marker": "تحتاج",
+      "polarity": 1,
+      "terms": ["قوة", "عقل", "عواقب", "تعدي", "حماية"],
+      "focus_terms": ["وزن العواقب", "تمييز الحماية", "منع التعدي"]
+    },
+    {
+      "id": "fact_reason_power_recklessness",
+      "relation_type": "prevention",
+      "subject": "عقل",
+      "object": "تهور",
+      "marker": "يمنع",
+      "polarity": 1,
+      "terms": ["عقل", "قوة", "تهور", "تعدي", "عواقب"],
+      "context_terms": ["قوة"],
+      "focus_terms": ["منع التهور", "وزن العواقب"]
+    },
+    {
+      "id": "fact_justice_conflict",
+      "relation_type": "prevention",
+      "subject": "عدالة",
+      "object": "نزاع",
+      "marker": "تمنع",
+      "polarity": 1,
+      "terms": ["عدالة", "نزاع", "حقوق", "ظلم", "خصومة"],
+      "focus_terms": ["توضيح الحقوق", "رد الظلم", "تقليل الخصومة"]
+    },
+    {
+      "id": "fact_power_peace_insufficient",
+      "relation_type": "need",
+      "subject": "سلام",
+      "object": "علم",
+      "marker": "يحتاج",
+      "polarity": 1,
+      "terms": ["سلام", "قوة", "يكفي", "حفظ", "علم", "عدل", "حقوق"],
+      "contrast_terms": ["قوة وحدها"],
+      "focus_terms": ["علم الحقوق", "إقامة العدل", "قوة منضبطة"]
+    },
+    {
+      "id": "fact_science_mercy",
+      "relation_type": "prevention",
+      "subject": "علم",
+      "object": "رحمة",
+      "marker": "يحمي",
+      "polarity": 1,
+      "terms": ["علم", "رحمة", "فهم", "ضعف", "تهاون"],
+      "focus_terms": ["موضع الرحمة", "منع الضعف", "منع التهاون"]
+    },
+    {
+      "id": "fact_understanding_justice",
+      "relation_type": "causal",
+      "subject": "فهم",
+      "object": "عدل",
+      "marker": "يساعد",
+      "polarity": 1,
+      "terms": ["فهم", "عدل", "حقيقة", "حق", "ميزان"],
+      "focus_terms": ["كشف الحال", "إعطاء الحق", "ميزان أوضح"]
+    },
+    {
+      "id": "fact_science_needs_guidance",
+      "relation_type": "need",
+      "subject": "علم",
+      "object": "فهم",
+      "marker": "يحتاج",
+      "polarity": 1,
+      "terms": ["علم", "يكفي", "فهم", "عدل", "رحمة", "طغيان"],
+      "focus_terms": ["تنظيم الفهم", "توجيه العدل", "منع الطغيان"]
+    },
+    {
+      "id": "fact_reason_recklessness",
+      "relation_type": "prevention",
+      "subject": "عقل",
+      "object": "تهور",
+      "marker": "يمنع",
+      "polarity": 1,
+      "terms": ["عقل", "تهور", "اندفاع", "عواقب", "خطأ"],
+      "focus_terms": ["وقف الاندفاع", "وزن العواقب", "مراجعة الفعل"]
+    },
+    {
+      "id": "fact_insight_authority",
+      "relation_type": "prevention",
+      "subject": "بصيرة",
+      "object": "سلطة",
+      "marker": "تضبط",
+      "polarity": 1,
+      "terms": ["بصيرة", "سلطة", "قوة", "عواقب", "حق", "انحراف"],
+      "focus_terms": ["كشف العواقب", "منع الانحراف", "حفظ الحق"]
+    }
+  ]
+}

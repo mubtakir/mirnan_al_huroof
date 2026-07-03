@@ -1,0 +1,48 @@
+# ═══ إعدادات مرنان الأساسية ═══
+# يُدمج تلقائياً مع باقي ملفات config/ عند التحميل.
+
+# ═══ فضاء الاندماج الهندسي وكليفورد ═══
+semantic_fusion:
+  method: "projection"
+  vowel_modulation: true
+  regularize: true
+
+# ═══ معامل ألفا — خلط السياق في المتجه الطوري ═══
+alpha: 0.5
+
+# ═══ معاملات التوليد ═══
+generation:
+  beam_width: 5
+  top_k: 500
+  beta: 2.0
+  relaxation_enabled: false
+  relaxation_passes: 3
+
+# ═══ تسريع كرت الشاشة — للاستخدام (التوليد) فقط، وليس التدريب ═══
+gpu:
+  enabled: false
+  dim: 9958
+
+# ═══ التدريب — بناء مصفوفات K ═══
+training:
+  window_sem: 10
+  window_syn: 4
+  window_dial: 2
+  particle_weight: 0.15
+  spectral_half_window: 7
+  causal_window: 5
+
+# ═══ معايرة الرنين — ضبط ذاتي للأوزان ═══
+calibration:
+  lr: 0.02
+  min_samples: 50
+  max_iterations: 10
+  convergence: 0.001
+
+# ═══ تطور المتجهات الطورية — تنظيم ذاتي ═══
+phase_evolution:
+  lr_cooc: 0.03
+  lr_contrast: 0.015
+  lr_spectral: 0.02
+  min_cooc: 2
+  max_shift: 0.25

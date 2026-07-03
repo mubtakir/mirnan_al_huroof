@@ -1,0 +1,104 @@
+"""MathBridge — جسر رياضي وبرمجي (كشف الرياضيات والكود وتقييم الصحة النحوية)."""
+module MathBridgeModule
+export MathBridge, is_math_expression, evaluate_math,
+       is_code_prompt, detect_mode, validate_code_syntax
+
+const MATH_KEYWORDS = Set(["زائد","ناقص","مضروب","مقسوم","جذر","مربع","مكعب","قوة","لوغاريتم","جيب","جيب تمام","ظل","مشتق","تكامل","نهاية","مجموع","حاصل ضرب","متوسط","وسيط","قيمة مطلقة","باقي قسمة"])
+const MATH_SYMBOLS = Dict("+"=>"+","-"=>"-","×"=>"*","÷"=>"/","√"=>"sqrt","^"=>"^","π"=>"3.14159","∞"=>"Inf","∑"=>"sum","∏"=>"prod")
+
+const CODE_KEYWORDS_AR = Set([
+    "كود","برنامج","برمجة","دالة","دوال","حلقة","شرط","مصفوفة","متغير","متغيرات",
+    "كلاس","صنف","استيراد","تصدير","إرجاع","خطأ","تصحيح","خوارزمية","خوارزميات",
+    "بايثون","جوليا","جافا","سي++","جافاسكريبت","أخطاء","تركيب","نحوي",
+    "اكتب","أنشئ","صمم","برمج","نفذ","نفّذ","compile","debug","build","run",
+])
+const CODE_KEYWORDS_EN = Set([
+    "def","class","import","from","return","yield","async","await",
+    "function","end","module","using","export","struct","mutable",
+    "print","for","while","if","else","elif","switch","case",
+    "try","catch","except","finally","throw","raise",
+    "lambda","lambda","typeof","instanceof",
+    "var","let","const","int","float","str","bool","list","dict","set","tuple",
+    "array","object","new","this","self","super",
+    "code","program","function","loop","array","debug","compile","syntax",
+    "error","bug","fix","patch","commit","push","pull","merge",
+    "api","http","json","xml","sql","query","database",
+    "algorithm","binary","search","sort","filter","map","reduce","recursion",
+    "react","vue","angular","node","express","flask","django","fastapi",
+    "import","export","require","include",
+])
+
+struct MathBridge end
+
+function is_math_expression(ce::MathBridge, text::String)
+    return any(w->w in MATH_KEYWORDS, split(text)) || any(c->c in keys(MATH_SYMBOLS), text)
+end
+
+function evaluate_math(ce::MathBridge, expr::String)
+    try
+        ar_digits = Dict('٠'=>'0', '١'=>'1', '٢'=>'2', '٣'=>'3', '٤'=>'4', '٥'=>'5', '٦'=>'6', '٧'=>'7', '٨'=>'8', '٩'=>'9')
+        e = map(c -> get(ar_digits, c, c), expr)
+        for (k, v) in MATH_SYMBOLS
+            e = replace(e, k => v)
+        end
+        math_matches = collect(eachmatch(r"[0-9.+\-*/^%()]+", e))
+        if !isempty(math_matches)
+            math_expr = join([m.match for m in math_matches], " ")
+            math_expr = strip(math_expr)
+            parsed = Meta.parse(math_expr, 1; raise=false)
+            if parsed !== nothing && (parsed[1] isa Expr || parsed[1] isa Number)
+                return eval(parsed[1])
+            end
+        end
+        return nothing
+    catch
+        return nothing
+    end
+end
+
+function is_code_prompt(text::String)
+    lower_text = lowercase(text)
+    words = Set(split(lower_text))
+    for w in words
+        w in CODE_KEYWORDS_AR && return true
+        w in CODE_KEYWORDS_EN && return true
+    end
+    startswith(lower_text, "def ") && return true
+    startswith(lower_text, "class ") && return true
+    startswith(lower_text, "import ") && return true
+    startswith(lower_text, "from ") && occursin("import", lower_text) && return true
+    return false
+end
+
+function detect_mode(text::String)
+    is_code_prompt(text) && return "code"
+    is_math_expression(MathBridge(), text) && return "math"
+    return "text"
+end
+
+function validate_code_syntax(code::String)
+    try
+        parsed = Meta.parse(code, 1; raise=true)
+        if parsed === nothing
+            return (true, "")
+        end
+        return (true, "")
+    catch e
+        return (false, string(e))
+    end
+end
+
+function extract_code_blocks(text::String)
+    blocks = String[]
+    pattern = r"```(\w*)\n(.*?)```"s
+    for m in eachmatch(pattern, text)
+        push!(blocks, strip(m.captures[2]))
+    end
+    return blocks
+end
+
+function strip_code_blocks(text::String)
+    return replace(text, r"```[\s\S]*?```"s => " ")
+end
+
+end

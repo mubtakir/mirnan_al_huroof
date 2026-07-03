@@ -1,0 +1,278 @@
+"""
+SemanticComprehension — إدراك دلالي: حرف ← كلمة ← جملة ← موضوع.
+
+يبني على "الفطرة اللغوية" المزروعة في مرنان (أبعاد الحروف، جبر كليفورد، الحساب الدلالي)
+ليصعد إلى مستويين أعلى:
+  ١. متجه الجملة الدلالي (SentenceSemanticVector) — جداء هندسي لمتجهات كلماتها
+  ٢. مصفوفة كثافة الموضوع (TopicDensityMatrix) — ρ من متجهات الجمل
+
+النتيجة: مرنان "يفهم" أن جملة "السلام عليكم" و"وعليكم السلام" تنتميان لنفس الموضوع
+(تحية) حتى لو اختلفت كلماتهما. وهذا يمنع الانحراف الموضوعي أثناء التوليد.
+"""
+module SemanticComprehension
+
+using LinearAlgebra, Statistics
+using ..Constants: PHASE_DIM, TOTAL_DIM
+using ..CliffordMath: Multivector22, from_vector, normalize!, norm as mv_norm
+using ..WordFusion: geometric_word_fusion, linear_fusion, _get_letter_vectors
+using ..LetterDB: LetterDatabase, get_vector
+using ..WordPhysics: _parse_word_harakat, _build_modulated_vectors, get_letter_db
+
+export SentenceSemanticVector, TopicDensityMatrix,
+       compute_sentence_vector, topic_resonance, build_topic_density!,
+       update_topic_with_word!, topic_alignment_score
+
+const CLIFFORD_DIM = 22
+
+# ═══════════════════ Sentence Semantic Vector ═══════════════════
+"""
+    SentenceSemanticVector
+
+متجه الجملة الدلالي — جداء هندسي (Clifford) لمتجهات كلمات الجملة
+مرتبة ترتيبياً. كما أن الكلمة = جداء حروفها، فالجملة = جداء كلماتها.
+
+يمثل المعنى الكلي للجملة ككيان هندسي واحد في فضاء 255-بُعداً (1+22+231+1).
+"""
+mutable struct SentenceSemanticVector
+    mv::Multivector22
+    n_words::Int
+    coherence::Float64
+end
+
+SentenceSemanticVector() = SentenceSemanticVector(Multivector22(), 0, 0.0)
+
+"""
+    compute_sentence_vector(words, pv_fn; weights=nothing)
+
+حساب متجه الجملة بضرب متجهات كلماتها جبرياً (جداء كليفورد).
+الكلمة الأولى = الأساس، ثم كل كلمة لاحقة تُضرب هندسياً.
+إذا أعطيت weights، فالكلمات ذات الوزن الأعلى (مثل الأسماء الحاملة) تؤثر أكثر.
+"""
+function compute_sentence_vector(words::Vector{String}, pv_fn::Function;
+                                  weights::Union{Vector{Float64},Nothing}=nothing)
+    n = length(words)
+    n == 0 && return SentenceSemanticVector()
+
+    db = get_letter_db()
+    word_mvs = Multivector22[]
+    word_norms = Float64[]
+
+    for w in words
+        letter_vecs = try
+            parsed = _parse_word_harakat(w)
+            _build_modulated_vectors(parsed, db)
+        catch
+            Vector{Float64}[]
+        end
+        if isempty(letter_vecs)
+            # Fallback: use the phase vector converted to 22D
+            pv = try pv_fn(w) catch; nothing end
+            if pv !== nothing && length(pv) >= CLIFFORD_DIM
+                mv = from_vector(collect(Float64, view(pv, 1:CLIFFORD_DIM)))
+                normalize!(mv)
+                push!(word_mvs, mv)
+                push!(word_norms, mv_norm(mv))
+            end
+            continue
+        end
+        mv = geometric_word_fusion(letter_vecs)
+        normalize!(mv)
+        push!(word_mvs, mv)
+        push!(word_norms, mv_norm(mv))
+    end
+
+    isempty(word_mvs) && return SentenceSemanticVector()
+
+    # Default position weights: first word strongest, decaying
+    if weights === nothing
+        weights = Float64[1.0 / sqrt(i) for i in 1:n]
+        weights ./= sum(weights)
+    end
+
+    # Geometric product chain: mv = mv₁ * mv₂ * mv₃ * ...
+    result = deepcopy(word_mvs[1])
+    # Scale first word by its weight
+    result.s *= weights[1]
+    result.v .*= weights[1]
+    result.b .*= weights[1]
+
+    for i in 2:length(word_mvs)
+        wmv = deepcopy(word_mvs[i])
+        wmv.s *= weights[i]
+        wmv.v .*= weights[i]
+        wmv.b .*= weights[i]
+        result = result * wmv
+        nrm = mv_norm(result)
+        nrm > 1e-10 && (result.s /= nrm; result.v ./= nrm; result.b ./= nrm)
+    end
+
+    # Coherence: how strongly the words fuse (measured by bivector content)
+    coherence = mv_norm(result) > 1e-10 ? norm(result.b) / mv_norm(result) : 0.0
+
+    return SentenceSemanticVector(result, n, coherence)
+end
+
+# ═══════════════════ Topic Density Matrix ═══════════════════
+"""
+    TopicDensityMatrix
+
+ذاكرة الموضوع — مصفوفة كثافة كمومية ρ تُبنى من متجهات الجمل،
+وليس من الكلمات المفردة. هذا يمثل "فهم" مرنان للموضوع الجاري.
+
+ρ_topic = Σ wᵢ |ψᵢ⟩⟨ψᵢ|  (حيث ψᵢ = متجه جملة، وليس متجه كلمة)
+
+تتراكم عبر الجلسة: كل جملة جديدة (من المستخدم أو من التوليد) تُضاف إلى ρ.
+"""
+mutable struct TopicDensityMatrix
+    dim::Int
+    decay::Float64
+    rho::Matrix{Float64}
+    n_contributions::Int
+    active::Bool
+end
+
+function TopicDensityMatrix(; dim::Int=CLIFFORD_DIM + 1, decay::Float64=0.85)
+    return TopicDensityMatrix(dim, decay, zeros(Float64, dim, dim), 0, true)
+end
+
+"""
+    build_topic_density!(topic, sentences::Vector{Vector{String}}, pv_fn)
+
+بناء ρ الموضوع من قائمة جمل. كل جملة تُحوّل إلى SentenceSemanticVector،
+ثم يُستخرج متجهها الخطي (المكوّن v) ويُضاف إلى ρ بوزن متناقص.
+"""
+function build_topic_density!(topic::TopicDensityMatrix,
+                               sentences::Vector{Vector{String}},
+                               pv_fn::Function)
+    n = length(sentences)
+    n == 0 && return topic
+
+    # Build sentence vectors
+    sent_vecs = Vector{Float64}[]
+    for words in sentences
+        sv = compute_sentence_vector(words, pv_fn)
+        if sv.n_words > 0
+            # Extract compressed representation: scalar + vector component
+            compressed = vcat([sv.mv.s], sv.mv.v[1:min(length(sv.mv.v), topic.dim - 1)])
+            nrm = norm(compressed)
+            nrm > 1e-10 && (compressed ./= nrm)
+            push!(sent_vecs, compressed)
+        end
+    end
+
+    isempty(sent_vecs) && return topic
+
+    # Weighted contribution to ρ
+    topic.rho .= 0.0
+    for (i, sv) in enumerate(sent_vecs)
+        w = exp(-topic.decay * (n - i))  # recent sentences weighted more
+        topic.rho .+= w .* (sv * sv')
+        topic.n_contributions += 1
+    end
+
+    # Normalize trace to ~1
+    tr_val = tr(topic.rho)
+    tr_val > 1e-10 && (topic.rho ./= tr_val)
+
+    return topic
+end
+
+"""
+    update_topic_with_word!(topic, word, pv_fn)
+
+تحديث ρ الموضوع بكلمة جديدة (أثناء التوليد).
+الكلمة تُحوّل إلى MV ثم يُستخرج متجهها المضغوط ويُضاف إلى ρ.
+"""
+function update_topic_with_word!(topic::TopicDensityMatrix, word::String, pv_fn::Function)
+    db = get_letter_db()
+    letter_vecs = try
+        parsed = _parse_word_harakat(word)
+        _build_modulated_vectors(parsed, db)
+    catch
+        Vector{Float64}[]
+    end
+
+    word_vec = if !isempty(letter_vecs)
+        mv = geometric_word_fusion(letter_vecs)
+        normalize!(mv)
+        vcat([mv.s], mv.v[1:min(length(mv.v), topic.dim - 1)])
+    else
+        pv = try pv_fn(word) catch; nothing end
+        if pv !== nothing && length(pv) >= CLIFFORD_DIM
+            v = collect(Float64, view(pv, 1:CLIFFORD_DIM))
+            nrm = norm(v) + 1e-10
+            v ./= nrm
+            vcat([0.0], v[1:min(length(v), topic.dim - 1)])
+        else
+            return topic
+        end
+    end
+
+    nrm = norm(word_vec)
+    nrm > 1e-10 && (word_vec ./= nrm)
+
+    # Exponential moving average update: ρ_new = (1-α)ρ_old + α|ψ⟩⟨ψ|
+    alpha = 0.15
+    topic.rho .= (1.0 - alpha) .* topic.rho .+ alpha .* (word_vec * word_vec')
+    topic.n_contributions += 1
+
+    return topic
+end
+
+"""
+    topic_resonance(topic, word, pv_fn) -> Float64
+
+قياس رنين كلمة مع موضوع: R = ⟨ψ_word| ρ_topic |ψ_word⟩
+
+كلما ارتفعت القيمة، زاد انتماء الكلمة للموضوع الجاري.
+هذا هو "الإدراك الموضوعي" — مرنان يعرف أن "ورحمه" تنتمي لموضوع التحية.
+"""
+function topic_resonance(topic::TopicDensityMatrix, word::String, pv_fn::Function)
+    !topic.active && return 0.5
+    topic.n_contributions < 2 && return 0.5
+
+    db = get_letter_db()
+    letter_vecs = try
+        parsed = _parse_word_harakat(word)
+        _build_modulated_vectors(parsed, db)
+    catch
+        Vector{Float64}[]
+    end
+
+    word_vec = if !isempty(letter_vecs)
+        mv = geometric_word_fusion(letter_vecs)
+        normalize!(mv)
+        vcat([mv.s], mv.v[1:min(length(mv.v), topic.dim - 1)])
+    else
+        pv = try pv_fn(word) catch; nothing end
+        if pv !== nothing && length(pv) >= CLIFFORD_DIM
+            v = collect(Float64, view(pv, 1:CLIFFORD_DIM))
+            nrm = norm(v) + 1e-10
+            v ./= nrm
+            vcat([0.0], v[1:min(length(v), topic.dim - 1)])
+        else
+            return 0.5
+        end
+    end
+
+    nrm = norm(word_vec) + 1e-10
+    word_vec ./= nrm
+
+    R = dot(word_vec, topic.rho * word_vec)
+    return clamp(R, 0.0, 1.0)
+end
+
+"""
+    topic_alignment_score(topic, word, pv_fn, excitation_score) -> Float64
+
+درجة اندماج الكلمة مع الموضوع: توليفة من الرنين الموضوعي والإثارة من K.
+تُستخدم في _resonant_generate لمنع الانحراف الموضوعي.
+"""
+function topic_alignment_score(topic::TopicDensityMatrix, word::String,
+                                pv_fn::Function, excitation_score::Float64)
+    tr = topic_resonance(topic, word, pv_fn)
+    # Blend: 40% topic resonance + 60% excitation
+    return 0.4 * tr + 0.6 * excitation_score
+end
+
+end # module SemanticComprehension

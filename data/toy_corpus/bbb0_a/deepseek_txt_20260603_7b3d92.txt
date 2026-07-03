@@ -1,0 +1,65 @@
+Floating City: "Aethon", a city built on the back of a colossal, dormant sky-whale that has been swimming through the clouds for ten thousand years. Its inhabitants never see the same horizon twice. Their houses are carved from the whale's indestructible, pearlescent bone, and their gardens are fertilized with stardust that collects on the whale's back as it sleeps.
+
+Floating City: "The Caravan of Bells", not a single city, but a fleet of a thousand hot air balloons tied together with silk ropes and suspension bridges. Each balloon carries a single house with a unique bell. The city migrates with the seasons, and its arrival is always announced by a symphony of a thousand different chimes carried on the wind.
+
+Creature: "The Glimmerfox", a small, silver fox with fur that reflects not light, but the nearest living being's happiest memory. If you stand near it, you will see your own moments of pure joy dancing in its coat. They are hunted not for their pelts, but because desperate people want to see if they still possess any happy memories at all.
+
+Creature: "Lullaby Spiders", harmless, thumb-sized spiders that live in nurseries and children's bedrooms. They spin webs made of silence, and at night, they gently pluck the strands of their webs to produce soft, imperceptible vibrations that give children peaceful dreams. A house without them is a house of restless sleepers.
+
+Underwater World: "The Sunken Choir", not a city, but a cathedral at the bottom of the deepest trench, built by things that existed before humans. Water flows through its coral pipes, creating an eternal, low-frequency song. Sailors who drown are sometimes found sitting in its pews, perfectly preserved, a look of serene understanding on their faces.
+
+Underwater World: "Jellyfish City", a cluster of transparent, living domes that pulse with bioluminescent light. Each dome is a living jellyfish genetically coaxed to grow into a specific room. To move house, you simply whisper to your dome, and it detaches to float to a new district.
+
+Magical Weapon: "The Oathkeeper's Blade", a sword that is completely blunt and cannot cut flesh. However, it can cut through lies. If you swing it at a person, it passes harmlessly through their body, but if they are currently telling a lie, the lie itself is severed and falls to the ground as a small, writhing, black insect that quickly scatters into dust.
+
+Magical Weapon: "The Bow of Return", whatever arrow you fire from this bow, it will always, without fail, return to you. This includes the arrow of grief you shot at your enemy, the arrow of love you aimed at a stranger, and the arrow of hatred you loosed at a friend. Experienced archers learn to shoot only arrows of peace, so that peace is what always comes home.
+
+Underground World: "The Library of Roots", an underground network of tunnels where the roots of every tree in the forest above intertwine. The roots do not just carry water; they carry stories. By pressing your ear to a root, you can hear the history of the forest, the gossip of squirrels, and the slow, thoughtful dreams of the ancient oaks.
+
+Underground World: "The Whispering Gallery of Magma", a city of fire-resistant obsidian golems built around a slow-moving river of magma. The golems do not speak. Instead, they shape the cooling magma into sculptures that depict the precise moment of their creation, their greatest fear, and their only hope. The entire city is a silent autobiography.
+
+Ritual: "The Planting of Shadows", in a desert tribe, when a child is born, the father travels to a sacred cave and "plants" the child's shadow by trapping it on the cave wall with a mixture of charcoal and tears. The child grows up knowing their shadow is safe, and when they die, their soul travels to the cave to be reunited with the shadow they left behind.
+
+Ritual: "The Festival of Borrowed Faces", once a year, the citizens of a masked city remove their own faces and place them in a communal pool. They then dive in and retrieve a random face. For the next twenty-four hours, you must live as the person whose face you wear—feeling their phantom joys and bearing their secret sorrows.
+
+Magical Food: "Phoenix Bread", a loaf that is baked until it is completely burnt to charcoal. The moment it is touched by a tear of genuine gratitude, the black crust cracks open to reveal a fresh, warm loaf inside. It is eaten at funerals, where tears are plentiful, to remind mourners that new life comes from the ashes of the old.
+
+Magical Drink: "Ink of the Chronicler", a dark, bitter tea brewed from fermented words. When you drink it, you temporarily forget how to speak, but you gain the ability to write one single, perfect sentence that captures the absolute essence of your life so far. Many spend years trying to brew the perfect cup, terrified of what their sentence will be.
+
+Strange Profession: "A Dream Broker", a person who buys and sells dreams on a black market. They carry a briefcase full of corked bottles, each containing a swirling liquid dream. "This one is flying over a golden ocean—very popular. This one is a quiet afternoon with a deceased grandmother—very rare, very expensive." They do not sell nightmares, out of principle, but they do collect them, and no one knows why.
+
+Strange Profession: "An Apology Forger", a master of empathy who writes apologies for people who lack the words. They interview the offender for hours, then craft a letter so genuine, so raw, that it often brings the recipient to tears. But the forger carries a terrible burden: they absorb the guilt of a hundred strangers and cannot apologize for their own sins.
+
+Fictional Illness: "Glass Heart Syndrome", a condition where a person's heart literally, physically turns to glass. It is not fatal, but it is exquisitely painful when the person feels a strong emotion. The glass heart resonates, and those nearby can hear a faint, beautiful crystalline hum. Sufferers often become poets or hermits.
+
+Fictional Illness: "Semantic Decay", a linguist's nightmare. The patient slowly loses the connection between words and their meanings. First, "chair" loses its meaning, but the object remains. Then "love" loses its meaning, but the feeling remains. Eventually, all words are just empty sounds, and the patient lives in a world of pure, pre-linguistic sensation.
+
+A Strange Law: "The Law of Inverted Theft", in the merchant city of "Glim", it is not illegal to steal an object, but it is a capital crime to steal an object's history. Selling a jewel without a notarized scroll detailing every previous owner's joy and sorrow while possessing it is considered fraud of the highest order.
+
+A Strange Law: "The Weight of a Word", in the floating libraries of "Lexicon", you cannot speak a word unless you know its full etymology and weight. Words have physical mass here. The word "war" weighs a ton and cannot be lifted by one man. The word "sorrow" is a small, dense pebble that you must carry in your pocket. The word "love" is lighter than air, and if spoken, it lifts you off your feet.
+
+Creation Myth: "The First Weaver", before time, there was a Weaver who was alone. She spun the universe from a single thread of her own loneliness. The galaxies are knots she tied to remember things. The black holes are where the thread snapped. She is still weaving, and every new life is a new stitch in the infinite tapestry.
+
+Creation Myth: "The Unfinished Symphony", the universe is the sound of a divine orchestra tuning their instruments. They have been tuning for an eternity. The actual symphony, the true creation, has not yet begun. Holy men and women are those who sit in absolute silence, waiting for the first, perfect note.
+
+Ghost: "The Custodian of Last Words", a spirit that haunts hospices and battlefields. It does not frighten, but gently collects the final words of the dying, which often scatter like startled birds. It keeps them in a lantern, and on the anniversary of a death, it opens the lantern outside the window of a grieving loved one so they can hear the voice one last time.
+
+Ghost: "The Second-Chance Phantom", a ghost that appears only to people about to make a fatal mistake. It does not speak or act. It simply looks at you with an expression of infinite, sorrowful tenderness, a look that contains the total knowledge of the beautiful life you are about to forfeit. The look is often, but not always, enough.
+
+War: "The War of Silent Cries", a century-long conflict between two telepathic empires. There were no explosions, no battle cries, just a horrifying, collective psychic scream that lasted for a hundred years. The war ended not with a treaty, but when both populations simultaneously ran out of psychic energy and collapsed, their minds forever deaf to each other.
+
+War: "The Salt War", a war fought not over gold or land, but over a magical salt mine. This salt, when sprinkled on a memory, could preserve it perfectly forever. The two nations fought for the right to never forget. The war ended when a third, neutral party poisoned the mine, turning the salt into an agent of forgetting. Both armies suddenly forgot why they were fighting, looked at the carnage, and wept.
+
+Invention: "The Empathy Machine", a helmet of copper wires and crystal that allows a judge to experience the exact emotional state of a defendant at the moment of their crime. It was outlawed after one day, because the first judge to use it put a murderer in the chair, experienced the murderer's childhood of absolute neglect, and immediately resigned, unable to pass judgment on anyone ever again.
+
+Invention: "The Chrono-Compass", a device that does not point north. It points to the most significant event that will happen in your personal future. For some, it points to a specific street corner in five years. For others, it points directly at the grave beneath their feet.
+
+Mythical Place: "The Island of Unmade Choices", an island that only appears on maps when you are lost. On this island live all the people you did not become. The artist you could have been, the mother you chose not to be, the villain you almost were. You can talk to them, learn from them, even fight them. But you can never become them, and the boat back only arrives when you accept this.
+
+Mythical Place: "The Observatory of Parallel Loves", a ruined tower in a forgotten desert. Its telescope is broken, but if you look through it, you don't see stars. You see, in vivid detail, the life you would have lived with the person you loved but did not end up with. Most visitors never leave. They spend decades at the eyepiece, watching a ghost of a life, growing old in the desert wind.
+
+Non-Physical Entity: "The Burden Eater", a formless being that is drawn to intense sorrow. It hovers above a weeping person, and slowly, gently, sucks the weight of the grief out of their chest. The person feels lighter, but the sorrow is not destroyed. It is simply transferred to the Burden Eater, which grows heavier and heavier, sinking slowly towards the earth's core, carrying the world's pain with it.
+
+Strange Profession: "A Lightkeeper of the Void", a solitary figure who lives on the edge of reality, operating a massive lighthouse that shines not into the sea, but into the primordial darkness between dimensions. The light does not guide ships; it guides lost concepts, dead gods, and forgotten colors back to existence.
+
+Fictional Illness: "Chronostasis of the Heart", a rare condition where a person's heart becomes stuck in a single moment of time. It beats to the rhythm of a waltz from a ball fifty years ago, or it races with the terror of a near-miss from childhood. The body ages, but the heart lives forever in a single, defining instant. The cure is to find the person whose heart is stuck in the same moment.

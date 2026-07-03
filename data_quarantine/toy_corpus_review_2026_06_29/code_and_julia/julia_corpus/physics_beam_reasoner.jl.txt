@@ -1,0 +1,331 @@
+"""
+BeamReasoner — مسبب بالبحث الشعاعي الفيزيائي.
+
+يحل مسائل الاستدلال عبر البحث عن أفضل مسار في فضاء الطور
+من نقطة بداية إلى هدف، باستخدام:
+- بحث شعاعي حقيقي (5 مسارات متوازية)
+- مقاييس فيزيائية (توافق طوري، جاذبية، ترابط KB)
+- ذاكرة هولوغرافية معرفية للتثبت من الحقائق
+- سلاسل تفسير لكل خطوة
+
+الفرق عن PathIntegralReasoner القديم:
+  قديم: مسار جشع واحد، لا تفسير، لا بحث شعاعي فعلي
+  جديد: 5 مسارات متوازية، تفسير لكل خطوة، تسجيل فيزيائي، تنوع المسارات
+"""
+module BeamReasonerModule
+
+using LinearAlgebra
+
+export BeamReasoner, ReasonStep, ReasonChain,
+       reason!, reason_steps!, explain_reasoning
+
+"""
+    ReasonStep
+
+خطوة واحدة في سلسلة الاستدلال.
+"""
+struct ReasonStep
+    word::String              # الكلمة/المفهوم في هذه الخطوة
+    score::Float64            # الدرجة الفيزيائية لهذه الخطوة
+    similarity_to_goal::Float64  # مدى القرب من الهدف
+    source::String            # مصدر الخطوة: "kb" | "K_sem" | "twistor" | "inference"
+    relation::String          # نوع العلاقة (من KB): "isa", "causes", إلخ
+end
+
+"""
+    ReasonChain
+
+سلسلة استدلال كاملة = مسار من البداية إلى الهدف.
+"""
+mutable struct ReasonChain
+    steps::Vector{ReasonStep}  # الخطوات بالترتيب
+    total_score::Float64       # الدرجة الكلية للمسار
+    converged::Bool            # هل تقارب مع الهدف؟
+    depth::Int                 # عدد الخطوات
+end
+
+ReasonChain() = ReasonChain(ReasonStep[], 0.0, false, 0)
+
+"""
+    BeamReasoner
+
+مسبب بالبحث الشعاعي.
+"""
+mutable struct BeamReasoner
+    beam_width::Int
+    max_depth::Int
+    min_depth::Int
+    convergence::Float64
+    goal_weight::Float64
+    diversity_weight::Float64
+    kb_weight::Float64
+    kb_confidence_threshold::Float64
+end
+
+function BeamReasoner(;
+    beam_width=5, max_depth=8, min_depth=2,
+    convergence=0.75, goal_weight=0.4,
+    diversity_weight=0.15, kb_weight=0.6,
+    kb_confidence_threshold=0.3)
+    return BeamReasoner(beam_width, max_depth, min_depth,
+                         convergence, goal_weight,
+                         diversity_weight, kb_weight,
+                         kb_confidence_threshold)
+end
+
+"""
+    reason!(br::BeamReasoner, start_pv, goal_pv, pv_fn, vocab;
+            K_sem=nothing, kb=nothing) -> Vector{ReasonChain}
+
+يبحث عن أفضل مسارات الاستدلال من start إلى goal.
+يرجع أفضل 3 سلاسل مرتبة تنازلياً.
+
+الخوارزمية:
+  1. انطلق بـ 5 مسارات متوازية من نقطة البداية
+  2. لكل خطوة: استخرج مرشحين من KB أولاً، ثم K_sem
+  3. سجّل كل مرشح بمقاييس فيزيائية (goal alignment + KB confidence - path similarity)
+  4. أبقِ أفضل beam_width مسار
+  5. توقف إذا تقارب أي مسار مع الهدف (cosine > convergence)
+"""
+function reason!(br::BeamReasoner, start_pv::AbstractVector, goal_pv::AbstractVector,
+                 pv_fn, vocab::Dict; K_sem=nothing, kb=nothing)
+    n_start = norm(start_pv); n_goal = norm(goal_pv)
+    if n_start < 1e-10 || n_goal < 1e-10
+        return ReasonChain[]
+    end
+
+    id2word = Dict{Int,String}(v => k for (k, v) in vocab)
+    goal_norm = n_goal
+
+    # ═══ التهيئة: 5 مسارات من البداية ═══
+    chains = ReasonChain[]
+    for _ in 1:br.beam_width
+        push!(chains, ReasonChain())
+    end
+
+    # لكل مسار: نضيف "البداية" الافتراضية
+    for ch in chains
+        push!(ch.steps, ReasonStep("START", 0.0, 0.0, "init", ""))
+    end
+
+    best_chains = ReasonChain[]
+
+    # ═══ البحث الشعاعي ═══
+    for depth in 1:br.max_depth
+        candidates = Vector{Tuple{ReasonChain,Float64}}[]  # مرشحين لكل مسار
+
+        for ch in chains
+            ch.converged && continue
+            last_step = ch.steps[end]
+            current_word = last_step.word
+
+            # احصل على المتجه الحالي
+            if current_word == "START"
+                current_pv = start_pv
+            else
+                try
+                    current_pv = Float64.(pv_fn(current_word))
+                catch
+                    continue
+                end
+            end
+
+            # ═══ المرشحون من KB أولاً ═══
+            step_candidates = Tuple{Float64,String,String,Vector{Float64}}[]  # score, word, relation, pv
+
+            if kb !== nothing
+                try
+                    kb_results = _query_kb(kb, current_pv; top_k=10)
+                    for (conf, word, rel) in kb_results
+                        if haskey(vocab, word)
+                            wpv = try Float64.(pv_fn(word)) catch; continue end
+                            goal_sim = max(0.0, dot(wpv, goal_pv) / (norm(wpv) * goal_norm + 1e-10))
+                            score = br.goal_weight * goal_sim + br.kb_weight * conf
+                            push!(step_candidates, (score, word, rel, wpv))
+                        end
+                    end
+                catch e
+                    @warn "Beam reasoner KB query failed: $e"
+                end
+            end
+
+            # ═══ المرشحون من K_sem (إن لم يكتفِ KB) ═══
+            if length(step_candidates) < br.beam_width * 2 && K_sem !== nothing
+                try
+                    cid = get(vocab, current_word, nothing)
+                    if cid !== nothing && cid <= size(K_sem, 1)
+                        row = K_sem isa AbstractSparseMatrix ? Vector(K_sem[cid, :]) : Vector(K_sem[cid, :])
+                        sorted = sortperm(row; rev=true)[1:min(br.beam_width * 3, end)]
+                        for tid in sorted
+                            row[tid] > 1e-6 || break
+                            w = get(id2word, tid, nothing)
+                            w === nothing && continue
+                            wpv = try Float64.(pv_fn(w)) catch; continue end
+                            goal_sim = max(0.0, dot(wpv, goal_pv) / (norm(wpv) * goal_norm + 1e-10))
+                            score = br.goal_weight * goal_sim + row[tid] * 0.01
+                            push!(step_candidates, (score, w, "cooccurrence", wpv))
+                        end
+                    end
+                catch e
+                    @warn "Beam reasoner K_sem query failed: $e"
+                end
+            end
+
+            isempty(step_candidates) && continue
+
+            # ═══ تنوع المسارات: عقاب التشابه مع مسارات أخرى ═══
+            sort!(step_candidates; by=x -> -x[1])
+            path_candidates = Tuple{ReasonChain,Float64}[]
+            used_words = Set{String}()
+
+            for (base_score, word, rel, wpv) in step_candidates[1:min(br.beam_width * 2, end)]
+                word in used_words && continue
+                push!(used_words, word)
+
+                # عقاب إذا كانت الكلمة موجودة في مسارات أخرى (تشجيع التنوع)
+                diversity_penalty = 0.0
+                for other_ch in chains
+                    if other_ch !== ch
+                        for s in other_ch.steps
+                            s.word == word && (diversity_penalty += br.diversity_weight)
+                        end
+                    end
+                end
+
+                goal_sim = max(0.0, dot(wpv, goal_pv) / (norm(wpv) * goal_norm + 1e-10))
+                final_score = base_score - diversity_penalty
+
+                new_ch = ReasonChain()
+                new_ch.steps = copy(ch.steps)
+                push!(new_ch.steps, ReasonStep(word, final_score, goal_sim,
+                                                startswith(rel, "cooccurrence") ? "K_sem" : "kb",
+                                                rel))
+                new_ch.total_score = ch.total_score + final_score
+                new_ch.depth = depth
+
+                # تحقق من التقارب
+                if goal_sim >= br.convergence && depth >= br.min_depth
+                    new_ch.converged = true
+                end
+
+                push!(path_candidates, (new_ch, final_score))
+            end
+
+            if !isempty(path_candidates)
+                push!(candidates, path_candidates)
+            end
+        end
+
+        # ═══ تجميع واختيار أفضل المسارات ═══
+        all_new = Tuple{ReasonChain,Float64}[]
+        for pc in candidates
+            append!(all_new, pc)
+        end
+
+        isempty(all_new) && break
+
+        sort!(all_new; by=x -> -x[1])
+        chains = ReasonChain[]
+        for (ch, _) in all_new[1:min(br.beam_width, end)]
+            if ch.converged
+                push!(best_chains, ch)
+            else
+                push!(chains, ch)
+            end
+        end
+
+        # كل المسارات تقاربت أو وصلت للعمق الأدنى
+        if isempty(chains) && !isempty(best_chains)
+            break
+        end
+    end
+
+    # أضف المسارات المتبقية (غير المتقاربة) للنتائج
+    for ch in chains
+        if ch.depth >= br.min_depth
+            ch.converged = false
+            push!(best_chains, ch)
+        end
+    end
+
+    sort!(best_chains; by=x -> -x.total_score)
+    return best_chains
+end
+
+"""
+    reason_steps!(br::BeamReasoner, start_pv, goal_pv, pv_fn, vocab; ...) -> Vector{String}
+
+اختصار: يرجع قائمة الكلمات فقط (للاستخدام المباشر في التوليد).
+"""
+function reason_steps!(br::BeamReasoner, start_pv, goal_pv, pv_fn, vocab; K_sem=nothing, kb=nothing)
+    chains = reason!(br, start_pv, goal_pv, pv_fn, vocab; K_sem=K_sem, kb=kb)
+    if isempty(chains)
+        return String[]
+    end
+    best = chains[1]
+    return [s.word for s in best.steps if s.word != "START"]
+end
+
+"""
+    explain_reasoning(chains::Vector{ReasonChain}) -> String
+
+يحول سلاسل الاستدلال إلى نص مفهوم.
+"""
+function explain_reasoning(chains::Vector{ReasonChain})
+    isempty(chains) && return "لم أجد مساراً استدلالياً."
+
+    lines = String[]
+    for (i, ch) in enumerate(chains[1:min(3, end)])
+        status = ch.converged ? "✓ تقارب" : "△ غير مكتمل"
+        push!(lines, "المسار $i ($status, درجة: $(round(ch.total_score; digits=2))):")
+
+        for (j, step) in enumerate(ch.steps)
+            if step.word == "START"
+                push!(lines, "  البداية")
+            else
+                src_label = step.source == "kb" ? "📚" : "🔗"
+                sim_str = round(step.similarity_to_goal; digits=2)
+                push!(lines, "  $j. $src_label $(step.word) (قرب: $sim_str)")
+                if step.source == "kb" && !isempty(step.relation)
+                    push!(lines, "     └ علاقة: $(step.relation)")
+                end
+            end
+        end
+        push!(lines, "")
+    end
+    return join(lines, "\n")
+end
+
+# ═══════════ استعلام KB داخلي ═══════════
+function _query_kb(kb, pv; top_k=5)
+    try
+        return _query_kb_internal(kb, pv; top_k=top_k)
+    catch e
+        return Tuple{Float64,String,String}[]
+    end
+end
+
+function _query_kb_internal(kb, pv; top_k=5)
+    results = Tuple{Float64,String,String}[]
+    nrm_pv = norm(pv)
+    nrm_pv < 1e-10 && return results
+
+    for (rel_type, bank) in kb.banks
+        keys = get(bank, "keys", Vector{Float64}[])
+        isempty(keys) && continue
+        obj_words = get(bank, "obj_words", String[])
+        for i in 1:length(keys)
+            k = keys[i]
+            nrm_k = norm(k)
+            nrm_k < 1e-10 && continue
+            sim = dot(k, pv) / (nrm_k * nrm_pv)
+            word = i <= length(obj_words) ? obj_words[i] : ""
+            isempty(word) && continue
+            push!(results, (Float64(sim), word, rel_type))
+        end
+    end
+    sort!(results; by=x -> -x[1])
+    return results[1:min(top_k, end)]
+end
+
+end # module BeamReasonerModule

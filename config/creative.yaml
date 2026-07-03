@@ -1,0 +1,99 @@
+# ═══ الوضع الإبداعي (Creative Mode) ═══
+creative:
+  tau: 1.2
+  beam_width: 8
+  tunnel_prob: 0.05
+  perturbation: 0.15
+  quantum_capacity: 25
+
+# ═══ V8.8: تبريد محاكى (Simulated Annealing) ═══
+annealing:
+  tau_max: 2.5
+  tau_min: 0.15
+  tau_decay: 5.0
+
+# ═══ V8.8: حقل قيود Dirichlet — prompt boundary conditions ═══
+prompt_constraint:
+  k_spring: 3.0
+  damping: 0.15
+
+# ═══ V8.8: ذاكرة هولوغرافية معرفية (Holographic KB) ═══
+holographic_kb:
+  enabled: true
+  max_facts: 500
+  curated_path: "data/facts_expanded.json"
+
+# ═══ V8.8: مسبب تكامل مساري (Path Integral Reasoner) ═══
+goal_gravity_weight: 0.3
+kb_influence: 0.4
+reasoning:
+  beam_width: 10
+  max_depth: 8
+  min_depth: 2
+  convergence_threshold: 0.75
+
+# ═══ أوزان تسجيل إضافية ═══
+scoring_weights:
+  align: 3.0
+  gravity: 4.0
+  resonant_chain: 4.0
+  oscillator: 3.0
+  heterodyne: 3.0
+  beamform: 3.0
+  mizan_coherence: 3.0
+  dccf: 3.0
+  causal_flow_align: 2.5
+  partonic_cross: 2.5
+  density_resonance: 2.5
+  hierarchical_mod: 2.5
+  prompt_align: 3.0
+  constraint_align: 3.0
+  kb_knowledge: 2.0
+  spectral: 2.0
+  thermo: 1.5
+  carrier: 3.0
+  macro_wave: 2.0
+  refractory: 2.5
+  resonance_gate: 2.0
+  semantic_density: 2.0
+  anchor_affinity: 2.0
+  global_resonance: 2.0
+  context_wave_filter: 2.0
+  category: 2.0
+  sentiment: 1.0
+  diversity: 3.0
+  repulsion: 2.5
+  novelty: 1.0
+  causal: 2.5
+  ppm: 2.0
+  amfs: 1.5
+  cascade: 0.0
+  symbolic: 0.0
+  poetic: 0.0
+  rhyme: 0.0
+  filament_tension: 1.5
+  k_coupling: 3.0
+  syn: 3.0
+  sem: 3.0
+  conc: 1.5
+
+# ═══ مشهد القصد — آبار جهد محتمل ═══
+intent_landscape:
+  adaptation_rate: 0.01
+
+# ═══ أثر التفاعل — حقل مستمر ═══
+interaction_trace:
+  decay_rate: 0.95
+  max_attractors: 50
+  learning_rate: 0.05
+
+# ═══ الذاكرة الهرمية — ضغط السياق ═══
+hierarchical_memory:
+  word_capacity: 100
+  phrase_capacity: 40
+  paragraph_capacity: 15
+  conversation_capacity: 5
+
+# ═══ V8: مصفوفة الكثافة الكمومية ═══
+density_matrix:
+  decay_rate: 0.8

@@ -1,0 +1,50 @@
+"""PhaseEvolution — تطور المتجهات الطورية عبر المزامنة الهيبيانية."""
+module PhaseEvolutionModule
+using LinearAlgebra
+using ..WordPhysics: phase_similarity, compute_extended_phase_vector
+using ..Constants: TOTAL_DIM
+
+export PhaseEvolution
+
+mutable struct PhaseEvolution
+    lr_cooc::Float64; lr_contrast::Float64; lr_spectral::Float64
+    min_cooc::Int; max_shift::Float64; decay::Float64
+    shifts::Dict{Int,Vector{Float64}}; cooc_counts::Dict{Int,Dict{Int,Int}}; epoch::Int
+end
+function PhaseEvolution(; lr_cooc=0.03, lr_contrast=0.015, lr_spectral=0.02, min_cooc=2, max_shift=0.25, decay=0.99)
+    PhaseEvolution(lr_cooc, lr_contrast, lr_spectral, min_cooc, max_shift, decay, Dict(), Dict(), 0)
+end
+
+function observe_cooccurrence!(pe::PhaseEvolution, w1_pv, w2_pv; w1_id=nothing, w2_id=nothing, distance=1)
+    decay_factor = 1.0/(1.0+distance*0.3)
+    sim = phase_similarity(w1_pv, w2_pv)
+    shift_mag = pe.lr_cooc * (1.0-sim) * decay_factor
+    shift = shift_mag .* (Float64.(w2_pv) .- Float64.(w1_pv))
+    shift_nrm = norm(shift)
+    if shift_nrm > pe.max_shift; shift .*= pe.max_shift/shift_nrm; end
+    if w1_id !== nothing
+        if !haskey(pe.shifts, w1_id); pe.shifts[w1_id] = zeros(Float64, TOTAL_DIM); end
+        pe.shifts[w1_id] .+= shift
+    end
+end
+
+function evolve!(pe::PhaseEvolution, all_pv::AbstractMatrix)
+    isempty(pe.shifts) && return all_pv, Dict("words_shifted"=>0)
+    new_pv = Float64.(all_pv)
+    count=0
+    for (wid, shift) in pe.shifts
+        wid > size(new_pv,1) && continue
+        conf=0.3
+        ns = Float64(norm(shift))
+        if ns > 1e-12
+            new_pv[wid, :] .+= shift .* conf
+            nrm2 = norm(view(new_pv, wid, :))
+            if nrm2 > 1e-10; new_pv[wid, :] ./= nrm2; end
+            count+=1
+        end
+    end
+    empty!(pe.shifts); pe.epoch += 1
+    return new_pv, Dict("words_shifted"=>count)
+end
+end
+

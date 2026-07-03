@@ -1,0 +1,226 @@
+{"en": "The cat sat on the mat.", "ar": "جلس القط على السجادة."}
+{"en": "She reads a book every day.", "ar": "هي تقرأ كتاباً كل يوم."}
+{"en": "The sun is shining today.", "ar": "الشمس ساطعة اليوم."}
+{"en": "Where is the nearest hospital?", "ar": "أين يوجد أقرب مستشفى؟"}
+{"en": "What time does the train arrive?", "ar": "في أي وقت يصل القطار؟"}
+{"en": "How much does this cost?", "ar": "كم ثمن هذا؟"}
+{"en": "Although it was raining, they decided to go for a walk.", "ar": "على الرغم من أنها كانت تمطر، قرروا الذهاب لنزهة."}
+{"en": "The book that I bought yesterday is very interesting.", "ar": "الكتاب الذي اشتريته البارحة مثير للاهتمام جداً."}
+{"en": "It's raining cats and dogs.", "ar": "تمطر بغزارة."}
+{"en": "Break a leg!", "ar": "حظاً موفقاً!"}
+{"en": "Mr. Ahmed will arrive at 3 PM.", "ar": "سيصل السيد أحمد في الساعة الثالثة عصراً."}
+{"en": "I've been working here since 2020.", "ar": "أعمل هنا منذ عام ٢٠٢٠."}
+{"en": "The conference will discuss artificial intelligence applications.", "ar": "سيناقش المؤتمر تطبيقات الذكاء الاصطناعي."}
+{"en": "Please turn left at the next intersection.", "ar": "من فضلك اتجه يساراً عند التقاطع التالي."}
+{"en": "Climate change affects the entire world.", "ar": "يؤثر التغير المناخي على العالم بأكمله."}
+{"en": "I am learning programming", "ar": "أنا أتعلم البرمجة"}
+{"en": "Do you speak Arabic?", "ar": "هل تتحدث العربية؟"}
+{"en": "The sky was clear and the weather was beautiful", "ar": "كانت السماء صافية والجو جميل"}
+{"en": "I eat an apple", "ar": "آكل تفاحة"}
+{"en": "They are students", "ar": "هم طلاب"}
+{"en": "The car is red", "ar": "السيارة حمراء"}
+{"en": "We will travel tomorrow", "ar": "سنسافر غداً"}
+{"en": "She was singing beautifully", "ar": "كانت تغني بشكل جميل"}
+{"en": "Have you finished your work?", "ar": "هل انتهيت من عملك؟"}
+{"en": "I don't understand", "ar": "لا أفهم"}
+{"en": "Give me the pen, please", "ar": "أعطني القلم من فضلك"}
+{"en": "I have been waiting for two hours", "ar": "أنا أنتظر منذ ساعتين"}
+{"en": "He will have completed the project by Friday", "ar": "سيكون قد أكمل المشروع بحلول الجمعة"}
+{"en": "If it rains, we will stay home", "ar": "إذا أمطرت، سنبقى في المنزل"}
+{"en": "I used to play football when I was young", "ar": "كنت ألعب كرة القدم عندما كنت صغيراً"}
+{"en": "Information is important", "ar": "المعلومات مهمة"}
+{"en": "The police are investigating", "ar": "الشرطة تحقق"}
+{"en": "Life is beautiful", "ar": "الحياة جميلة"}
+{"en": "I need water", "ar": "أحتاج إلى ماء"}
+{"en": "The patient needs immediate surgery", "ar": "يحتاج المريض إلى جراحة فورية"}
+{"en": "Take one pill three times daily", "ar": "خذ حبة واحدة ثلاث مرات يومياً"}
+{"en": "Blood pressure is measured in mmHg", "ar": "يقاس ضغط الدم بالمليمتر زئبق"}
+{"en": "Click the right mouse button", "ar": "انقر على الزر الأيمن للفأرة"}
+{"en": "Download the update from our website", "ar": "حمّل التحديث من موقعنا الإلكتروني"}
+{"en": "The algorithm processes data efficiently", "ar": "تعالج الخوارزمية البيانات بكفاءة"}
+{"en": "All parties must sign the contract", "ar": "يجب على جميع الأطراف توقيع العقد"}
+{"en": "The court will issue its verdict next week", "ar": "ستصدر المحكمة حكمها الأسبوع القادم"}
+{"en": "Intellectual property rights are protected", "ar": "حقوق الملكية الفكرية محمية"}
+{"en": "It's a piece of cake", "ar": "هذا سهل جداً"}
+{"en": "Don't judge a book by its cover", "ar": "لا تحكم على الكتاب من غلافه"}
+{"en": "He's beating around the bush", "ar": "هو يراوغ ولا يدخل في صلب الموضوع"}
+{"en": "That costs an arm and a leg", "ar": "هذا مكلف جداً"}
+{"en": "Ramadan Mubarak", "ar": "رمضان مبارك"}
+{"en": "He went for Hajj last year", "ar": "حج العام الماضي"}
+{"en": "The iftar starts at sunset", "ar": "يبدأ الإفطار عند غروب الشمس"}
+{"en": "Eid al-Fitr celebration", "ar": "احتفال عيد الفطر"}
+{"en": "Despite the economic challenges facing the region, which have been exacerbated by global inflation, many countries are implementing innovative solutions to stimulate growth and create job opportunities for their youth, especially in the technology and renewable energy sectors.", "ar": "على الرغم من التحديات الاقتصادية التي تواجه المنطقة، والتي تفاقمت بسبب التضخم العالمي، تنفذ العديد من الدول حلولاً مبتكرة لتحفيز النمو وخلق فرص عمل لشبابها، خاصة في قطاعات التكنولوجيا والطاقة المتجددة."}
+{"en": "I'd like to return this item.", "ar": "أود إعادة هذا المنتج."}
+{"en": "Do you have the receipt?", "ar": "هل لديك الفاتورة؟"}
+{"en": "Yes, here it is.", "ar": "نعم، ها هي."}
+{"en": "Perfect, I'll process the refund.", "ar": "ممتاز، سأعالج عملية الاسترداد."}
+{"en": "She gave her book to her friend", "ar": "أعطت كتابها لصديقتها"}
+{"en": "They saw themselves in the mirror", "ar": "رأوا أنفسهم في المرآة"}
+{"en": "I'm interested in science", "ar": "أنا مهتم بالعلوم"}
+{"en": "She's good at mathematics", "ar": "هي جيدة في الرياضيات"}
+{"en": "We arrived at the airport", "ar": "وصلنا إلى المطار"}
+{"en": "The beautiful red car", "ar": "السيارة الحمراء الجميلة"}
+{"en": "I have never been there", "ar": "لم أذهب إلى هناك أبداً"}
+{"en": "Newton's second law: F = ma", "ar": "القانون الثاني لنيوتن: القوة = الكتلة × التسارع"}
+{"en": "The projectile follows a parabolic trajectory", "ar": "يتبع المقذوف مساراً قطعياً مكافئاً"}
+{"en": "Conservation of angular momentum", "ar": "حفظ الزخم الزاوي"}
+{"en": "The coefficient of kinetic friction is 0.3", "ar": "معامل الاحتكاك الحركي هو ٠٫٣"}
+{"en": "Maxwell's equations describe electromagnetic waves", "ar": "تصف معادلات ماكسويل الموجات الكهرومغناطيسية"}
+{"en": "The right-hand rule determines magnetic field direction", "ar": "قاعدة اليد اليمنى تحدد اتجاه المجال المغناطيسي"}
+{"en": "Faraday's law of induction", "ar": "قانون فارادي للحث الكهرومغناطيسي"}
+{"en": "Electric potential difference is measured in volts", "ar": "فرق الجهد الكهربائي يقاس بالفولت"}
+{"en": "Heisenberg's uncertainty principle: \u0394x\u0394p \u2265 \u0127/2", "ar": "مبدأ عدم اليقين لهايزنبرغ: \u0394x\u0394p \u2265 \u0127/٢"}
+{"en": "Quantum superposition allows qubits to be 0 and 1 simultaneously", "ar": "التراكب الكمي يسمح للبتات الكمية أن تكون ٠ و١ في نفس الوقت"}
+{"en": "Schr\u00f6dinger's wave equation", "ar": "معادلة شرودنغر الموجية"}
+{"en": "Lorentz transformation in special relativity", "ar": "تحويلات لورنتز في النسبية الخاصة"}
+{"en": "The second law of thermodynamics: entropy always increases", "ar": "القانون الثاني للديناميكا الحرارية: الإنتروبيا تزداد دائماً"}
+{"en": "Blackbody radiation spectrum", "ar": "طيف إشعاع الجسم الأسود"}
+{"en": "Heat transfer by conduction, convection, and radiation", "ar": "انتقال الحرارة بالتوصيل والحمل والإشعاع"}
+{"en": "Solve the quadratic equation: ax\u00b2 + bx + c = 0", "ar": "حل المعادلة التربيعية: أس\u00b2 + ب س + ج = ٠"}
+{"en": "The fundamental theorem of calculus", "ar": "النظرية الأساسية في التفاضل والتكامل"}
+{"en": "Eigenvalues and eigenvectors of a matrix", "ar": "القيم الذاتية والمتجهات الذاتية للمصفوفة"}
+{"en": "Taylor series expansion around point a", "ar": "متسلسلة تايلور حول النقطة أ"}
+{"en": "Pythagorean theorem: a\u00b2 + b\u00b2 = c\u00b2", "ar": "نظرية فيثاغورث: أ\u00b2 + ب\u00b2 = ج\u00b2"}
+{"en": "Manifold with non-Euclidean geometry", "ar": "متشعب ذو هندسة لا إقليدية"}
+{"en": "Homeomorphism preserves topological properties", "ar": "التماثل التوبولوجي يحافظ على الخصائص الطوبولوجية"}
+{"en": "Fourier transform converts time domain to frequency domain", "ar": "تحويل فورييه يحول من مجال الزمن إلى مجال التردد"}
+{"en": "Numerical solution of differential equations using Runge-Kutta methods", "ar": "الحل العددي للمعادلات التفاضلية باستخدام طرق رونج-كوتا"}
+{"en": "Monte Carlo simulation for probability estimation", "ar": "محاكاة مونت كارلو لتقدير الاحتمالات"}
+{"en": "Gradient descent optimization algorithm", "ar": "خوارزمية تحسين الهبوط التدريجي"}
+{"en": "Proof by mathematical induction", "ar": "البرهان بالاستقراء الرياضي"}
+{"en": "G\u00f6del's incompleteness theorems", "ar": "نظريات غودل في عدم الاكتمال"}
+{"en": "Boolean algebra operations: AND, OR, NOT", "ar": "عمليات الجبر البولياني: AND, OR, NOT"}
+{"en": "Initialize a variable with integer type", "ar": "تهيئة متغير من نوع عدد صحيح"}
+{"en": "Iterate through array using for loop", "ar": "التكرار عبر المصفوفة باستخدام حلقة for"}
+{"en": "Function parameters and return values", "ar": "معاملات الدالة وقيم الإرجاع"}
+{"en": "Exception handling with try-catch blocks", "ar": "معالجة الاستثناءات باستخدام كتل try-catch"}
+{"en": "Implement a binary search tree", "ar": "تنفيذ شجرة بحث ثنائية"}
+{"en": "Hash table with collision resolution", "ar": "جدول التجزئة مع حل التعارضات"}
+{"en": "Graph traversal: depth-first search", "ar": "اجتياز الرسم البياني: البحث بالعمق أولاً"}
+{"en": "Dynamic programming: memoization technique", "ar": "البرمجة الديناميكية: تقنية المذكرة"}
+{"en": "Class inheritance and polymorphism", "ar": "وراثة الفئات وتعدد الأشكال"}
+{"en": "Encapsulation using private members", "ar": "التغليف باستخدام الأعضاء الخاصة"}
+{"en": "Abstract class cannot be instantiated", "ar": "لا يمكن إنشاء كائن من الفئة المجردة"}
+{"en": "Recursive function calls itself", "ar": "الدالة العودية تنادي نفسها"}
+{"en": "Functional programming with pure functions", "ar": "البرمجة الوظيفية باستخدام دوال نقية"}
+{"en": "Asynchronous programming with async/await", "ar": "البرمجة غير المتزامنة باستخدام async/await"}
+{"en": "Garbage collection frees unused memory", "ar": "جامع القمامة يحرر الذاكرة غير المستخدمة"}
+{"en": "Memory leak occurs when allocated memory isn't released", "ar": "تسرب الذاكرة يحدث عندما لا يتم تحرير الذاكرة المخصصة"}
+{"en": "Supervised learning with labeled dataset", "ar": "التعلم الموج\u0651ه بمجموعة بيانات موسومة"}
+{"en": "Train-test split ratio is 80:20", "ar": "نسبة تقسيم التدريب-الاختبار هي \u0668\u0660:\u0662\u0660"}
+{"en": "Gradient descent minimizes loss function", "ar": "الهبوط التدريجي يقلل دالة الخسارة"}
+{"en": "Overfitting occurs when model learns noise", "ar": "الإفراط في التخصيص يحدث عندما يتعلم النموذج الضوضاء"}
+{"en": "Deep neural network with hidden layers", "ar": "شبكة عصبية عميقة ذات طبقات خفية"}
+{"en": "Backpropagation algorithm for weight adjustment", "ar": "خوارزمية الانتشار العكسي لضبط الأوزان"}
+{"en": "Convolutional neural networks for image processing", "ar": "الشبكات العصبية التلافيفية لمعالجة الصور"}
+{"en": "Activation function: ReLU, Sigmoid, Tanh", "ar": "دالة التنشيط: ReLU, Sigmoid, Tanh"}
+{"en": "Transformer architecture with attention mechanism", "ar": "بنية المحولات مع آلية الانتباه"}
+{"en": "Word embeddings capture semantic relationships", "ar": "التضمينات الكلماتية تلتقط العلاقات الدلالية"}
+{"en": "Named entity recognition identifies persons and locations", "ar": "التعرف على الكيانات المسماة يحدد الأشخاص والأماكن"}
+{"en": "Image segmentation using U-Net architecture", "ar": "تجزئة الصور باستخدام بنية U-Net"}
+{"en": "Object detection with bounding boxes", "ar": "كشف الأشياء باستخدام الصناديق المحيطة"}
+{"en": "Generative adversarial networks (GANs)", "ar": "الشبكات التوليدية التنافسية (GANs)"}
+{"en": "Markov decision process defines state transitions", "ar": "عملية قرار ماركوف تحدد انتقالات الحالة"}
+{"en": "Q-learning algorithm for optimal policy", "ar": "خوارزمية Q-learning للسياسة المثلى"}
+{"en": "Exploration vs. exploitation trade-off", "ar": "المقايضة بين الاستكشاف والاستغلال"}
+{"en": "The Navier-Stokes equations describe fluid motion", "ar": "تصف معادلات نافير-ستوكس حركة الموائع"}
+{"en": "The integral from a to b of f(x) dx", "ar": "التكامل من أ إلى ب لـ د(س) دس"}
+{"en": "LSTM (Long Short-Term Memory) networks", "ar": "شبكات الذاكرة طويلة المدى القصيرة (LSTM)"}
+{"en": "The wavefunction collapse occurs upon measurement", "ar": "انهيار الدالة الموجية يحدث عند القياس"}
+{"en": "Quantum entanglement violates Bell's inequalities", "ar": "التشابك الكمي ينتهك متباينات بيل"}
+{"en": "Pauli exclusion principle forbids identical fermions from occupying the same quantum state", "ar": "مبدأ استبعاد باولي يمنع الفرميونات المتماثلة من شغل نفس الحالة الكمية"}
+{"en": "Quantum tunneling through potential barriers", "ar": "النفق الكمي عبر حواجز الجهد"}
+{"en": "The Copenhagen interpretation vs. Many-worlds interpretation", "ar": "تفسير كوبنهاجن مقابل تفسير العوالم المتعددة"}
+{"en": "Feynman diagrams represent particle interactions", "ar": "تمثل مخططات فاينمان تفاعلات الجسيمات"}
+{"en": "Renormalization removes infinities from quantum field calculations", "ar": "إعادة التطبيع تزيل اللانهايات من حسابات نظرية الحقل الكمي"}
+{"en": "The Standard Model includes quarks, leptons, and gauge bosons", "ar": "النموذج القياسي يتضمن الكواركات واللبتونات والبوزونات المقياسية"}
+{"en": "Higgs mechanism gives mass to elementary particles", "ar": "آلية هيغز تعطي الكتلة للجسيمات الأولية"}
+{"en": "Spacetime curvature causes gravitational attraction", "ar": "انحناء الزمكان يسبب التجاذب الثقالي"}
+{"en": "Black hole event horizon and singularity", "ar": "أفق حدث الثقب الأسود والتفر\u0651د"}
+{"en": "Cosmic microwave background radiation", "ar": "إشعاع الخلفية الكونية الميكروي"}
+{"en": "Dark matter constitutes approximately 27% of the universe", "ar": "المادة المظلمة تشكل حوالي \u0662\u0667\u066a من الكون"}
+{"en": "Superconductivity below critical temperature", "ar": "الموصلية الفائقة تحت درجة الحرارة الحرجة"}
+{"en": "Topological insulators conduct electricity on their surface", "ar": "العوازل الطوبولوجية توصل الكهرباء على سطحها"}
+{"en": "Bose-Einstein condensate at near absolute zero", "ar": "تكاثف بوز-أينشتاين بالقرب من الصفر المطلق"}
+{"en": "Lebesgue integral generalizes Riemann integral", "ar": "تكامل لوبيغ يعمم تكامل ريمان"}
+{"en": "Cauchy-Riemann equations for analytic functions", "ar": "معادلات كوشي-ريمان للدوال التحليلية"}
+{"en": "Measure theory foundations of probability", "ar": "أسس نظرية القياس للاحتمالات"}
+{"en": "Banach and Hilbert spaces in functional analysis", "ar": "فضاءات باناخ وهيلبرت في التحليل الدالي"}
+{"en": "Group theory: normal subgroups and quotient groups", "ar": "نظرية الزمر: الزمر الجزئية الطبيعية وزمر خارج القسمة"}
+{"en": "Ring homomorphisms preserve ring operations", "ar": "تشاكلات الحلقة تحافظ على عمليات الحلقة"}
+{"en": "Galois theory connects field extensions to group theory", "ar": "نظرية غالوا تربط امتدادات الحقول بنظرية الزمر"}
+{"en": "Tensor products of vector spaces", "ar": "الضرب التنسوري لفضاءات المتجهات"}
+{"en": "Manifolds, tangent spaces, and differential forms", "ar": "المتشعبات، الفضاءات المماسية، والصيغ التفاضلية"}
+{"en": "Riemannian metric and curvature tensor", "ar": "المترية الريمانية وتنسور الانحناء"}
+{"en": "Stokes' theorem generalizes fundamental theorem of calculus", "ar": "تعم\u0651م نظرية ستوكس النظرية الأساسية في التفاضل والتكامل"}
+{"en": "Finite element method for partial differential equations", "ar": "طريقة العناصر المحدودة للمعادلات التفاضلية الجزئية"}
+{"en": "Numerical stability and condition number", "ar": "الاستقرار العددي وعدد الشرطية"}
+{"en": "Fast Fourier Transform (FFT) algorithm complexity O(n log n)", "ar": "تعقيد خوارزمية تحويل فورييه السريع (FFT) هو O(n log n)"}
+{"en": "Red-black tree maintains balance during insertion/deletion", "ar": "شجرة الأحمر-أسود تحافظ على التوازن أثناء الإدراج والحذف"}
+{"en": "Dijkstra's algorithm for shortest path in weighted graphs", "ar": "خوارزمية ديكسترا لأقصر مسار في الرسوم البيانية الموزونة"}
+{"en": "AVL tree rotation operations for balancing", "ar": "عمليات دوران شجرة AVL لتحقيق التوازن"}
+{"en": "Bloom filter probabilistic data structure", "ar": "بنية بيانات مرشح بلوم الاحتمالية"}
+{"en": "MapReduce paradigm for big data processing", "ar": "نموذج MapReduce لمعالجة البيانات الضخمة"}
+{"en": "Race conditions in multithreaded programming", "ar": "ظروف السباق في البرمجة متعددة الخيوط"}
+{"en": "CAP theorem: consistency, availability, partition tolerance", "ar": "نظرية CAP: الاتساق، التوفر، تحمل التجزئة"}
+{"en": "Message passing interface (MPI) for parallel computing", "ar": "واجهة تمرير الرسائل (MPI) للحوسبة المتوازية"}
+{"en": "Monads in functional programming handle side effects", "ar": "أحادية التكافؤ في البرمجة الوظيفية تتعامل مع الآثار الجانبية"}
+{"en": "Type inference in statically typed languages", "ar": "الاستدلال على الأنواع في اللغات ذات الأنواع الثابتة"}
+{"en": "Continuation-passing style (CPS) transformation", "ar": "تحويل نمط تمرير الاستمرارية (CPS)"}
+{"en": "Lazy evaluation and thunks", "ar": "التقييم الكسول والحزم المؤجلة"}
+{"en": "Virtual memory management with page tables", "ar": "إدارة الذاكرة الافتراضية مع جداول الصفحات"}
+{"en": "Context switching overhead in operating systems", "ar": "حمل تبديل السياق في أنظمة التشغيل"}
+{"en": "Just-in-time (JIT) compilation in modern VMs", "ar": "الترجمة في الوقت المناسب (JIT) في الآلات الافتراضية الحديثة"}
+{"en": "Register allocation using graph coloring", "ar": "تخصيص السجلات باستخدام تلوين الرسم البياني"}
+{"en": "Multi-head attention mechanism in transformers", "ar": "آلية الانتباه متعددة الرؤوس في المحولات"}
+{"en": "Positional encoding in transformer architectures", "ar": "الترميز الموضعي في بنى المحولات"}
+{"en": "Layer normalization vs batch normalization", "ar": "تطبيع الطبقة مقابل تطبيع الدفعة"}
+{"en": "Gradient vanishing/exploding problems in deep networks", "ar": "مشاكل تلاشي/انفجار التدرج في الشبكات العميقة"}
+{"en": "Policy gradient methods with baseline subtraction", "ar": "طرق تدرج السياسة مع طرح خط الأساس"}
+{"en": "Actor-critic architecture combines value and policy methods", "ar": "بنية الممثل-الناقد تجمع بين طرق القيمة والسياسة"}
+{"en": "Proximal Policy Optimization (PPO) with clipped objectives", "ar": "التحسين القريب للسياسة (PPO) مع دوال الهدف المقصوصة"}
+{"en": "Model-based vs model-free reinforcement learning", "ar": "التعلم المعزز القائم على النماذج مقابل غير القائم على النماذج"}
+{"en": "Variational autoencoders (VAEs) learn latent representations", "ar": "تشفيرات تباينية تلقائية (VAEs) تتعلم تمثيلات كامنة"}
+{"en": "Diffusion models gradually add and remove noise", "ar": "نماذج الانتشار تضيف وتزيل الضوضاء تدريجياً"}
+{"en": "Self-supervised learning with contrastive loss", "ar": "التعلم الذاتي الإشرافي مع خسارة المقارنة"}
+{"en": "Normalizing flows for density estimation", "ar": "التدفقات المعيرة لتقدير الكثافة"}
+{"en": "SHAP values quantify feature importance", "ar": "قيم SHAP تقيس أهمية الميزات"}
+{"en": "Adversarial attacks on machine learning models", "ar": "الهجمات الخصومة على نماذج التعلم الآلي"}
+{"en": "Fairness constraints in algorithmic decision-making", "ar": "قيود الإنصاف في صنع القرار الخوارزمي"}
+{"en": "Federated learning preserves data privacy", "ar": "التعلم الموحد يحافظ على خصوصية البيانات"}
+{"en": "The holographic principle suggests that the information contained in a volume of space can be represented on its boundary.", "ar": "يقترح مبدأ الهولوغرام أن المعلومات الموجودة في حجم من الفضاء يمكن تمثيلها على حدوده."}
+{"en": "Wormholes, or Einstein-Rosen bridges, are hypothetical topological features connecting disparate points in spacetime.", "ar": "الثقوب الدودية، أو جسور أينشتاين-روزن، هي ميزات طوبولوجية افتراضية تربط نقاطاً متباعدة في الزمكان."}
+{"en": "The Poincar\u00e9 conjecture, proven by Perelman, states that every simply connected, closed 3-manifold is homeomorphic to the 3-sphere.", "ar": "تنص حدسية بوانكاريه، التي أثبتها بيرلمان، أن كل متشعب ثلاثي الأبعاد مغلق وموصول ببساطة يكون متماثلاً توبولوجياً مع الكرة الثلاثية الأبعاد."}
+{"en": "Vision transformers (ViTs) treat image patches as tokens, achieving state-of-the-art results on image classification benchmarks.", "ar": "محولات الرؤية (ViTs) تعامل بقع الصور كرموز، محققة نتائج متطورة في معايير تصنيف الصور."}
+{"en": "Large language models exhibit emergent abilities at scale, including few-shot learning and chain-of-thought reasoning.", "ar": "تظهر النماذج اللغوية الكبيرة قدرات ناشئة على نطاق واسع، تتضمن التعلم بالقليل من الأمثلة والاستدلال بسلسلة الأفكار."}
+{"en": "The wood is lovely, dark and deep", "ar": "\u0639\u0645\u064a\u0642\u0629\u064c \u063a\u0627\u0628\u0627\u062a\u064f \u0627\u0644\u0638\u0644\u0627\u0645 \u0627\u0644\u062c\u0645\u064a\u0644"}
+{"en": "Literature is the memory of humanity", "ar": "\u0627\u0644\u0623\u062f\u0628 \u0647\u0648 \u0630\u0627\u0643\u0631\u0629 \u0627\u0644\u0625\u0646\u0633\u0627\u0646\u064a\u0629"}
+{"en": "A writer is a world trapped in a person", "ar": "\u0627\u0644\u0643\u0627\u062a\u0628 \u0647\u0648 \u0631\u062c\u0644 \u0645\u062d\u0628\u0648\u0633 \u0641\u064a \u0639\u0627\u0644\u0645"}
+{"en": "Let us pause and weep for the memory of a beloved and an abode", "ar": "\u0642\u0641\u0627 \u0646\u0628\u0643\u0650 \u0645\u0646 \u0630\u0643\u0631\u0649 \u062d\u0628\u064a\u0628\u064d \u0648\u0645\u0646\u0632\u0644\u0650"}
+{"en": "I am the one who exchanged passion for noble companions", "ar": "\u0623\u0646\u0627 \u0645\u0646 \u0628\u062f\u0644 \u0628\u0627\u0644\u0635\u062d\u0628\u0650 \u0627\u0644\u0643\u0631\u0627\u0645\u0650 \u0635\u0628\u0627\u0628\u062a\u064a"}
+{"en": "Shall I compare thee to a summer's day?", "ar": "\u0623\u0623\u0642\u0627\u0631\u0646\u0643 \u0628\u064a\u0648\u0645 \u0645\u0646 \u0623\u064a\u0627\u0645 \u0627\u0644\u0635\u064a\u0641\u061f"}
+{"en": "Two roads diverged in a yellow wood", "ar": "\u0637\u0631\u064a\u0642\u0627\u0646 \u062a\u0641\u0631\u0639\u0627 \u0641\u064a \u063a\u0627\u0628\u0629 \u0635\u0641\u0631\u0627\u0621"}
+{"en": "I have measured out my life with coffee spoons", "ar": "\u0644\u0642\u062f \u0642\u0633\u062a\u064f \u062d\u064a\u0627\u062a\u064a \u0628\u0645\u0642\u0627\u064a\u0636 \u0627\u0644\u0642\u0647\u0648\u0629"}
+{"en": "Do not go gentle into that good night", "ar": "\u0644\u0627 \u062a\u0630\u0647\u0628 \u0628\u0631\u0641\u0642 \u0625\u0644\u0649 \u062a\u0644\u0643 \u0627\u0644\u0644\u064a\u0644\u0629 \u0627\u0644\u0637\u064a\u0628\u0629"}
+{"en": "It was the best of times, it was the worst of times", "ar": "\u0643\u0627\u0646\u062a \u0623\u062d\u0633\u0646 \u0627\u0644\u0623\u0632\u0645\u0627\u0646\u060c \u0643\u0627\u0646\u062a \u0623\u0633\u0648\u0623 \u0627\u0644\u0623\u0632\u0645\u0627\u0646"}
+{"en": "Call me Ishmael", "ar": "\u0646\u0627\u062f\u0650\u0646\u064a \u0625\u0633\u0645\u0627\u0639\u064a\u0644"}
+{"en": "Happy families are all alike; every unhappy family is unhappy in its own way", "ar": "\u0643\u0644 \u0627\u0644\u0639\u0627\u0626\u0644\u0627\u062a \u0627\u0644\u0633\u0639\u064a\u062f\u0629 \u062a\u062a\u0634\u0627\u0628\u0647\u060c \u0644\u0643\u0646 \u0643\u0644 \u0639\u0627\u0626\u0644\u0629 \u062a\u0631\u064a\u0633\u0629 \u062a\u0643\u0648\u0646 \u062a\u0639\u064a\u0633\u0629 \u0628\u0637\u0631\u064a\u0642\u062a\u0647\u0627 \u0627\u0644\u062e\u0627\u0635\u0629"}
+{"en": "So we beat on, boats against the current, borne back ceaselessly into the past.", "ar": "\u0648\u0647\u0643\u0630\u0627 \u0646\u0648\u0627\u0635\u0644 \u0627\u0644\u062a\u0642\u062f\u0645\u060c \u0642\u0648\u0627\u0631\u0628 \u0636\u062f \u0627\u0644\u062a\u064a\u0627\u0631\u060c \u0645\u062d\u0645\u0648\u0644\u064a\u0646 \u0628\u0644\u0627 \u062a\u0648\u0642\u0641 \u0625\u0644\u0649 \u0627\u0644\u0645\u0627\u0636\u064a."}
+{"en": "All animals are equal, but some animals are more equal than others.", "ar": "\u0643\u0644 \u0627\u0644\u062d\u064a\u0648\u0627\u0646\u0627\u062a \u0645\u062a\u0633\u0627\u0648\u064a\u0629\u060c \u0644\u0643\u0646 \u0628\u0639\u0636 \u0627\u0644\u062d\u064a\u0648\u0627\u0646\u0627\u062a \u0623\u0643\u062b\u0631 \u0645\u0623\u0648\u0627\u0629 \u0645\u0646 \u063a\u064a\u0631\u0647\u0627."}
+{"en": "To be, or not to be, that is the question", "ar": "\u0623\u0643\u0648\u0646 \u0623\u0648 \u0644\u0627 \u0623\u0643\u0648\u0646\u060c \u0630\u0644\u0643 \u0647\u0648 \u0627\u0644\u0633\u0624\u0627\u0644"}
+{"en": "What is life but a series of moments strung together like pearls on the fragile thread of memory?", "ar": "\u0648\u0645\u0627 \u0627\u0644\u062d\u064a\u0627\u0622 \u0633\u0648\u0649 \u0633\u0644\u0633\u0644\u0629 \u0645\u0646 \u0627\u0644\u0644\u062d\u0638\u0627\u062a \u0645\u0646\u062a\u0638\u0645\u0629 \u0643\u0627\u0644\u0644\u0622\u0644\u0626 \u0631\u0644\u0649 \u0627\u0644\u062e\u064a\u0637 \u0627\u0644\u0647\u0634 \u0644\u0644\u0630\u0627\u0643\u0631\u0629\u061f"}
+{"en": "The sea is the same everywhere, but men are not", "ar": "\u0627\u0644\u0628\u062d\u0631 \u0647\u0648 \u0646\u0641\u0633\u0647 \u0641\u064a \u0643\u0644 \u0645\u0643\u0627\u0646\u060c \u0644\u0643\u0646 \u0627\u0644\u0631\u062c\u0627\u0644 \u0644\u064a\u0633\u0648\u0627 \u0643\u0630\u0644\u0643"}
+{"en": "We tell ourselves stories in order to live", "ar": "\u0646\u062d\u0643\u064a \u0644\u0623\u0646\u0641\u0633\u0646\u0627 \u0627\u0644\u0642\u0635\u0635 \u0643\u064a \u0646\u0639\u064a\u0634"}
+{"en": "He meticulously described the squalor of industrial London", "ar": "\u0648\u0635\u0641 \u0628\u062f\u0642\u0629 \u0628\u0624\u0633 \u0644\u0646\u062f\u0646 \u0627\u0644\u0635\u0646\u0627\u0639\u064a\u0629"}
+{"en": "The characters were ordinary people facing everyday struggles", "ar": "\u0643\u0627\u0646\u062a \u0627\u0644\u0634\u062e\u0635\u064a\u0627\u062a \u0623\u0646\u0627\u0633\u0627\u064b \u0639\u0627\u062f\u064a\u064a\u0646 \u064a\u0648\u0627\u062c\u0647\u0648\u0646 \u0635\u0631\u0627\u063a\u0627\u062a \u064a\u0648\u0645\u064a\u0629"}
+{"en": "The white whale symbolized the unknowable forces of nature", "ar": "\u0631\u0645\u0632 \u0627\u0644\u062d\u0648\u062a \u0627\u0644\u0623\u0628\u064a\u0636 \u0625\u0644\u0649 \u0627\u0644\u0642\u0648\u0649 \u0627\u0644\u0637\u0628\u064a\u0639\u064a\u0629 \u0627\u0644\u0645\u062c\u0647\u0648\u0644\u0649"}
+{"en": "The journey represented the protagonist's spiritual quest", "ar": "\u0645\u062b\u0651\u0644\u062a \u0627\u0644\u0631\u062d\u0644\u0629 \u0631\u062d\u0644\u0629 \u0627\u0644\u0628\u0637\u0644 \u0627\u0644\u0631\u0648\u062d\u064a\u0629"}
+{"en": "The melting clocks defied conventional notions of time", "ar": "\u062a\u062d\u062f\u062a \u0627\u0644\u0633\u0627\u0639\u0627\u062a \u0627\u0644\u0630\u0627\u0626\u0628\u0629 \u0627\u0644\u0645\u0641\u0627\u0647\u064a\u0645 \u0627\u0644\u062a\u0642\u0644\u064a\u062f\u064a\u0629 \u0644\u0644\u0632\u0645\u0646"}
+{"en": "Dreamlike sequences blurred reality and fantasy", "ar": "\u0634\u0648\u0651\u0634\u062a \u0627\u0644\u062a\u0633\u0644\u0633\u0644\u0627\u062a \u0627\u0644\u0634\u0628\u064a\u0647\u0629 \u0628\u0627\u0644\u062d\u0644\u0645 \u0627\u0644\u062d\u062f\u0648\u062f \u0628\u064a\u0646 \u0627\u0644\u0648\u0627\u0642\u0639 \u0648\u0627\u0644\u062e\u064a\u0627\u0644"}
+{"en": "The fragmented narrative reflected the disintegration of traditional values", "ar": "\u0639\u0643\u0633 \u0627\u0644\u0633\u0631\u062f \u0627\u0644\u0645\u062a\u062c\u0632\u0626 \u062a\u0641\u0643\u0643 \u0627\u0644\u0642\u064a\u0645 \u0627\u0644\u062a\u0642\u0644\u064a\u062f\u064a\u0629"}
+{"en": "Man is sometimes extraordinarily, passionately, in love with suffering", "ar": "\u064a\u062d\u0628 \u0627\u0644\u0625\u0646\u0633\u0627\u0646 \u0627\u0644\u0645\u0639\u0627\u0646\u0627\u0622 \u0623\u062d\u064a\u0627\u0646\u0627\u064b \u0628\u0634\u063a\u0641 \u063a\u064a\u0631 \u0639\u0627\u062f\u064a"}
+{"en": "The darker the night, the brighter the stars", "ar": "\u0643\u0644\u0645\u0627 \u0643\u0627\u0646\u062a \u0627\u0644\u0644\u064a\u0644 \u0623\u0638\u0644\u0645\u060c \u0643\u0627\u0646\u062a \u0627\u0644\u0646\u062c\u0648\u0645 \u0623\u0644\u0645\u0639"}
+{"en": "One must imagine Sisyphus happy", "ar": "\u064a\u062c\u0628 \u0623\u0646 \u0646\u062a\u062e\u064a\u0644 \u0633\u064a\u0632\u064a\u0641 \u0633\u0639\u064a\u062f\u0627\u064b"}
+{"en": "Hell is other people", "ar": "\u0627\u0644\u062c\u062d\u064a\u0645 \u0647\u0648 \u0627\u0644\u0622\u062e\u0631\u0648\u0646"}
+{"en": "Somewhere in La Mancha, in a place whose name I do not care to remember", "ar": "\u0641\u064a \u0645\u0643\u0627\u0646 \u0645\u0646 \u0645\u0646\u062b\u0649\u060c \u0644\u0627 \u0623\u0631\u064a\u062f \u0623\u0646 \u0623\u0630\u0643\u0631 \u0627\u0633\u0645\u0647..."}
+{"en": "Dawn crept across the sky like a shy lover", "ar": "\u062a\u0633\u0644\u0651\u0644 \u0627\u0644\u0641\u062c\u0631 \u0639\u0628\u0631 \u0627\u0644\u0633\u0645\u0627\u0622 \u0643\u0639\u0627\u0634\u0642 \u062e\u062c\u0648\u0644"}

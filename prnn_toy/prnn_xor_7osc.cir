@@ -1,0 +1,128 @@
+* =========================================================================
+* Phase-Resonant Neural Network (PRNN) - 7-Oscillator XOR Gate Netlist
+* =========================================================================
+* هذا الملف يمثل مخطط الدائرة الإلكترونية التناظرية لشبكة مرنان الرنينية لحل XOR.
+* يعتمد النموذج على 7 مذبذبات فان دير بول (Van der Pol Oscillators):
+* - العقدتان 1 و 2: المدخلات (مغلقة طورياً بجهد خارجي عند الطور 0 أو pi).
+* - العقدة 3: مذبذب التحيز المرجعي الثابت (Bias) المقفل دائماً عند الطور 0 لتوفير الأرض الطورية.
+* - العقد 4 و 5 و 6: المذبذبات الخفية (Hidden Layer) ذات اتصالات بينية جانبية.
+* - العقدة 7: مذبذب المخرج الحر (Output Node) الذي يتقارب للطور الصحيح.
+*
+* الاقتران بين المذبذبات يتم برمجته عبر مصادر تيار متحكم بها بالجهد (VCCS / G-elements)
+* لمحاكاة مصفوفة الأوزان المتناظرة K_ij مع إمكانية تمثيل الاقتران الموجب والسالب.
+
+* ─── مصادر التغذية للشبكة ───
+VCC VCC 0 DC 5
+VEE VEE 0 DC -5
+
+* ─── إشارات الحقن الخارجية للـ Clamping (المدخلات 1 و 2 والتحيز 3) ───
+* في هذا المخطط، نقوم باختبار الإدخال (1, 0) حيث:
+* - المدخل 1: الطور pi (180 درجة) -> يمثل البت '1'
+* - المدخل 2: الطور 0 (0 درجة) -> يمثل البت '0'
+* - المخرج المتوقع عند العقدة 7: الطور pi (180 درجة) -> يمثل البت '1'
+*
+* لتجربة بقية المدخلات، يمكن تعديل قيم الزاوية (Phase) في مصادر الجيب أدناه:
+* (0,0) -> VIN1 phase=0,   VIN2 phase=0   -> V(NODE7) = phase 0
+* (1,0) -> VIN1 phase=180, VIN2 phase=0   -> V(NODE7) = phase 180 (هذا الوضع الافتراضي أدناه)
+* (0,1) -> VIN1 phase=0,   VIN2 phase=180 -> V(NODE7) = phase 180
+* (1,1) -> VIN1 phase=180, VIN2 phase=180 -> V(NODE7) = phase 0
+
+VIN1 INJ_1 0 SIN(0 1.2 1k 0 0 180)     ; المدخل 1 (طور 180)
+VIN2 INJ_2 0 SIN(0 1.2 1k 0 0 0)       ; المدخل 2 (طور 0)
+VIN3 INJ_3 0 SIN(0 1.2 1k 0 0 0)       ; مذبذب التحيز (دائماً طور 0)
+
+* ─── ماكرو المذبذب غير الخطي (Van der Pol Oscillator Subcircuit) ───
+* يحتوي على رنان LC لضبط التردد عند 1 kHz ومقاومة سالبة غير خطية للتشبع ومحافظة السعة.
+.SUBCKT VDP_OSC OUT INJ VCC VEE
+C1 OUT 0 15.9u
+L1 OUT 0 1.59
+* حد التشبع غير الخطي: I = 0.002 * V - 0.0001 * V^3
+Gnl OUT 0 VALUE = { 0.002 * V(OUT) - 0.0001 * V(OUT)**3 }
+* مدخل الحقن المرجعي (قفل الطور بقوة الحقن)
+R_inj OUT INJ 10
+.ENDS VDP_OSC
+
+* ─── بناء المذبذبات السبعة للشبكة ───
+* المذبذبات المقفلة بالحقن (Inputs & Bias)
+X1 NODE1 INJ_1 VCC VEE VDP_OSC
+X2 NODE2 INJ_2 VCC VEE VDP_OSC
+X3 NODE3 INJ_3 VCC VEE VDP_OSC
+
+* المذبذبات الحرة (Hidden Nodes & Output) - نربط مدخل الحقن بالأرضي 0 عبر مقاومة كبيرة لتعمل بحرية
+X4 NODE4 0 VCC VEE VDP_OSC
+X5 NODE5 0 VCC VEE VDP_OSC
+X6 NODE6 0 VCC VEE VDP_OSC
+X7 NODE7 0 VCC VEE VDP_OSC
+
+R_free4 NODE4 0 10Meg
+R_free5 NODE5 0 10Meg
+R_free6 NODE6 0 10Meg
+R_free7 NODE7 0 10Meg
+
+* ─── برمجة مصفوفة الاقتران التناظرية K (أوزان XOR المدربة هيبياً) ───
+* نستخدم مصادر تيار VCCS من نوع G-elements لصياغة اقتران انتشاري دقيق:
+* I(NODE_i) = K_ij * (V(NODE_j) - V(NODE_i))
+* قيم الأوزان K_ij مأخوذة من قيم تقارب شبكة XOR في جوليا:
+
+* 1. اقتران المدخل 1 بالطبقة الخفية:
+G14 NODE4 0 VALUE = {  1.5 * (V(NODE1) - V(NODE4)) }
+G41 NODE1 0 VALUE = {  1.5 * (V(NODE4) - V(NODE1)) }
+
+G15 NODE5 0 VALUE = { -1.2 * (V(NODE1) - V(NODE5)) }
+G51 NODE1 0 VALUE = { -1.2 * (V(NODE5) - V(NODE1)) }
+
+G16 NODE6 0 VALUE = {  0.8 * (V(NODE1) - V(NODE6)) }
+G61 NODE1 0 VALUE = {  0.8 * (V(NODE6) - V(NODE1)) }
+
+* 2. اقتران المدخل 2 بالطبقة الخفية:
+G24 NODE4 0 VALUE = { -1.2 * (V(NODE2) - V(NODE4)) }
+G42 NODE2 0 VALUE = { -1.2 * (V(NODE4) - V(NODE2)) }
+
+G25 NODE5 0 VALUE = {  1.5 * (V(NODE2) - V(NODE5)) }
+G52 NODE2 0 VALUE = {  1.5 * (V(NODE5) - V(NODE2)) }
+
+G26 NODE6 0 VALUE = { -0.9 * (V(NODE2) - V(NODE6)) }
+G62 NODE2 0 VALUE = { -0.9 * (V(NODE6) - V(NODE2)) }
+
+* 3. اقتران مذبذب التحيز 3 بالطبقة الخفية والمخرج:
+G34 NODE4 0 VALUE = {  0.5 * (V(NODE3) - V(NODE4)) }
+G43 NODE3 0 VALUE = {  0.5 * (V(NODE4) - V(NODE3)) }
+
+G35 NODE5 0 VALUE = {  0.5 * (V(NODE3) - V(NODE5)) }
+G53 NODE3 0 VALUE = {  0.5 * (V(NODE5) - V(NODE3)) }
+
+G36 NODE6 0 VALUE = { -0.7 * (V(NODE3) - V(NODE6)) }
+G63 NODE3 0 VALUE = { -0.7 * (V(NODE6) - V(NODE3)) }
+
+G37 NODE7 0 VALUE = {  0.3 * (V(NODE3) - V(NODE7)) }
+G73 NODE3 0 VALUE = {  0.3 * (V(NODE7) - V(NODE3)) }
+
+* 4. الاتصالات البينية الجانبية في الطبقة الخفية (Lateral Hidden Connections):
+G45 NODE5 0 VALUE = {  1.1 * (V(NODE4) - V(NODE5)) }
+G54 NODE4 0 VALUE = {  1.1 * (V(NODE5) - V(NODE4)) }
+
+G46 NODE6 0 VALUE = { -0.8 * (V(NODE4) - V(NODE6)) }
+G64 NODE4 0 VALUE = { -0.8 * (V(NODE6) - V(NODE4)) }
+
+G56 NODE6 0 VALUE = {  1.0 * (V(NODE5) - V(NODE6)) }
+G65 NODE5 0 VALUE = {  1.0 * (V(NODE6) - V(NODE5)) }
+
+* 5. اقتران الطبقة الخفية بالمخرج 7:
+G47 NODE7 0 VALUE = {  1.8 * (V(NODE4) - V(NODE7)) }
+G74 NODE4 0 VALUE = {  1.8 * (V(NODE7) - V(NODE4)) }
+
+G57 NODE7 0 VALUE = { -1.5 * (V(NODE5) - V(NODE7)) }
+G75 NODE5 0 VALUE = { -1.5 * (V(NODE7) - V(NODE5)) }
+
+G67 NODE7 0 VALUE = {  1.2 * (V(NODE6) - V(NODE7)) }
+G76 NODE6 0 VALUE = {  1.2 * (V(NODE7) - V(NODE6)) }
+
+* ─── إعدادات المحاكاة والقياس ───
+* تشغيل المحاكاة العابرة لمدة 15ms لرصد الاستقرار الطوري التام
+.TRAN 0.01m 15m 0 0.01m UIC
+.OPTIONS RELTOL=1e-4 VNTOL=1e-4 ITL4=150
+
+* قياس الأطوار ورسمها
+.PROBE V(NODE1) V(NODE2) V(NODE3) V(NODE7)
+
+.END

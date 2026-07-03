@@ -1,0 +1,14 @@
+{
+  "description": "Minimal facts for multi-hop reasoning tests",
+  "facts": [
+    {"subject": "ثلج", "relation": "يصبح_بالتسخين", "object": "ماء"},
+    {"subject": "ماء", "relation": "يصبح_بالتسخين", "object": "بخار"},
+
+    {"subject": "باريس", "relation": "تقع_في", "object": "فرنسا"},
+    {"subject": "فرنسا", "relation": "تقع_في", "object": "أوروبا"},
+
+    {"subject": "سكين", "relation": "مصنوع_من", "object": "معدن"},
+    {"subject": "معدن", "relation": "يستخرج_من", "object": "خام"},
+    {"subject": "خام", "relation": "يوجد_في", "object": "جبال"}
+  ]
+}

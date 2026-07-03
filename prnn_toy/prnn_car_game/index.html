@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة السيارة ذاتية التعلم بالشبكة الرنينية الطورية (PRNN)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo-section">
+            <span class="logo-icon">🧠</span>
+            <div>
+                <h1>لعبة السيارة ذاتية التعلم بالشبكة الطورية (PRNN)</h1>
+                <div class="subtitle">محاكاة الرنين التزامني والتعلم المعزز الهيبي التبايني</div>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button id="playPauseBtn" class="primary">▶️ Start Simulation</button>
+            <button id="resetBtn" class="danger-btn">🔄 Reset</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Info Alert Banner -->
+        <div class="info-banner">
+            <span class="info-banner-icon">ℹ️</span>
+            <div class="rtl-text">
+                <strong>كيف تتعلم السيارة؟</strong> تستخدم السيارة شبكة <strong>PRNN الطورية</strong> مكونة من 8 مذبذبات. عندما تقترب أشعة الليزر (المستشعرات) من الحوائط، تتقارب أطوار المداخل إلى $\pi$ (راديان). تقوم الشبكة برنين الأطوار داخلياً لتوجيه مذبذب المخرج. 
+                في وضع <strong>Contrastive (التبايني)</strong>، عند اقتراب خطر الاصطدام، تقوم الشبكة بقفل المخرج طورياً عند الزاوية الآمنة لتعليم الخلايا الخفية التزامن الصحيح (CHL). وفي وضع <strong>Hebbian (المعزز)</strong>، يتم تعديل الأوزان تدريجياً بناءً على قيمة المكافأة اللحظية.
+            </div>
+        </div>
+
+        <!-- Real-time Visualizer Panel -->
+        <div class="workspace">
+            <!-- Left Side: Simulator Canvas -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        🏁 مضمار التحدي (Track Arena)
+                    </div>
+                    <div class="flex-row">
+                        <label for="trackSelect" style="font-size: 0.8rem; color: var(--text-secondary);">المضمار:</label>
+                        <select id="trackSelect">
+                            <option value="oval">المضمار الدائري (سلس)</option>
+                            <option value="scurve">مضمار المنعطفات (S-Curve)</option>
+                            <option value="obstacles">مضمار الحواجز والعقبات</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="gameCanvas" width="800" height="500"></canvas>
+                </div>
+            </div>
+
+            <!-- Right Side: Neural Network Graph Canvas -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        🌀 شبكة المذبذبات (PRNN Neuro Graph)
+                        <span id="trainBadge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; font-weight: bold; margin-right: 8px;">ON</span>
+                    </div>
+                    <div class="flex-row">
+                        <label style="font-size: 0.8rem; color: var(--text-secondary);">نمط التدريب:</label>
+                        <select id="trainingModeSelect">
+                            <option value="contrastive">التعلم التبايني التلقائي (Contrastive)</option>
+                            <option value="hebbian">التعلم المعزز بالمكافأة (Hebbian RL)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="canvas-container" style="min-height: 480px;">
+                    <canvas id="networkCanvas" width="500" height="480"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Dashboard Grid -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-label">عدد الاصطدامات (Crashes)</div>
+                <div id="crashVal" class="stat-value danger">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">المسافة المقطوعة (Distance)</div>
+                <div id="distVal" class="stat-value">0.0 m</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">وقت البقاء اللحظي (Survival)</div>
+                <div id="survVal" class="stat-value success">0.0s</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">أطول مدةsurvival قياسية</div>
+                <div id="maxSurvVal" class="stat-value">0.0s</div>
+            </div>
+        </div>
+
+        <!-- Parameter Configuration Sidebars -->
+        <div class="settings-section">
+            <!-- Autonomous Control Controls -->
+            <div class="settings-group">
+                <div class="settings-title">⚙️ خيارات التدريب والتحكم</div>
+                
+                <div class="flex-between" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">تفعيل تدريب الأوزان (Weight Learning)</span>
+                    <input type="checkbox" id="trainToggle" checked style="width: 18px; height: 18px; cursor: pointer;">
+                </div>
+
+                <div class="flex-between">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">المكافأة اللحظية / التحديث (Live Reward)</span>
+                    <span id="rewardVal" class="stat-value" style="font-size: 1.1rem; font-weight: bold;">0.00</span>
+                </div>
+
+                <div class="control-row">
+                    <button id="manualDriveBtn" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+                        🧠 Autopilot On (Autonomous)
+                    </button>
+                    <div class="drive-keys">
+                        <div id="keyL" class="key-cap">◀</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">توجيه يدوي للتعليم (Arrows)</div>
+                        <div id="keyR" class="key-cap">▶</div>
+                    </div>
+                </div>
+
+                <button id="clearWeightsBtn" class="danger-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+                    🧹 إعادة تهيئة أوزان الاقتران (Reset Brain)
+                </button>
+            </div>
+
+            <!-- Physics & Math Sliders -->
+            <div class="settings-group">
+                <div class="settings-title">🎛️ ضبط معاملات الفيزياء والمذبذبات</div>
+                
+                <div class="control-row">
+                    <label>
+                        <span>معدل التعلم ($\eta$)</span>
+                        <span id="lrVal" class="val">0.050</span>
+                    </label>
+                    <input type="range" id="lrSlider" min="0.005" max="0.25" step="0.005" value="0.050">
+                </div>
+
+                <div class="control-row">
+                    <label>
+                        <span>الضوضاء الطورية العشوائية (Phase Noise)</span>
+                        <span id="noiseVal" class="val">0.050</span>
+                    </label>
+                    <input type="range" id="noiseSlider" min="0.000" max="0.200" step="0.005" value="0.050">
+                </div>
+
+                <div class="control-row">
+                    <label>
+                        <span>سرعة السيارة (Vehicle Speed)</span>
+                        <span id="speedVal" class="val">3.5</span>
+                    </label>
+                    <input type="range" id="speedSlider" min="1.0" max="7.0" step="0.5" value="3.5">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Project JS Links -->
+    <script src="prnn.js"></script>
+    <script src="game.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

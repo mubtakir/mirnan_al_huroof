@@ -1,0 +1,515 @@
+"""
+الحساب الدلالي — Semantic Arithmetic.
+
+عمليات: الجمع، الطرح، القياس، المزج، التضاد، الترادف.
+مبني على جبر كليفورد + الاندماج الهندسي.
+
+يدعم:
+- بناء مؤثرات التضاد العامة والمتخصصة بالحقول
+- التنبؤ بالمضاد (قاموس سريع + بحث متجهي)
+- القياس الدلالي (أ:ب :: جـ:؟)
+- المسافة الدلالية بين الكلمات
+- تحليل التقارب والترادف
+"""
+module SemanticArithmetic
+
+using LinearAlgebra, Statistics
+using ..Constants: PHASE_DIM, TOTAL_DIM
+using ..CliffordMath: Multivector22, from_vector, normalize!,
+      BIVECTOR_DIM, CLIFFORD_DIM
+using ..WordFusion: geometric_word_fusion, linear_fusion, _get_letter_vectors
+using ..LetterDB: LetterDatabase, get_vector
+using ..WordPhysics: _normalize_letters, _parse_word_harakat, _build_modulated_vectors
+
+import JSON
+
+export build_general_antinomy_operator, apply_antinomy_operator,
+       predict_antonym, FAST_ANTONYMS, solve_analogy,
+       semantic_difference, semantic_midpoint, blend_words,
+       analyze_semantic_affinity, classify_word_field,
+       build_field_specific_antinomy_operators,
+       compute_compound_word_vector, _get_word_mv, _get_word_linear,
+       _get_modulated_letter_vectors, benchmark_analogies
+
+# ─── قاموس الأضداد السريع (106 أزواج — يُحمّل من data/fast_antonyms.json إن وُجد) ───
+const _FAST_ANTONYMS_FILE = joinpath(@__DIR__, "..", "..", "data", "fast_antonyms.json")
+
+function _load_fast_antonyms()
+    dict = Dict{String,String}()
+    # Default inline fallback containing 52 pairs
+    fallback = Dict{String,String}(
+        "قوة" => "ضعف", "ضعف" => "قوة",
+        "نور" => "ظلام", "ظلام" => "نور",
+        "علم" => "جهل", "جهل" => "علم",
+        "كبر" => "صغر", "صغر" => "كبر",
+        "صدق" => "كذب", "كذب" => "صدق",
+        "حر" => "برد", "برد" => "حر",
+        "حياة" => "موت", "موت" => "حياة",
+        "حق" => "باطل", "باطل" => "حق",
+        "غنى" => "فقر", "فقر" => "غنى",
+        "طول" => "قصر", "قصر" => "طول",
+        "شجاعة" => "جبن", "جبن" => "شجاعة",
+        "كرم" => "بخل", "بخل" => "كرم",
+        "حكمة" => "حمق", "حمق" => "حكمة",
+        "عدل" => "ظلم", "ظلم" => "عدل",
+        "سماء" => "أرض", "أرض" => "سماء",
+        "شمس" => "قمر", "قمر" => "شمس",
+        "صيف" => "شتاء", "شتاء" => "صيف",
+        "ليل" => "نهار", "نهار" => "ليل",
+        "خير" => "شر", "شر" => "خير",
+        "حرب" => "سلام", "سلام" => "حرب",
+        "صديق" => "عدو", "عدو" => "صديق",
+        "قريب" => "بعيد", "بعيد" => "قريب",
+        "سريع" => "بطيء", "بطيء" => "سريع",
+        "سهل" => "صعب", "صعب" => "سهل",
+        "كثير" => "قليل", "قليل" => "كثير",
+        "جميل" => "قبيح", "قبيح" => "جميل",
+        "جديد" => "قديم", "قديم" => "جديد",
+        "سعيد" => "حزين", "حزين" => "سعيد",
+        "واسع" => "ضيق", "ضيق" => "واسع",
+        "ثقيل" => "خفيف", "خفيف" => "ثقيل",
+        "حلو" => "مر", "مر" => "حلو",
+        "نظيف" => "قذر", "قذر" => "نظيف",
+        "صحيح" => "خطأ", "خطأ" => "صحيح",
+        "سليم" => "مريض", "مريض" => "سليم",
+        "حاضر" => "غائب", "غائب" => "حاضر",
+        "معلوم" => "مجهول", "مجهول" => "معلوم",
+        "يقظة" => "نوم", "نوم" => "يقظة",
+        "حي" => "ميت", "ميت" => "حي",
+        "سؤال" => "جواب", "جواب" => "سؤال",
+        "نصر" => "هزيمة", "هزيمة" => "نصر",
+        "جمع" => "طرح", "طرح" => "جمع",
+        "ضرب" => "قسمة", "قسمة" => "ضرب",
+        "زيادة" => "نقصان", "نقصان" => "زيادة",
+        "ناجح" => "فاشل", "فاشل" => "ناجح",
+        "حرارة" => "برودة", "برودة" => "حرارة",
+        "جفاف" => "رطوبة", "رطوبة" => "جفاف",
+        "ارتفاع" => "انخفاض", "انخفاض" => "ارتفاع",
+        "قوي" => "ضعيف", "ضعيف" => "قوي",
+        "عالم" => "جاهل", "جاهل" => "عالم",
+        "كبير" => "صغير", "صغير" => "كبير",
+        "غني" => "فقير", "فقير" => "غني",
+        "صلب" => "سائل", "سائل" => "صلب",
+        "حزن" => "فرح", "فرح" => "حزن",
+        "حيا" => "موت",
+        "قرب" => "بعد", "بعد" => "قرب",
+        "كثر" => "قلل", "قلل" => "كثر",
+        "ارتفع" => "انخفض", "انخفض" => "ارتفع",
+        "جمل" => "قبح", "قبح" => "جمل",
+        "بيض" => "سود", "سود" => "بيض",
+        "علو" => "سفل", "سفل" => "علو",
+        "قدم" => "جدد", "جدد" => "قدم",
+        "سعد" => "حزن",
+        "سرع" => "بطؤ", "بطؤ" => "سرع"
+    )
+    for (k, v) in fallback
+        dict[k] = v
+    end
+
+    if isfile(_FAST_ANTONYMS_FILE)
+        try
+            data = JSON.parsefile(_FAST_ANTONYMS_FILE)
+            if haskey(data, "pairs")
+                pairs = data["pairs"]
+                for (k, v) in pairs
+                    dict[String(k)] = String(v)
+                end
+            end
+        catch e
+            @warn "Failed to load antonyms from $_FAST_ANTONYMS_FILE: $e"
+        end
+    end
+    return dict
+end
+
+const FAST_ANTONYMS = _load_fast_antonyms()
+
+# التخزين المؤقت
+const _word_mv_cache = Dict{String,Multivector22}()
+const _word_linear_cache = Dict{String,Vector{Float64}}()
+
+function _get_db()
+    return LetterDatabase()
+end
+
+function _get_modulated_letter_vectors(word::String, db)
+    parsed = _parse_word_harakat(word)
+    return _build_modulated_vectors(parsed, db)
+end
+
+function _get_word_mv(word::String)
+    if haskey(_word_mv_cache, word)
+        return _word_mv_cache[word]
+    end
+    db = _get_db()
+    parsed = _parse_word_harakat(word)
+    lvs = _build_modulated_vectors(parsed, db)
+    mv = geometric_word_fusion(lvs)
+    _word_mv_cache[word] = mv
+    return mv
+end
+
+function _get_word_linear(word::String)
+    if haskey(_word_linear_cache, word)
+        return _word_linear_cache[word]
+    end
+    db = _get_db()
+    parsed = _parse_word_harakat(word)
+    lvs = _build_modulated_vectors(parsed, db)
+    if isempty(lvs)
+        return zeros(Float64, PHASE_DIM)
+    end
+    v_lin = linear_fusion(lvs)
+    _word_linear_cache[word] = v_lin
+    return v_lin
+end
+
+# ═══ 1. المسافة الدلالية ═══
+"""
+    semantic_difference(word_from, word_to; method="geometric") -> Dict
+
+Δ = word_to - word_from (طريقة خطية) أو Δ = MV_to / MV_from (طريقة هندسية).
+"""
+function semantic_difference(word_from::String, word_to::String; method::String="geometric")
+    if method == "linear"
+        v_from = _get_word_linear(word_from)
+        v_to = _get_word_linear(word_to)
+        delta = v_to .- v_from
+        mag = norm(delta)
+        return Dict("method" => "linear", "word_from" => word_from, "word_to" => word_to,
+                    "magnitude" => round(mag; digits=4))
+    else
+        mv_from = _get_word_mv(word_from)
+        mv_to = _get_word_mv(word_to)
+        delta_mv = mv_to / mv_from
+        return Dict("method" => "geometric", "word_from" => word_from, "word_to" => word_to,
+                    "delta_scalar" => round(delta_mv.s; digits=4),
+                    "delta_vector_norm" => round(norm(delta_mv.v); digits=4),
+                    "delta_bivector_norm" => round(norm(delta_mv.b); digits=4),
+                    "magnitude" => round(norm(delta_mv); digits=4))
+    end
+end
+
+# ═══ 2. القياس الدلالي ═══
+"""
+    solve_analogy(a, b, c; method="linear", vocab=nothing) -> Dict
+
+حل التناسب: أ:ب :: جـ:؟ — D = C + (B - A)
+"""
+function solve_analogy(a::String, b::String, c::String; method::String="linear",
+                       vocab::Union{Dict,Nothing}=nothing, ID2WORD::Union{Dict,Nothing}=nothing)
+    if method == "linear"
+        v_a = _get_word_linear(a)
+        v_b = _get_word_linear(b)
+        v_c = _get_word_linear(c)
+        delta_v = v_b .- v_a
+        v_d = v_c .+ delta_v
+        v_d_norm = v_d ./ (norm(v_d) + 1e-10)
+
+        candidates = Tuple{Float64,String}[]
+        if ID2WORD !== nothing
+            for (wid, word) in ID2WORD
+                length(word) < 2 && continue
+                word in (a, b, c) && continue
+                wv = _get_word_linear(word)
+                sim = dot(v_d_norm, wv) / (norm(wv) + 1e-10)
+                push!(candidates, (sim, word))
+            end
+            sort!(candidates; by=x -> -x[1])
+        end
+
+        nearest = isempty(candidates) ? "?" : candidates[1][2]
+        conf = isempty(candidates) ? 0.0 : candidates[1][1]
+        return Dict("analogy" => "$a : $b :: $c : ?", "method" => "linear",
+                    "predicted" => nearest, "confidence" => round(conf; digits=4),
+                    "delta_norm" => round(norm(delta_v); digits=4))
+    else
+        mv_a = _get_word_mv(a)
+        mv_b = _get_word_mv(b)
+        mv_c = _get_word_mv(c)
+        delta = mv_b / mv_a
+        mv_d = delta * mv_c
+        return Dict("analogy" => "$a : $b :: $c : ?", "method" => "geometric",
+                    "predicted" => "?", "confidence" => 0.0)
+    end
+end
+
+# ═══ 3. المنتصف والمزج ═══
+function semantic_midpoint(word1::String, word2::String)
+    mv1 = _get_word_mv(word1)
+    mv2 = _get_word_mv(word2)
+    mid = Multivector22(
+        (mv1.s + mv2.s) / 2,
+        (mv1.v + mv2.v) / 2,
+        (mv1.b + mv2.b) / 2,
+        (mv1.p + mv2.p) / 2,
+    )
+    normalize!(mid)
+    return Dict("word1" => word1, "word2" => word2, "midpoint_norm" => round(norm(mid); digits=4))
+end
+
+function blend_words(word1::String, word2::String; ratio::Float64=0.5)
+    mv1 = _get_word_mv(word1)
+    mv2 = _get_word_mv(word2)
+    blend = Multivector22(
+        mv1.s * (1 - ratio) + mv2.s * ratio,
+        mv1.v .* (1 - ratio) .+ mv2.v .* ratio,
+        mv1.b .* (1 - ratio) .+ mv2.b .* ratio,
+        mv1.p * (1 - ratio) + mv2.p * ratio,
+    )
+    normalize!(blend)
+    return Dict("word1" => word1, "word2" => word2, "ratio" => ratio,
+                "blend_norm" => round(norm(blend); digits=4))
+end
+
+# ═══ 4. مؤثرات التضاد ═══
+"""
+    build_general_antinomy_operator(pairs; method="linear") -> Any
+
+بناء مؤثر التضاد العام من أزواج الأضداد المعروفة.
+يدعم: linear (Δ = mean(v_neg - v_pos)), clifford (Δ = mean(MV_neg / MV_pos)), rotation.
+"""
+function build_general_antinomy_operator(pairs::Vector{Tuple{String,String}};
+                                          method::String="linear", vector_type::String="linear")
+    if method == "clifford"
+        sum_mv = Multivector22()
+        for (w_pos, w_neg) in pairs
+            mv_pos = _get_word_mv(w_pos)
+            mv_neg = _get_word_mv(w_neg)
+            sum_mv = sum_mv + (mv_neg / mv_pos)
+        end
+        n = length(pairs)
+        return Multivector22(sum_mv.s / n, sum_mv.v / n, sum_mv.b / n, sum_mv.p / n)
+    end
+
+    # linear method
+    deltas = Vector{Float64}[]
+    for (w_pos, w_neg) in pairs
+        v_pos = _get_word_linear(w_pos)
+        v_neg = _get_word_linear(w_neg)
+        push!(deltas, v_neg .- v_pos)
+    end
+    mat = reduce(hcat, deltas)'
+    return vec(mean(mat; dims=1))
+end
+
+"""
+    apply_antinomy_operator(word, operator; method="linear") -> AbstractVector
+
+تطبيق مؤثر التضاد على كلمة لإنتاج تمثيل دلالي للمضاد.
+"""
+function apply_antinomy_operator(word::String, operator; method::String="linear")
+    if method == "clifford"
+        mv = _get_word_mv(word)
+        mv_new = mv * operator
+        normalize!(mv_new)
+        return mv_new
+    end
+    v = _get_word_linear(word)
+    v_new = v .+ operator
+    nrm = norm(v_new)
+    return nrm > 1e-10 ? v_new ./ nrm : v_new
+end
+
+"""
+    predict_antonym(word, operator; method="linear", top_k=5) -> Vector{Tuple{String,Float64}}
+
+التنبؤ بضد الكلمة: بحث في FAST_ANTONYMS أولاً، ثم بحث جذري، ثم بحث متجهي.
+"""
+function predict_antonym(word::String, operator; method::String="linear", top_k::Int=5,
+                         vocab::Union{Dict,Nothing}=nothing, ID2WORD::Union{Dict,Nothing}=nothing)
+    word_clean = filter(c -> c ∉ ('ً', 'ٌ', 'ٍ', 'َ', 'ُ', 'ِ', 'ّ', 'ْ', 'ـ'), word)
+
+    # 1. بحث مباشر في القاموس السريع
+    if haskey(FAST_ANTONYMS, word_clean)
+        return [(FAST_ANTONYMS[word_clean], 1.0)]
+    end
+
+    # 2. بحث متجهي
+    if ID2WORD === nothing || method == "clifford"
+        return Tuple{String,Float64}[]
+    end
+
+    target_v = apply_antinomy_operator(word, operator; method=method)
+    target_norm = norm(target_v)
+    if target_norm < 1e-10
+        return Tuple{String,Float64}[]
+    end
+
+    candidates = Tuple{Float64,String}[]
+    for (wid, cand) in ID2WORD
+        cand_clean = filter(c -> c ∉ ('ً', 'ٌ', 'ٍ', 'َ', 'ُ', 'ِ', 'ّ', 'ْ', 'ـ'), cand)
+        length(cand_clean) < 2 && continue
+        cand_clean == word_clean && continue
+        wv = _get_word_linear(cand)
+        sim = dot(target_v, wv) / (target_norm * norm(wv) + 1e-10)
+        push!(candidates, (sim, cand))
+    end
+    sort!(candidates; by=x -> -x[1])
+    return [(w, round(s; digits=4)) for (s, w) in candidates[1:min(top_k, end)]]
+end
+
+# ═══ 5. تصنيف الحقول الدلالية ═══
+const _EPISTEM_CHARS = Set("علمجهلصدقكذبحقبطل")
+const _SENSORY_CHARS = Set("نورظلمحبرديموت")
+const _STATE_CHARS = Set("قوضعرفكبرصغ")
+
+"""
+    classify_word_field(word) -> String
+
+تصنيف الكلمة إلى حقل دلالي: epistemology, sensory, state.
+"""
+function classify_word_field(word::String)
+    pure = filter(c -> c ∉ ('ً', 'ٌ', 'ٍ', 'َ', 'ُ', 'ِ', 'ّ', 'ْ', 'ـ'), _normalize_letters(word))
+    counts = Dict(
+        "epistemology" => count(c -> c in _EPISTEM_CHARS, pure),
+        "sensory" => count(c -> c in _SENSORY_CHARS, pure),
+        "state" => count(c -> c in _STATE_CHARS, pure),
+    )
+    dominant = argmax(counts)
+    return counts[dominant] == 0 ? "epistemology" : dominant
+end
+
+function build_field_specific_antinomy_operators(pairs::Vector{Tuple{String,String}};
+                                                  method::String="linear", vector_type::String="linear")
+    pairs_by_field = Dict{String,Vector{Tuple{String,String}}}(
+        "epistemology" => [], "sensory" => [], "state" => [],
+    )
+    for (pos, neg) in pairs
+        field = classify_word_field(pos)
+        push!(pairs_by_field[field], (pos, neg))
+    end
+
+    operators = Dict{String,Any}()
+    for (field, f_pairs) in pairs_by_field
+        operators[field] = if isempty(f_pairs)
+            build_general_antinomy_operator(pairs; method=method, vector_type=vector_type)
+        else
+            build_general_antinomy_operator(f_pairs; method=method, vector_type=vector_type)
+        end
+    end
+    return operators
+end
+
+# ═══ 6. النفي الاختياري + التحليل الدلالي ═══
+"""
+    compute_compound_word_vector(word; method="projection") -> Vector{Float64}
+
+حساب متجه PHASE_DIM يمثل الكلمة المركبة عبر الإسقاط الهندسي.
+method: "remnant" (الجزء المتجهي فقط) أو "projection" (متجه + انكماش bivector).
+"""
+function _bv_contract(bv::Vector{Float64}, v::Vector{Float64})
+    res = zeros(Float64, 22)
+    k = 0
+    for i in 1:22
+        for j in (i+1):22
+            k += 1
+            val = bv[k]
+            res[i] -= val * v[j]
+            res[j] += val * v[i]
+        end
+    end
+    return res
+end
+
+function compute_compound_word_vector(word::String; method::String="projection")
+    mv = _get_word_mv(word)
+    if method == "remnant"
+        v = mv.v
+    else  # projection
+        contracted = _bv_contract(mv.b, mv.v)
+        mounted = mv.v + contracted
+        nrm_v = norm(mounted)
+        v = nrm_v > 1e-10 ? mounted ./ nrm_v : linear_fusion(_get_modulated_letter_vectors(word, _get_db()))
+    end
+    nrm = norm(v)
+    if nrm < 1e-10
+        return _get_word_linear(word)
+    end
+    v_full = _get_word_linear(word)
+    d = min(22, length(v_full))
+    v_full[1:d] .= v[1:d]
+    nrm_f = norm(v_full)
+    if nrm_f > 1e-10
+        v_full ./= nrm_f
+    end
+    return v_full
+end
+
+"""
+    analyze_semantic_affinity(word1, word2) -> Dict
+
+قياس التقارب والترادف والفرقان الدلالي بين كلمتين:
+linear cos, remnant cos, projection cos → affinity class.
+"""
+function analyze_semantic_affinity(word1::String, word2::String)
+    v1_lin = _get_word_linear(word1)
+    v2_lin = _get_word_linear(word2)
+    sim_lin = dot(v1_lin, v2_lin) / (norm(v1_lin) * norm(v2_lin) + 1e-10)
+
+    v1_rem = compute_compound_word_vector(word1; method="remnant")
+    v2_rem = compute_compound_word_vector(word2; method="remnant")
+    sim_rem = dot(v1_rem, v2_rem)
+
+    v1_proj = compute_compound_word_vector(word1; method="projection")
+    v2_proj = compute_compound_word_vector(word2; method="projection")
+    sim_proj = dot(v1_proj, v2_proj)
+
+    shared_essence = abs(sim_proj)
+
+    affinity_class = if sim_proj > 0.4
+        "close_synonym"
+    elseif sim_proj > 0.15
+        "semantic_affinity"
+    elseif sim_proj < -0.25
+        "divergence_antonym"
+    else
+        "nuanced_relation"
+    end
+
+    return Dict(
+        "word1" => word1, "word2" => word2,
+        "similarity" => Dict(
+            "linear" => round(sim_lin; digits=4),
+            "remnant" => round(sim_rem; digits=4),
+            "projection" => round(sim_proj; digits=4),
+        ),
+        "shared_essence" => round(shared_essence; digits=4),
+        "affinity_class" => affinity_class,
+    )
+end
+
+const KNOWN_ANALOGIES = [
+    ("نور", "ظلام", "علم", "جهل"),
+    ("قوة", "ضعف", "غنى", "فقر"),
+    ("كبر", "صغر", "طول", "قصر"),
+    ("حياة", "موت", "يقظة", "نوم"),
+    ("صدق", "كذب", "حق", "باطل"),
+    ("حر", "برد", "جفاف", "رطوبة"),
+    ("شجاعة", "جبن", "كرم", "بخل"),
+    ("حكمة", "حمق", "عدل", "ظلم"),
+]
+
+"""
+    benchmark_analogies(ID2WORD) -> Dict
+
+اختبار دقة القياس الدلالي على 8 أزواج أضداد.
+"""
+function benchmark_analogies(ID2WORD::Dict)
+    correct = 0
+    results = []
+    for (a, b, c, expected) in KNOWN_ANALOGIES
+        r = solve_analogy(a, b, c; method="linear", ID2WORD=ID2WORD)
+        is_correct = (r["predicted"] == expected)
+        is_correct && (correct += 1)
+        push!(results, Dict(
+            "analogy" => "$a:$b :: $c:$expected",
+            "predicted" => r["predicted"], "expected" => expected,
+            "correct" => is_correct, "confidence" => r["confidence"],
+        ))
+    end
+    return Dict("total" => length(KNOWN_ANALOGIES), "correct" => correct,
+                "accuracy" => round(correct / length(KNOWN_ANALOGIES); digits=4), "results" => results)
+end
+
+end # module SemanticArithmetic

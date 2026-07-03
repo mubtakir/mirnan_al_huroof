@@ -1,0 +1,502 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""تدريب كامل لكل بنى مرنان — توليف K, Syntax, Spectral, Causal.
+
+الاستخدام:
+  python train.py                              # تدريب كامل من الملفات الموجودة
+  python train.py --rebuild-dialogue           # إعادة بناء كوربوس الحوار أولاً
+  python train.py --clean                      # تنظيف جميع الكوربسات
+  python train.py --out model/                 # حفظ النموذج في مجلد
+"""
+import os, sys, time, argparse, json, logging
+import numpy as np
+import yaml
+from scipy import sparse
+import model
+from src.physics.word_physics import compute_extended_phase_vector
+from src.physics.constants import TOTAL_DIM
+from src.physics.particles import is_particle
+
+if hasattr(sys.stdout, 'reconfigure') and "pytest" not in sys.modules:
+    sys.stdout.reconfigure(encoding='utf-8')
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+log = logging.getLogger('train')
+
+# ─── مسارات ───
+PROJECT = os.path.dirname(os.path.abspath(__file__))
+DATA = os.path.join(PROJECT, 'data')
+DEFAULT_OUT = os.path.join(PROJECT, 'model')
+
+# ملفات الكوربس — يكتشف تلقائياً كل .txt في data/ ومجلداته
+def _discover_corpus_files():
+    """يُعيد dict يحتوي كل ملفات .txt في data/ مصنفة حسب النوع — مرتبة أبجدياً."""
+    import glob
+    all_files = sorted(glob.glob(os.path.join(DATA, '**', '*.txt'), recursive=True))
+    all_files = [os.path.relpath(f, DATA) for f in all_files]
+    return {
+        'all': all_files,
+    }
+
+CORPUS_FILES = _discover_corpus_files()
+
+
+def refresh_corpus_files():
+    """إعادة اكتشاف ملفات الكوربس (بعد بناء كوربس الحوار مثلاً)."""
+    global CORPUS_FILES
+    CORPUS_FILES = _discover_corpus_files()
+    return CORPUS_FILES
+
+
+def find_corpus_files(names):
+    """يجمع ملفات الكوربس الموجودة فعلياً."""
+    found = []
+    for name in names:
+        path = os.path.join(DATA, name)
+        if os.path.exists(path) and os.path.getsize(path) > 0:
+            found.append(path)
+        else:
+            log.warning(f'  ⚠ الملف مفقود: {name}')
+    return found
+
+
+def load_corpus_texts(paths):
+    """يقرأ جميع الكوربسات ويعيد قائمة نصوص."""
+    texts = []
+    for p in paths:
+        with open(p, encoding='utf-8', errors='replace') as f:
+            t = f.read()
+            if t.strip():
+                texts.append(t)
+                log.info(f'  ✓ {os.path.basename(p)}: {len(t):,} حرف')
+    return texts
+
+
+def _extract_dialogue_lines(texts):
+    """يستخرج سطوراً حوارية من أي نص — بغض النظر عن اسم الملف.
+
+    يكتشف الأنماط التالية:
+    - سؤال\\tجواب  (tab separation)
+    - سؤال، جواب   (comma separation)
+    - س، ج         (abbreviated)
+    - سؤال: ... جواب: ...  (colon format)
+    - Q: ... A: ...
+    - أي سطرين متتاليين أحدهما قصير (سؤال) والآخر طويل (جواب)
+
+    يُعيد قائمة نصوص حوارية منفصلة (كل زوج سؤال-جواب = نص).
+    """
+    import re
+    dialogue_texts = []
+
+    # أنماط الفصل بين السؤال والجواب
+    QA_PATTERNS = [
+        re.compile(r'(?:سؤال|س)\s*[,:،:\t]\s*(?:جواب|ج)\s*[,:،:\t]\s*', re.IGNORECASE),
+        re.compile(r'Q\s*[,:]\s*A\s*[,:]\s*', re.IGNORECASE),
+        re.compile(r'\?\s*[,،\t]\s*', re.IGNORECASE),
+    ]
+
+    for text in texts:
+        lines = text.split('\n')
+        qa_pairs = []
+
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if not line:
+                continue
+
+            # النمط 1: سطر واحد فيه فاصل (tab, comma, colon)
+            for pat in QA_PATTERNS:
+                parts = pat.split(line, maxsplit=1)
+                if len(parts) == 2:
+                    q, a = parts[0].strip(), parts[1].strip()
+                    if len(q) >= 2 and len(a) >= 2:
+                        qa_pairs.append(f"{q}\n{a}")
+                        break
+
+            # النمط 2: سؤال\\tجواب (tab separated)
+            if '\t' in line and len(line.split('\t')) == 2:
+                parts = line.split('\t')
+                q, a = parts[0].strip(), parts[1].strip()
+                if 2 <= len(q) <= 50 and len(a) >= 2:
+                    qa_pairs.append(f"{q}\n{a}")
+
+            # النمط 3: سؤال: جواب (colon separated)
+            if ':' in line or ':' in line:
+                for sep in [':', '،', ':']:
+                    if sep in line:
+                        parts = line.split(sep, 1)
+                        if len(parts) == 2:
+                            q, a = parts[0].strip(), parts[1].strip()
+                            if 2 <= len(q) <= 50 and len(a) >= 2:
+                                qa_pairs.append(f"{q}\n{a}")
+                                break
+
+            # النمط 4: سطرين متتاليين — قصير (سؤال) + طويل (جواب)
+            if i + 1 < len(lines):
+                next_line = lines[i + 1].strip()
+                if (len(line) >= 5 and len(line) <= 60 and
+                    len(next_line) >= 5 and
+                    '?' in line or '؟' in line or
+                    len(next_line) > len(line) * 1.5):
+                    qa_pairs.append(f"{line}\n{next_line}")
+
+        if qa_pairs:
+            dialogue_texts.extend(qa_pairs)
+
+    # إزالة التكرارات
+    seen = set()
+    unique = []
+    for pair in dialogue_texts:
+        if pair not in seen:
+            seen.add(pair)
+            unique.append(pair)
+
+    if unique:
+        log.info(f'  ✓ استُخرج {len(unique)} زوجاً حوارياً من جميع النصوص')
+    return unique
+
+
+def train_synchronize(texts, window=5, mode='sem', vocab=None, label='K'):
+    """تدريب مصفوفة الاقتران."""
+    from src.physics.synchronize import synchronize
+    log.info(f'  تدريب {label} (window={window}, mode={mode})...')
+    t0 = time.time()
+    result = synchronize(texts, window=window, mode=mode, vocab=vocab,
+                         particle_weight=0.15)
+    dt = time.time() - t0
+    if vocab is None:
+        vocab_out, K, syntax = result
+        log.info(f'    vocab: {len(vocab_out)} كلمة, K: {K.shape}, الزمن: {dt:.1f}ث')
+        return vocab_out, K, syntax
+    else:
+        _, K, _ = result
+        log.info(f'    K: {K.shape}, الزمن: {dt:.1f}ث')
+        return K
+
+
+def train_spectral_memory(vocab, corpus_texts, data_dir=DATA):
+    """تدريب الذاكرة الطيفية الشاملة."""
+    from src.physics.spectral_memory import GlobalSpectralMemory, build_contexts_map
+    log.info('  تدريب الذاكرة الطيفية (GlobalSpectralMemory)...')
+    t0 = time.time()
+    gss = GlobalSpectralMemory(data_dir=data_dir)
+    c_map = build_contexts_map(corpus_texts, vocab, half_window=7)
+    gss.build_global_signatures(vocab, c_map)
+    gss.save(os.path.join(data_dir, 'gss'))
+    dt = time.time() - t0
+    log.info(f'    تم: {dt:.1f}ث')
+    return gss
+
+
+def train_causal_engine(vocab, corpus_texts, data_dir=DATA):
+    """تدريب محرك السببية."""
+    from src.physics.causal_engine import CausalPhaseEngine
+    log.info('  تدريب المحرك السببي (CausalPhaseEngine)...')
+    t0 = time.time()
+    causal = CausalPhaseEngine()
+    causal.build_from_corpus(corpus_texts, vocab, window=5)
+    causal.save(os.path.join(data_dir, 'causal_K.npz'))
+    dt = time.time() - t0
+    log.info(f'    تم: {dt:.1f}ث')
+    return causal
+
+
+def train_spectral_coupling(vocab, K, corpus_texts):
+    """تدريب مصفوفة الاقتران الطيفي (SpectralCouplingMatrix)."""
+    from src.physics.spectral_wave_engine import SpectralCouplingMatrix
+    log.info('  تدريب الاقتران الطيفي (SpectralCouplingMatrix)...')
+    t0 = time.time()
+    scm = SpectralCouplingMatrix()
+    scm.fit(vocab, K, corpus_texts)
+    dt = time.time() - t0
+    log.info(f'    تم: {dt:.1f}ث')
+    return scm
+
+
+def save_bundle(vocab, K, syntax, gss, causal_K, out_dir, K_syn=None, K_dial=None, spectra=None, dial_spectra=None):
+    """حفظ النموذج كملفات Python قابلة للتوسع."""
+    from src.physics.model_io import save_model
+    save_model(out_dir, vocab, K, syntax, K_syn=K_syn, K_dial=K_dial)
+    import os
+    from scipy import sparse
+    if causal_K is not None:
+        sparse.save_npz(os.path.join(out_dir, 'causal_K.npz'), causal_K)
+    if gss is not None:
+        gss.save(os.path.join(out_dir, 'gss'))
+    if spectra is not None:
+        np.save(os.path.join(out_dir, 'contextual_spectra.npy'), spectra)
+    if dial_spectra is not None:
+        np.save(os.path.join(out_dir, 'dialogue_spectra.npy'), dial_spectra)
+    log.info(f'  ✓ النموذج محفوظ كـ Python في: {out_dir}')
+
+
+def run_generation_test(vocab, K, syntax, K_dialogue=None, config=None):
+    """اختبار توليدي سريع للتحقق من صحة التدريب."""
+    from src.physics.generator import Generator
+    from src.physics.orchestrator import PhysicsOrchestrator
+
+    gen = Generator(vocab, K, syntax_field=syntax, K_dialogue=K_dialogue, config=config)
+    orch = PhysicsOrchestrator(gen)
+    orch.set_dialogue(True)
+
+    log.info('\n  ─── اختبار التوليد ───')
+    tests = [
+        ('standard', 'السلام عليكم'),
+        ('dialogue', 'السلام عليكم'),
+        ('dialogue', 'كيف الحال'),
+        ('dialogue', 'شكراً'),
+        ('dialogue', 'مع السلامة'),
+        ('dialogue', 'ما اسمك'),
+        ('dialogue', 'hello'),
+    ]
+    for mode, prompt in tests:
+        try:
+            r = orch.generate(prompt, max_words=6, mode=mode)
+            log.info(f'  [{mode:10s}] [{prompt}] → [{r}]')
+        except Exception as e:
+            log.warning(f'  [{mode:10s}] [{prompt}] → خطأ: {e}')
+
+
+def main():
+    parser = argparse.ArgumentParser(description='تدريب كامل لكل بنى مرنان')
+    parser.add_argument('--out', default=DEFAULT_OUT, help='مجلد حفظ النموذج')
+    parser.add_argument('--rebuild-dialogue', action='store_true',
+                        help='إعادة بناء كوربوس الحوار أولاً')
+    parser.add_argument('--clean', action='store_true',
+                        help='تنظيف جميع الكوربسات')
+    parser.add_argument('--skip-test', action='store_true',
+                        help='تخطي اختبار التوليد')
+    parser.add_argument('--skip-calibration', action='store_true',
+                        help='تخطي معايرة الأوزان')
+    parser.add_argument('--particle-weight', type=float, default=None,
+                        help='وزن الحروف النحوية في K (0.0-1.0)')
+    parser.add_argument('--config', default=None,
+                        help='مسار ملف config.yaml')
+    args = parser.parse_args()
+
+    # ─── تحميل الإعدادات الفيزيائية ───
+    config_path = args.config or os.path.join(PROJECT, 'config.yaml')
+    if os.path.exists(config_path):
+        with open(config_path, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f) or {}
+        log.info(f'  ✓ تحميل الإعدادات من: {config_path}')
+        log.info(f'    alpha = {config.get("alpha", 0.3)}')
+    else:
+        config = {}
+        log.info('  ⚠ لم يُعثر على config.yaml — استخدام القيم الافتراضية')
+
+    train_cfg = config.get('training', {})
+    particle_w = args.particle_weight if args.particle_weight is not None else train_cfg.get('particle_weight', 0.15)
+
+    os.makedirs(DATA, exist_ok=True)
+    os.makedirs(args.out, exist_ok=True)
+
+    log.info('═' * 50)
+    log.info('  تدريب مرنان — النسخة الكاملة')
+    log.info('═' * 50)
+
+    # ─── المرحلة 0: إعادة بناء كوربوس الحوار ───
+    if args.rebuild_dialogue:
+        log.info('\n─── المرحلة 0: بناء كوربوس الحوار ───')
+        from build_dialogue_corpus import build_corpus
+        lines = build_corpus()
+        out_path = os.path.join(DATA, 'dialogue_corpus.txt')
+        with open(out_path, 'w', encoding='utf-8') as f:
+            for line in lines:
+                f.write(line + '\n')
+        log.info(f'  ✓ تم إنشاء {len(lines)} سطر في {out_path}')
+
+    # ─── المرحلة 0.5: تنظيف الكوربسات ───
+    if args.clean:
+        log.info('\n─── المرحلة 0.5: تنظيف الكوربسات ───')
+        from clean_corpus import clean_corpus
+        for fname in CORPUS_FILES['all']:
+            path = os.path.join(DATA, fname)
+            if os.path.exists(path):
+                with open(path, encoding='utf-8', errors='replace') as f:
+                    raw = f.read()
+                cleaned, stats = clean_corpus(raw, keep_english=True)
+                if cleaned != raw:
+                    with open(path, 'w', encoding='utf-8') as f:
+                        f.write(cleaned)
+                    log.info(f'  ✓ {fname}: {stats["removed_pct"]}% إزالة')
+
+    # إعادة اكتشاف الكوربسات (في حال أُضيف dialogue_corpus.txt بعد بدء التشغيل)
+    refresh_corpus_files()
+
+    # ─── المرحلة 1: تحميل الكوربسات ───
+    log.info('\n─── المرحلة 1: تحميل الكوربسات ───')
+    all_paths = find_corpus_files(CORPUS_FILES['all'])
+
+    if not all_paths:
+        log.error('✗ لا توجد ملفات كوربس!')
+        sys.exit(1)
+
+    all_texts = load_corpus_texts(all_paths)
+
+    # ─── استخراج الحوارات من جميع النصوص (وليس من ملف dialogue منفصل) ───
+    log.info('\n  ─── استخراج الحوارات تلقائياً ───')
+    dialogue_texts = _extract_dialogue_lines(all_texts)
+
+    # ─── المرحلة 2: بناء المعجم من جميع النصوص ───
+    log.info('\n─── المرحلة 2: بناء المعجم الموحد ───')
+    from src.physics.synchronize import Vocabulary, _tokenize
+    full_vocab = Vocabulary()
+    for text in all_texts:
+        for line in text.split('\n'):
+            for word in _tokenize(line):
+                full_vocab.add(word)
+    log.info(f'  المعجم الموحد: {len(full_vocab):,} كلمة')
+
+    # ─── المرحلة 3: تدريب مصفوفات K ───
+    log.info('\n─── المرحلة 3: تدريب مصفوفات K من جميع النصوص ───')
+
+    K_sem = train_synchronize(
+        all_texts, window=5, mode='sem', vocab=full_vocab, label='K_sem (رئيسي)')
+
+    K_syn = train_synchronize(
+        all_texts, window=2, mode='syn', vocab=full_vocab, label='K_syn (تركيبي)')
+
+    # SyntaxField — يستخدم أزواج نصية (string pairs) وليس معرفات
+    from src.physics.synchronize import synchronize as _sync
+    log.info('  استخراج SyntaxField...')
+    _, _, syntax = _sync(all_texts, window=5, mode='sem', particle_weight=particle_w,
+                          vocab=Vocabulary())
+
+    K_dialogue = None
+    if dialogue_texts:
+        K_dialogue = train_synchronize(
+            dialogue_texts, window=2, mode='syn', vocab=full_vocab, label='K_dial (حواري — مستخرج تلقائياً)')
+
+    log.info(f'\n  ملخص K:')
+    log.info(f'    K_sem (رئيسي):      {K_sem.shape}')
+    log.info(f'    K_syn (تركيبي):     {K_syn.shape}')
+    if K_dialogue is not None:
+        log.info(f'    K_dial (حواري):     {K_dialogue.shape}')
+
+    # الأطياف السياقية — متوسط المتجهات الطورية للكلمات المرتبطة
+    log.info('  حساب الأطياف السياقية (Spectral Context)...')
+    t0 = time.time()
+    from src.physics.word_physics import compute_word_phase_vector
+    import numpy as np
+    vocab_size = len(full_vocab)
+    all_pv = np.zeros((vocab_size, 22))
+    for i in range(vocab_size):
+        w = full_vocab.id2word.get(i, '')
+        if w:
+            all_pv[i] = compute_word_phase_vector(w)
+    from src.physics.spectral_context import build_contextual_spectra
+    spectra = build_contextual_spectra(K_sem, all_pv)
+    log.info(f'    ✓ K_sem spectra: {spectra.shape} ({time.time()-t0:.1f}ث)')
+    # أطياف الحوار من K_dialogue إن وجد
+    dial_spectra = None
+    if K_dialogue is not None:
+        td = time.time()
+        dial_spectra = build_contextual_spectra(K_dialogue, all_pv)
+        log.info(f'    ✓ K_dial spectra: {dial_spectra.shape} ({time.time()-td:.1f}ث)')
+
+    # ─── المرحلة 3.5: بناء K علاقية ═══
+    log.info('  بناء مصفوفة K علاقية...')
+    from src.physics.relational_k import RelationalK
+    relational_k = RelationalK(config=config)
+    K_relational = relational_k.build_from_syntax(K_sem, K_syn, K_dialogue)
+    if K_relational is not None:
+        log.info(f'    ✓ K علاقية: {K_relational.shape}')
+
+    # ─── المرحلة 3.6: تطور المتجهات الطورية ═══
+    log.info('  تطور المتجهات الطورية (مزامنة هيبيانية)...')
+    from src.physics.phase_evolution import PhaseEvolution
+    phase_evo = PhaseEvolution(config=config)
+    all_pv_data = np.zeros((len(full_vocab), TOTAL_DIM))
+    for wid, word in full_vocab.id2word.items():
+        if wid < len(all_pv_data) and not is_particle(word):
+            all_pv_data[wid] = compute_extended_phase_vector(word, vocab=full_vocab, K=K_sem)
+    new_pv, evo_stats = phase_evo.evolve_from_corpus(all_pv_data, all_texts, full_vocab, window=5)
+    log.info(f'    ✓ تطور طوري: {evo_stats["words_shifted"]} كلمة، متوسط إزاحة={evo_stats["avg_shift"]:.6f}')
+
+    # ─── المرحلة 4: حفظ النموذج الأساسي ───
+    log.info('\n─── المرحلة 4: حفظ النموذج الأساسي ───')
+    save_bundle(full_vocab, K_sem, syntax, None, None, args.out, K_syn=K_syn, K_dial=K_dialogue, spectra=spectra, dial_spectra=dial_spectra)
+
+    # حفظ مصفوفة K علاقية
+    if K_relational is not None:
+        sparse.save_npz(os.path.join(args.out, 'K_relational.npz'), K_relational)
+
+    # حفظ المتجهات الطورية المُطوّرة
+    np.save(os.path.join(args.out, 'evolved_pv.npy'), new_pv)
+
+    # ─── المرحلة 5: البنى المتقدمة (اختيارية — قد تطول) ───
+    log.info('\n─── المرحلة 5: البنى المتقدمة (اختيارية) ───')
+
+    # SyntaxTransitionField
+    from src.physics.syntax_phase import SyntaxTransitionField
+    log.info('  تدريب SyntaxTransitionField...')
+    t0 = time.time()
+    try:
+        syntax_field = SyntaxTransitionField()
+        syntax_field.extract(all_texts)
+        log.info(f'    تم: {time.time()-t0:.1f}ث')
+    except Exception as e:
+        log.warning(f'    ⚠ تخطي: {e}')
+
+    # GlobalSpectralMemory
+    log.info('  تدريب الذاكرة الطيفية...')
+    t0 = time.time()
+    try:
+        gss = train_spectral_memory(full_vocab, all_texts)
+        log.info(f'    تم: {time.time()-t0:.1f}ث')
+    except Exception as e:
+        log.warning(f'    ⚠ تخطي: {e}')
+
+    # CausalPhaseEngine
+    log.info('  تدريب المحرك السببي...')
+    t0 = time.time()
+    try:
+        causal = train_causal_engine(full_vocab, all_texts)
+        log.info(f'    تم: {time.time()-t0:.1f}ث')
+    except Exception as e:
+        log.warning(f'    ⚠ تخطي: {e}')
+
+    # SpectralCouplingMatrix — اختياري
+    log.info('  تدريب الاقتران الطيفي...')
+    t0 = time.time()
+    try:
+        scm = train_spectral_coupling(full_vocab, K_sem, all_texts)
+        log.info(f'    تم: {time.time()-t0:.1f}ث')
+    except Exception as e:
+        log.warning(f'    ⚠ تخطي: {e}')
+
+    # ─── المرحلة 6: اختبار التوليد ───
+    if not args.skip_test:
+        log.info('\n─── المرحلة 6: اختبار التوليد ───')
+        run_generation_test(full_vocab, K_sem, syntax, K_dialogue, config=config)
+
+    # ─── ملخص ───
+    log.info('\n' + '═' * 50)
+    log.info('  التدريب اكتمل!')
+    log.info(f'  • حجم المعجم: {len(full_vocab):,} كلمة')
+    log.info(f'  • K_sem: {K_sem.shape}')
+    log.info(f'  • K_syn: {K_syn.shape}')
+    if K_dialogue is not None:
+        log.info(f'  • K_dial: {K_dialogue.shape}')
+    log.info(f'  • النموذج في: {args.out}')
+    log.info('═' * 50)
+
+    # ─── المرحلة 7: معايرة الأوزان (اختيارية) ═══
+    if not args.skip_calibration and all_texts:
+        log.info('\n─── المرحلة 7: معايرة الأوزان الرنينية ───')
+        from src.physics.resonance_calibration import ResonanceCalibrator
+        from src.physics.generator import Generator
+        cal_data = model.load_model()
+        cal_gen = Generator(
+            cal_data['vocab'], cal_data['K_sem'],
+            syntax_field=cal_data['syntax'],
+            K_syn=cal_data['K_syn'], K_dialogue=cal_data.get('K_dial'),
+            config=config, corpus_texts=all_texts[:3],
+        )
+        calibrator = ResonanceCalibrator(config=config)
+        new_weights = calibrator.calibrate(cal_gen, all_texts[:20])
+        log.info(f'  ✓ تمت معايرة {len(new_weights)} وزن')
+
+
+if __name__ == '__main__':
+    main()

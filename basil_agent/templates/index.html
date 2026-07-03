@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Majnoon v27 | مركز القيادة السيادي</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cmd-bg: rgba(0, 0, 0, 0.3);
+            --cmd-border: #1f2937;
+            --cmd-hover: rgba(109, 40, 217, 0.2);
+        }
+        .cmd-center {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 8px;
+            background: var(--cmd-bg);
+            border: 1px solid var(--cmd-border);
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        .cmd-panel {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #111;
+            border-radius: 6px;
+            padding: 6px;
+            min-height: 80px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .cmd-panel h4 {
+            font-size: 10px;
+            color: #6b7280;
+            margin: 0 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .cmd-panel .file-item {
+            font-size: 10px;
+            padding: 2px 4px;
+            color: #9ca3af;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.15s;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .cmd-panel .file-item:hover {
+            background: var(--cmd-hover);
+            color: #e5e7eb;
+        }
+        .cmd-panel .file-item .icon { color: #60a5fa; }
+        .cmd-panel .file-item .icon.py { color: #34d399; }
+        .cmd-panel .file-item .icon.md { color: #fbbf24; }
+        .cmd-panel .file-item .icon.json { color: #a78bfa; }
+        .cmd-panel .file-item .icon.html { color: #f87171; }
+        .cmd-panel .file-item .icon.css { color: #60a5fa; }
+        .cmd-panel .file-item .icon.dir { color: #9ca3af; }
+
+        .debug-entry {
+            font-size: 10px;
+            padding: 3px 4px;
+            border-bottom: 1px solid #111;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .debug-entry .type { color: #fbbf24; font-weight: 600; }
+        .debug-entry .msg { color: #d1d5db; }
+        .debug-entry .ts { color: #6b7280; font-size: 9px; }
+
+        .hil-controls {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        .hil-btn {
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--cmd-border);
+            background: rgba(0,0,0,0.3);
+            color: #e5e7eb;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Tajawal', sans-serif;
+        }
+        .hil-btn:hover { background: var(--cmd-hover); }
+        .hil-btn.approve { border-color: #10b981; color: #34d399; }
+        .hil-btn.approve:hover { background: rgba(16, 185, 129, 0.2); }
+        .hil-btn.reject { border-color: #ef4444; color: #f87171; }
+        .hil-btn.reject:hover { background: rgba(239, 68, 68, 0.2); }
+        .hil-btn.modify { border-color: #fbbf24; color: #fbbf24; }
+        .hil-btn.modify:hover { background: rgba(251, 191, 36, 0.2); }
+
+        .cmd-panel::-webkit-scrollbar { width: 4px; }
+        .cmd-panel::-webkit-scrollbar-track { background: transparent; }
+        .cmd-panel::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+
+        .cmd-badge {
+            font-size: 9px;
+            padding: 1px 6px;
+            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            margin-right: 4px;
+        }
+        .cmd-badge.warn { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .cmd-badge.err { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="glass-background"></div>
+    <div id="toast-container" aria-live="polite"></div>
+
+    <div class="app-container">
+        <!-- ===== الشريط الجانبي: عقل الوكيل + Live Monitor ===== -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-microchip"></i> عقل الوكيل</h2>
+                <div class="pulse-indicator" id="agent-pulse"></div>
+            </div>
+
+            <div class="live-monitor">
+                <div class="lm-header">
+                    <div class="lm-pulse idle" id="lm-pulse"></div>
+                    <span>شاشة الوكيل الحية</span>
+                    <span id="lm-turn" style="margin-right:auto;color:#6b7280;font-size:10px">دورة 0 / 50</span>
+                    <span id="lm-auto-badge" style="display:none;color:#c084fc;font-size:10px">◈ Auto-Continue</span>
+                </div>
+                <div class="agent-screen" id="agent-screen">
+                    <div class="line system">⬛ في انتظار المهمة...</div>
+                </div>
+                <div class="status-bar">
+                    <div class="sb-item"><i class="fa-solid fa-bolt"></i> أدوات: <span class="sb-val" id="sb-tools">0</span></div>
+                    <div class="sb-item"><i class="fa-solid fa-rotate"></i> إعادة تخطيط: <span class="sb-val" id="sb-replan">0</span></div>
+                    <div class="sb-item"><i class="fa-solid fa-database"></i> RAG: <span class="sb-val" id="sb-rag">--</span></div>
+                    <div class="sb-item"><i class="fa-solid fa-microchip"></i> CPU: <span class="sb-val" id="sb-cpu">--%</span></div>
+                    <div class="sb-item"><i class="fa-solid fa-memory"></i> RAM: <span class="sb-val" id="sb-ram">--</span></div>
+                </div>
+                <div class="quick-actions">
+                    <button class="qa-btn blue" onclick="quickCmd('اعرض حالة المهمة الحالية')">📊 حالة المهمة</button>
+                    <button class="qa-btn green" onclick="quickCmd('list_dir(\".\")')">📁 الملفات</button>
+                    <button class="qa-btn purple" onclick="quickCmd('ما سياق الجلسة السابقة؟')">🔄 استئناف</button>
+                    <button class="qa-btn red" id="qa-stop-btn" onclick="stopAgent()">⏹ إيقاف</button>
+                </div>
+                <div class="ws-search">
+                    <input type="text" id="ws-search-input" placeholder="بحث ويب فوري... (اضغط Enter)">
+                    <button onclick="webSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="pm-panel" id="pm-panel" style="display:none">
+                    <div class="pm-title"><i class="fa-solid fa-gears"></i> العمليات الخلفية</div>
+                    <div id="pm-list"></div>
+                </div>
+            </div>
+
+            <!--  مركز القيادة (Command Center) v29.0 -->
+            <div class="cmd-center" id="cmd-center">
+                <div class="cmd-panel" id="cmd-files">
+                    <h4><i class="fa-solid fa-folder-tree"></i> مستكشف الملفات <span class="cmd-badge" id="cmd-file-count">0</span></h4>
+                    <div id="cmd-file-list">
+                        <div class="file-item" style="color:#6b7280">جاري تحميل الملفات...</div>
+                    </div>
+                </div>
+                <div class="cmd-panel" id="cmd-debug">
+                    <h4><i class="fa-solid fa-bug"></i> وحدة التصحيح <span class="cmd-badge" id="cmd-debug-count">0</span></h4>
+                    <div id="cmd-debug-list">
+                        <div class="debug-entry"><span class="ts">--</span> في انتظار التشخيص...</div>
+                    </div>
+                </div>
+                <div class="cmd-panel" id="cmd-terminal" style="grid-column: span 2; max-height: 120px;">
+                    <h4><i class="fa-solid fa-terminal"></i> مخرجات المحطة <span class="cmd-badge" id="cmd-term-count">0</span></h4>
+                    <div id="cmd-term-list" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#34d399;">
+                        <div>⬛ في انتظار التنفيذ...</div>
+                    </div>
+                </div>
+                <div class="hil-controls" id="hil-controls" style="grid-column: span 2; display: none;">
+                    <span style="font-size:10px;color:#fbbf24;"><i class="fa-solid fa-user-check"></i> موافقة المستخدم مطلوبة:</span>
+                    <button class="hil-btn approve" onclick="hilAction('approve')">✔ موافقة</button>
+                    <button class="hil-btn reject" onclick="hilAction('reject')">✘ رفض</button>
+                    <button class="hil-btn modify" onclick="hilAction('modify')">✏ تعديل الطلب</button>
+                </div>
+            </div>
+
+            <!-- World State Panel -->
+            <div class="world-state-panel" id="world-state-panel">
+                <div class="ws-header">
+                    <i class="fa-solid fa-globe"></i> حالة العالم
+                    <span id="ws-step-badge" class="ws-badge">خطوة 0</span>
+                </div>
+                <div class="ws-grid">
+                    <div class="ws-card" id="ws-progress">
+                        <div class="ws-label">التقدم</div>
+                        <div class="ws-value" id="ws-progress-val">--%</div>
+                        <div class="ws-bar-track"><div class="ws-bar-fill" id="ws-bar" style="width:0%"></div></div>
+                    </div>
+                    <div class="ws-card" id="ws-tools-card">
+                        <div class="ws-label">استدعاءات الأدوات</div>
+                        <div class="ws-value" id="ws-tools-val">0</div>
+                    </div>
+                    <div class="ws-card" id="ws-backtrack-card">
+                        <div class="ws-label">تراجع استراتيجي</div>
+                        <div class="ws-value" id="ws-backtrack-val">0 / 5</div>
+                    </div>
+                    <div class="ws-card" id="ws-issues-card">
+                        <div class="ws-label">مشكلات مرصودة</div>
+                        <div class="ws-value" id="ws-issues-val">0</div>
+                    </div>
+                    <div class="ws-card" id="ws-snapshots-card">
+                        <div class="ws-label">لقطات متاحة</div>
+                        <div class="ws-value" id="ws-snapshots-val">0</div>
+                    </div>
+                    <div class="ws-card ws-card-wide" id="ws-files-card">
+                        <div class="ws-label">ملفات مُعدَّلة</div>
+                        <div class="ws-value ws-files-list" id="ws-files-val">لا شيء بعد</div>
+                    </div>
+                </div>
+                <div class="ws-monologue" id="ws-monologue">
+                    <div class="ws-label"><i class="fa-solid fa-brain"></i> آخر فكرة داخلية</div>
+                    <div class="ws-monologue-text" id="ws-monologue-text">في انتظار بدء المهمة...</div>
+                </div>
+            </div>
+
+            <!-- Task Board -->
+            <div class="task-board-panel" id="task-board-panel">
+                <div class="ws-header">
+                    <i class="fa-solid fa-list-check"></i> لوحة المهام الحية
+                    <span id="tb-progress-badge" class="ws-badge">0%</span>
+                </div>
+                <div class="tb-progress-bar">
+                    <div class="tb-progress-fill" id="tb-progress-fill" style="width:0%"></div>
+                </div>
+                <div class="tb-meta" id="tb-meta">
+                    <span id="tb-goal">لا توجد مهمة نشطة</span>
+                </div>
+                <div id="tb-phases" class="tb-phases"></div>
+                <div class="tb-resources" id="tb-resources">
+                    <div class="tb-res-item"><i class="fa-solid fa-microchip"></i> CPU: <span id="tb-cpu">--%</span></div>
+                    <div class="tb-res-item"><i class="fa-solid fa-memory"></i> RAM: <span id="tb-ram">--GB</span></div>
+                    <div class="tb-res-item"><i class="fa-solid fa-bolt"></i> أدوات: <span id="tb-tools">0</span></div>
+                    <div class="tb-res-item"><i class="fa-solid fa-database"></i> RAG: <span id="tb-rag">--</span></div>
+                </div>
+                <div class="tb-timeline-header"><i class="fa-solid fa-timeline"></i> آخر الأفعال</div>
+                <div class="tb-timeline" id="tb-timeline"></div>
+            </div>
+        </aside>
+
+        <!-- ===== قسم المحادثة الرئيسي ===== -->
+        <main class="chat-area glass-panel">
+            <header class="chat-header">
+                <div>
+                    <h1>وكيل المطور السيادي <span>(Majnoon v27)</span></h1>
+                    <p class="status" id="agent-status-text">
+                        <i class="fa-solid fa-eye"></i> جاهز — Sovereign Prime (Command Center)
+                    </p>
+                </div>
+                <div class="header-actions">
+                    <div id="git-status-badge" class="git-badge untracked">
+                        <i class="fa-solid fa-code-branch"></i>
+                        <span>Git: جاري الفحص...</span>
+                    </div>
+                    <button id="reset-session-btn" class="reset-btn" title="تصفير الجلسة">
+                        <i class="fa-solid fa-redo"></i> New Chat
+                    </button>
+                    <button id="toggle-preview-btn" class="preview-btn" title="معاينة النظام">
+                        <i class="fa-solid fa-globe"></i> Preview
+                    </button>
+                </div>
+            </header>
+
+            <div class="chat-tabs glass-panel">
+                <button class="tab-btn active" data-tab="chat">
+                    <i class="fa-solid fa-comments"></i> المحادثة والعمليات
+                </button>
+            </div>
+
+            <div id="tab-chat" class="tab-content active">
+                <div id="chat-messages" class="messages-container">
+                    <div class="message assistant-message">
+                        <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+                        <div class="content">مرحباً! أنا "مجنون" v27 — وكيلك السيادي الذي يرى العالم بعيون العبقرية. بمقدوري البحث في الويب، إدارة العمليات الخلفية، التحقق البصري من النتائج، والاستئناف من حيث توقفت. ماذا نبني بجنون اليوم؟</div>
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <textarea id="user-input" placeholder="اكتب رسالتك... (Enter للإرسال، Shift+Enter لسطر جديد)" rows="1" autocomplete="off"></textarea>
+                    <button id="stop-btn" class="stop" title="إيقاف إجباري">
+                        <i class="fa-solid fa-stop"></i>
+                    </button>
+                    <button id="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+
+        </main>
+
+        <!-- ===== معاينة حية ===== -->
+        <aside class="preview-area glass-panel" id="preview-panel" style="display: none;">
+            <div class="sidebar-header preview-header">
+                <h2><i class="fa-solid fa-browser"></i> متصفح مدمج</h2>
+                <div>
+                    <input type="text" id="preview-url" value="http://localhost:8000" />
+                    <button id="refresh-preview-btn"><i class="fa-solid fa-rotate-right"></i></button>
+                    <button id="close-preview-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <iframe id="preview-frame" src="about:blank"></iframe>
+        </aside>
+    </div>
+
+    <script src="/static/main.js?v=29.5"></script>
+</body>
+</html>

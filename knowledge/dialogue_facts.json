@@ -1,0 +1,166 @@
+{
+  "version": 2,
+  "note": "This is the only intentionally fixed/template-like list in Mirnan. It is limited to conventional social replies such as greetings, thanks, farewell, and short well-being formulas. The reason is honest and practical: these utterances are shared customs that humans usually answer by convention, not by reasoning. Do not add definitions, causal answers, opinions, explanations, code, math, or semantic reasoning here.",
+  "speech_acts": [
+    {
+      "speaker": "user",
+      "act_type": "تحية",
+      "content": "السلام عليكم",
+      "responder": "mirnan",
+      "response_act": "رد_تحية",
+      "response_content": "وعليكم السلام ورحمة الله.",
+      "confidence": 0.99,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "تحية",
+      "content": "سلام",
+      "responder": "mirnan",
+      "response_act": "رد_تحية",
+      "response_content": "وعليكم السلام ورحمة الله.",
+      "confidence": 0.98,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "تحية",
+      "content": "صباح الخير",
+      "responder": "mirnan",
+      "response_act": "رد_تحية",
+      "response_content": "صباح النور.",
+      "confidence": 0.97,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "تحية",
+      "content": "مساء الخير",
+      "responder": "mirnan",
+      "response_act": "رد_تحية",
+      "response_content": "مساء النور.",
+      "confidence": 0.97,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "سؤال_حال",
+      "content": "كيف حالك",
+      "responder": "mirnan",
+      "response_act": "جواب_حال",
+      "response_content": "أنا بخير، والحمد لله.",
+      "confidence": 0.96,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "سؤال_حال",
+      "content": "كيف الصحة",
+      "responder": "mirnan",
+      "response_act": "جواب_حال",
+      "response_content": "الحمد لله، بخير.",
+      "confidence": 0.96,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "سؤال_حال",
+      "content": "كيف أصبحت",
+      "responder": "mirnan",
+      "response_act": "جواب_حال",
+      "response_content": "أصبحت بخير، والحمد لله.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "سؤال_حال",
+      "content": "كيف أمسيت",
+      "responder": "mirnan",
+      "response_act": "جواب_حال",
+      "response_content": "أمسيت بخير، والحمد لله.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "وداع",
+      "content": "إلى اللقاء",
+      "responder": "mirnan",
+      "response_act": "رد_وداع",
+      "response_content": "إلى اللقاء، أتمنى لك يوماً طيباً.",
+      "confidence": 0.96,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "وداع",
+      "content": "وداعا",
+      "responder": "mirnan",
+      "response_act": "رد_وداع",
+      "response_content": "في أمان الله.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "شكر",
+      "content": "شكرا",
+      "responder": "mirnan",
+      "response_act": "رد_شكر",
+      "response_content": "عفواً.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "شكر",
+      "content": "شكراً",
+      "responder": "mirnan",
+      "response_act": "رد_شكر",
+      "response_content": "عفواً.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "دعاء",
+      "content": "جزاك الله خيرا",
+      "responder": "mirnan",
+      "response_act": "رد_دعاء",
+      "response_content": "وإياك.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "دعاء",
+      "content": "بارك الله فيك",
+      "responder": "mirnan",
+      "response_act": "رد_دعاء",
+      "response_content": "وفيك بارك الله.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "تعريف_اجتماعي",
+      "content": "ما اسمك",
+      "responder": "mirnan",
+      "response_act": "رد_تعريف_اجتماعي",
+      "response_content": "اسمي مرنان.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    },
+    {
+      "speaker": "user",
+      "act_type": "تعريف_اجتماعي",
+      "content": "من أنت",
+      "responder": "mirnan",
+      "response_act": "رد_تعريف_اجتماعي",
+      "response_content": "أنا مرنان.",
+      "confidence": 0.95,
+      "evidence": "persistent_dialogue_convention"
+    }
+  ]
+}

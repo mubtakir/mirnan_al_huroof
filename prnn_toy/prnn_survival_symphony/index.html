@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survival Symphony — سيمفونية النجاة (PRNN)</title>
+    <link rel="stylesheet" href="style_web.css">
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <span class="logo-icon">🧠</span>
+            <div>
+                <h1>Survival Symphony — سيمفونية النجاة</h1>
+                <div class="subtitle">شبكة PRNN رنينية طورية — قتال بالرنين الترددي</div>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button id="playPauseBtn" class="primary">▶️ Start Game</button>
+            <button id="resetBtn" class="danger-btn">🔄 Reset</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="info-banner">
+            <span>🎯</span>
+            <div><strong>كيف تلعب؟</strong> طابق ترددك (A/D) مع تردد العدو القريب وفعّل الدرع (Space) للإفناء الرنيني. كلما تطابق الطوران (بناء) زاد الضرر. الـ PRNN تتعلم القيادة التلقائية!</div>
+        </div>
+
+        <div class="workspace">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">📡 رادار المعركة (Radar)</div>
+                    <div class="flex-row">
+                        <span id="scoreVal" style="color:#fbbf24;font-weight:bold;">Score: 0</span>
+                        <span id="diffVal" style="color:#f87171;margin-right:12px;">Diff: 1</span>
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="gameCanvas" width="700" height="500"></canvas>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">🌀 شبكة PRNN (10 مذبذبات)</div>
+                    <span id="learnBadge" class="badge" style="background:rgba(16,185,129,0.2);color:#10b981;">CHL</span>
+                </div>
+                <div class="canvas-container" style="min-height:480px;">
+                    <canvas id="networkCanvas" width="500" height="480"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-label">❤️ الصحة</div>
+                <div id="healthVal" class="stat-value success">100%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🛡️ طاقة الدرع</div>
+                <div id="shieldVal" class="stat-value">100%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🎵 التردد</div>
+                <div id="freqVal" class="stat-value">0.30 Hz</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">⚔️ الرنين</div>
+                <div id="resonanceVal" class="stat-value">—</div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-group">
+                <div class="settings-title">🎮 التحكم</div>
+                <div class="control-row">
+                    <button id="autopilotBtn" style="width:100%;">🧠 Autopilot ON</button>
+                </div>
+                <div class="drive-keys">
+                    <span>A</span><span style="color:var(--text-secondary);font-size:0.75rem;">خفض التردد</span>
+                    <span>D</span><span style="color:var(--text-secondary);font-size:0.75rem;">رفع التردد</span>
+                    <span>Space</span><span style="color:var(--text-secondary);font-size:0.75rem;">الدرع</span>
+                    <span>M</span><span style="color:var(--text-secondary);font-size:0.75rem;">تبديل التحكم</span>
+                    <span>T</span><span style="color:var(--text-secondary);font-size:0.75rem;">نمط التعلم</span>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-title">🎛️ المعاملات</div>
+                <div class="control-row">
+                    <label><span>معدل التعلم (η)</span><span id="lrVal" class="val">0.070</span></label>
+                    <input type="range" id="lrSlider" min="0.01" max="0.25" step="0.005" value="0.07">
+                </div>
+                <div class="control-row">
+                    <label><span>الضوضاء</span><span id="noiseVal" class="val">0.010</span></label>
+                    <input type="range" id="noiseSlider" min="0.000" max="0.050" step="0.002" value="0.010">
+                </div>
+                <div class="control-row">
+                    <button id="clearWeightsBtn" class="danger-btn" style="width:100%;">🧹 إعادة تعيين الأوزان</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="prnn_web.js"></script>
+    <script src="game_web.js"></script>
+    <script src="main_web.js"></script>
+</body>
+</html>

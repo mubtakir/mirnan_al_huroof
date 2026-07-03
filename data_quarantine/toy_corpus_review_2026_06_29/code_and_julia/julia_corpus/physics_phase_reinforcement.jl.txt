@@ -1,0 +1,149 @@
+"""
+تعزيز طوري ذاتي — Phase Reinforcement.
+
+تعلّم بدون backprop في فضاء طوري:
+- تعزيز المسارات الطورية الناجحة
+- إضعاف المسارات الضعيفة
+- يشبه Hebbian learning لكن في فضاء الطور
+"""
+module PhaseReinforcement
+
+using LinearAlgebra
+
+export PhaseReinforcer, apply, reinforce!, weaken!, decay_all!, reset!, get_strength
+
+"""
+    PhaseReinforcer
+
+ذاكرة تعلم طوري — تعزيز وإضعاف هيبياني للمتجهات.
+
+الحقول:
+- `lr`: معدل التعلم
+- `decay_rate`: اضمحلال التعزيز
+- `max_traces`: أقصى عدد آثار
+- `traces`: word -> reinforced_pv
+- `strengths`: word -> strength
+"""
+mutable struct PhaseReinforcer
+    lr::Float64
+    decay_rate::Float64
+    max_traces::Int
+    traces::Dict{String,Vector{Float64}}
+    strengths::Dict{String,Float64}
+    step_count::Int
+
+    function PhaseReinforcer(; lr::Float64=0.15, decay_rate::Float64=0.005, max_traces::Int=200)
+        return new(lr, decay_rate, max_traces,
+                   Dict{String,Vector{Float64}}(),
+                   Dict{String,Float64}(), 0)
+    end
+end
+
+"""
+    reinforce!(pr::PhaseReinforcer, word, pv; reward=1.0)
+
+تعزيز متجه طوري بعد توليد ناجح.
+"""
+function reinforce!(pr::PhaseReinforcer, word::String, pv::AbstractVector;
+                    reward::Float64=1.0)
+    if norm(pv) < 1e-10
+        return
+    end
+
+    if !haskey(pr.traces, word)
+        pr.traces[word] = Float64.(pv)
+        pr.strengths[word] = 0.0
+    end
+
+    old = pr.traces[word]
+    reinforced = old .+ pr.lr .* reward .* (Float64.(pv) .- old)
+    nrm = norm(reinforced)
+    if nrm > 1e-10
+        reinforced ./= nrm
+    end
+    pr.traces[word] = reinforced
+    pr.strengths[word] = min(1.0, pr.strengths[word] + reward * pr.lr)
+
+    pr.step_count += 1
+    _prune!(pr)
+end
+
+"""
+    weaken!(pr::PhaseReinforcer, word; penalty=0.3)
+
+إضعاف مسار طوري بعد توليد ضعيف.
+"""
+function weaken!(pr::PhaseReinforcer, word::String; penalty::Float64=0.3)
+    if !haskey(pr.strengths, word)
+        return
+    end
+    pr.strengths[word] = max(0.0, pr.strengths[word] - penalty * pr.lr)
+    if pr.strengths[word] < 0.01
+        delete!(pr.traces, word)
+        delete!(pr.strengths, word)
+    end
+end
+
+"""
+    apply(pr::PhaseReinforcer, word, pv) -> Vector{Float64}
+
+تطبيق التعزيز على متجه طوري — يمزج المتجه الأصلي مع المعزَّز.
+"""
+function apply(pr::PhaseReinforcer, word::String, pv::AbstractVector)
+    if !haskey(pr.traces, word)
+        return Float64.(pv)
+    end
+    strength = pr.strengths[word]
+    if strength < 0.01
+        return Float64.(pv)
+    end
+    alpha = strength * 0.5
+    return (1.0 - alpha) .* Float64.(pv) .+ alpha .* pr.traces[word]
+end
+
+"""
+    get_strength(pr::PhaseReinforcer, word) -> Float64
+
+قوة التعزيز لكلمة (0..1).
+"""
+get_strength(pr::PhaseReinforcer, word::String) = get(pr.strengths, word, 0.0)
+
+"""
+    decay_all!(pr::PhaseReinforcer)
+
+اضمحلال جميع التعزيزات — لمنع التعلم الزائد.
+"""
+function decay_all!(pr::PhaseReinforcer)
+    for w in collect(keys(pr.strengths))
+        pr.strengths[w] *= (1.0 - pr.decay_rate)
+        if pr.strengths[w] < 0.01
+            delete!(pr.traces, w)
+            delete!(pr.strengths, w)
+        end
+    end
+end
+
+"""
+    reset!(pr::PhaseReinforcer)
+
+مسح كامل.
+"""
+function reset!(pr::PhaseReinforcer)
+    empty!(pr.traces)
+    empty!(pr.strengths)
+    pr.step_count = 0
+end
+
+function _prune!(pr::PhaseReinforcer)
+    if length(pr.traces) <= pr.max_traces
+        return
+    end
+    sorted = sort(collect(pr.strengths); by=x -> -x[2])
+    keep = Set{String}(first.(sorted[1:pr.max_traces]))
+    for w in setdiff(collect(keys(pr.traces)), keep)
+        delete!(pr.traces, w)
+        delete!(pr.strengths, w)
+    end
+end
+
+end # module PhaseReinforcement

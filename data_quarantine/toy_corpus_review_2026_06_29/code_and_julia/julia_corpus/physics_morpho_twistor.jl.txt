@@ -1,0 +1,389 @@
+"""
+عامل الالتواء الطوري — MorphoTwistor.
+
+يتعلم العلاقات الصرفية بين الكلمات عبر القسمة الهندسية في فضاء كليفورد.
+T = v(w₂) / v(w₁) — التحويل الهندسي الذي ينقل كلمة إلى أخرى.
+التجميع (Clustering) لتوابع T المتشابهة = قوالب صرفية (أوزان).
+الاستدلال: T(w₁→w₂) ∘ v(query) → أقرب كلمة في المعجم.
+
+مثال: نور → نورا ← T_ألف → جو → جوا
+"""
+module MorphoTwistor
+
+using LinearAlgebra, Statistics
+using ..Constants: TOTAL_DIM
+using ..WordPhysics: compute_word_phase_vector, compute_extended_phase_vector
+using ..CliffordMath: Multivector22, from_vector, normalize!
+
+export TwistorOperator, TwistorEngine, MorphPattern,
+       compute_twistor, apply_twistor, twistor_similarity,
+       learn_patterns!, predict_derivation, find_morphological_pairs,
+       score_twistor_candidate
+
+# ═══════════ الأنواع الأساسية ═══════════
+
+"""
+    TwistorOperator
+
+عامل التواء طوري = متعدد متجهات كليفورد (22D).
+يمثل تحويلاً هندسياً: دوران + تمدد + انعكاس.
+"""
+struct TwistorOperator
+    mv::Multivector22
+    magnitude::Float64     # |T| — شدة التحويل
+    rotation::Float64      # الطاقة الدورانية من bivector
+    scale::Float64         # السلمي — تمدد/تقلص
+end
+
+function TwistorOperator(mv::Multivector22)
+    bmag = norm(mv.b)
+    return TwistorOperator(mv, norm(mv), bmag, abs(mv.s))
+end
+
+# مُنشئ محايد
+TwistorOperator() = TwistorOperator(Multivector22(1.0))
+
+function Base.show(io::IO, t::TwistorOperator)
+    print(io, "Twistor(|T|=", round(t.magnitude; digits=3),
+          ", rot=", round(t.rotation; digits=3),
+          ", scale=", round(t.scale; digits=3), ")")
+end
+
+"""
+    MorphPattern
+
+قالب صرفي = مركز مجموعة من توابع الالتواء المتشابهة.
+يمثل نمطاً صرفياً واحداً (إضافة ألف، جمع تكسير، اسم فاعل...).
+"""
+mutable struct MorphPattern
+    center::TwistorOperator   # مركز المجموعة
+    label::String             # وصف النمط (مكتشف تلقائياً أو مسمى)
+    count::Int                # عدد الأزواج في هذه المجموعة
+    examples::Vector{Tuple{String,String}}  # أزواج المثال
+end
+
+MorphPattern(center::TwistorOperator; label::String="") =
+    MorphPattern(center, label, 0, Tuple{String,String}[])
+
+"""
+    TwistorEngine
+
+محرك الالتواء الطوري — يحتفظ بقوالب صرفية مكتشفة.
+"""
+mutable struct TwistorEngine
+    patterns::Vector{MorphPattern}      # القوالب الصرفية المكتشفة
+    pair_cache::Dict{Tuple{String,String},TwistorOperator}  # T(w1,w2)
+    active::Bool
+end
+
+TwistorEngine() = TwistorEngine(MorphPattern[], Dict{Tuple{String,String},TwistorOperator}(), true)
+
+# ═══════════ العمليات الأساسية ═══════════
+
+"""
+    _to_clifford(pv::AbstractVector) -> Multivector22
+
+يحول متجه طوري (9958D) إلى Multivector22 عبر أخذ أول 22 بعداً.
+"""
+function _to_clifford(pv::AbstractVector)
+    n = min(length(pv), 22)
+    v22 = zeros(Float64, 22)
+    v22[1:n] = Float64.(pv[1:n])
+    nrm = norm(v22)
+    if nrm > 1e-10
+        v22 ./= nrm
+    end
+    return from_vector(v22)
+end
+
+"""
+    compute_twistor(w1::String, w2::String) -> TwistorOperator
+
+يحسب عامل الالتواء T الذي يحول w1 إلى w2:
+    T = MV(w2) / MV(w1)   ← قسمة كليفورد
+"""
+function compute_twistor(w1::String, w2::String)
+    pv1 = compute_word_phase_vector(w1)
+    pv2 = compute_word_phase_vector(w2)
+    mv1 = _to_clifford(pv1)
+    mv2 = _to_clifford(pv2)
+    T_mv = try
+        mv2 / mv1
+    catch
+        Multivector22(1.0)
+    end
+    return TwistorOperator(T_mv)
+end
+
+"""
+    apply_twistor(T::TwistorOperator, word::String) -> Vector{Float64}
+
+يطبّق عامل الالتواء T على كلمة:
+    v_pred = T ∘ MV(word)   ← جداء كليفورد، ثم استخراج المتجه
+"""
+function apply_twistor(T::TwistorOperator, word::String)
+    pv = compute_word_phase_vector(word)
+    mv_w = _to_clifford(pv)
+    mv_result = try
+        T.mv * mv_w
+    catch
+        mv_w
+    end
+    return mv_result.v
+end
+
+"""
+    apply_twistor_pv(T::TwistorOperator, pv::AbstractVector) -> Vector{Float64}
+
+يطبّق عامل الالتواء على متجه طوري مباشرة.
+"""
+function apply_twistor_pv(T::TwistorOperator, pv::AbstractVector)
+    mv_w = _to_clifford(pv)
+    mv_result = try
+        T.mv * mv_w
+    catch
+        mv_w
+    end
+    return mv_result.v
+end
+
+"""
+    twistor_similarity(T1::TwistorOperator, T2::TwistorOperator) -> Float64
+
+قياس تشابه عاملين طوريين (0-1).
+بناءً على cosine بين مركباتهم الكاملة (scalar + vector + bivector).
+"""
+function twistor_similarity(T1::TwistorOperator, T2::TwistorOperator)
+    a = T1.mv; b = T2.mv
+    dot_prod = a.s * b.s + dot(a.v, b.v) + dot(a.b, b.b) + a.p * b.p
+    na = sqrt(a.s^2 + sum(a.v.^2) + sum(a.b.^2) + a.p^2)
+    nb = sqrt(b.s^2 + sum(b.v.^2) + sum(b.b.^2) + b.p^2)
+    if na < 1e-10 || nb < 1e-10
+        return 0.0
+    end
+    return max(0.0, min(1.0, dot_prod / (na * nb)))
+end
+
+# ═══════════ استخراج الأزواج الصرفية ═══════════
+
+"""
+    find_morphological_pairs(words::Vector{String}) -> Vector{Tuple{String,String}}
+
+يبحث عن أزواج كلمات تشترك في حروف الجذر (علاقات صرفية محتملة).
+يقارن أول 2-3 حروف للكشف عن جذر مشترك.
+"""
+function find_morphological_pairs(words::Vector{String})
+    pairs = Tuple{String,String}[]
+    seen = Set{Tuple{String,String}}()
+    n = length(words)
+    # نافذة محلية — الكلمات المتجاورة غالباً لها علاقة صرفية
+    for i in 1:n
+        for j in max(1, i-5):min(n, i+5)
+            j == i && continue
+            w1, w2 = words[i], words[j]
+            (length(w1) < 3 || length(w2) < 3) && continue
+            w1 == w2 && continue
+
+            # كشف الجذر المشترك عبر أول 2-3 حروف (فهرسة آمنة)
+            w1_chars = collect(w1); w2_chars = collect(w2)
+            l1 = length(w1_chars); l2 = length(w2_chars)
+            min_len = min(l1, l2, 3)
+            shared = 0
+            for k in 1:min_len
+                if w1_chars[k] == w2_chars[k]
+                    shared += 1
+                end
+            end
+            # تحتاج 2/3 تطابق على الأقل لتكون من نفس الجذر
+            if shared >= 2 && shared >= min_len - 1
+                key = (w1, w2)
+                key in seen && continue
+                push!(seen, key)
+                push!(pairs, (w1, w2))
+            end
+        end
+    end
+    return pairs
+end
+
+# ═══════════ تعلم القوالب ═══════════
+
+"""
+    learn_patterns!(engine::TwistorEngine, pairs::Vector{Tuple{String,String}};
+                    sim_threshold::Float64=0.7, min_cluster_size::Int=2)
+
+يتعلم القوالب الصرفية من أزواج الكلمات:
+1. يحسب T = v₂/v₁ لكل زوج
+2. يجمّع T's المتشابهة في قوالب (clustering تجميعي)
+3. يُخزّن القوالب في engine.patterns
+"""
+function learn_patterns!(engine::TwistorEngine, pairs::Vector{Tuple{String,String}};
+                          sim_threshold::Float64=0.7, min_cluster_size::Int=2)
+    isempty(pairs) && return engine.patterns
+    engine.active || return engine.patterns
+
+    # الخطوة 1: حساب T لكل زوج
+    computed = Tuple{Float64,TwistorOperator,Tuple{String,String}}[]
+    for (w1, w2) in pairs
+        T = get!(engine.pair_cache, (w1, w2)) do
+            compute_twistor(w1, w2)
+        end
+        push!(computed, (T.magnitude, T, (w1, w2)))
+    end
+
+    # فلترة التوابع الضعيفة جداً (|T| < 0.01 = تحويل تافه)
+    valid = filter(x -> x[1] > 0.01, computed)
+    isempty(valid) && return engine.patterns
+
+    # الخطوة 2: تجميع تجميعي (Agglomerative clustering)
+    clusters = Tuple{TwistorOperator, Vector{Tuple{String,String}}}[]
+    assigned = falses(length(valid))
+
+    for i in 1:length(valid)
+        assigned[i] && continue
+        Ti = valid[i][2]
+        cluster_center = Ti
+        cluster_members = [valid[i][3]]
+        assigned[i] = true
+
+        for j in (i+1):length(valid)
+            assigned[j] && continue
+            Tj = valid[j][2]
+            sim = twistor_similarity(Ti, Tj)
+            if sim >= sim_threshold
+                # تحديث المركز كمتوسط متحرك
+                alpha = 1.0 / (length(cluster_members) + 1)
+                cluster_center = _blend_twistors(cluster_center, Tj, alpha)
+                push!(cluster_members, valid[j][3])
+                assigned[j] = true
+            end
+        end
+
+        # فقط المجموعات التي تحقق الحد الأدنى
+        if length(cluster_members) >= min_cluster_size
+            push!(clusters, (cluster_center, cluster_members))
+        end
+    end
+
+    # الخطوة 3: تحويل المجموعات إلى MorphPattern
+    new_patterns = MorphPattern[]
+    for (center, members) in clusters
+        pat = MorphPattern(center; label="نمط_$(length(new_patterns)+1)")
+        pat.count = length(members)
+        pat.examples = members[1:min(5, end)]
+        push!(new_patterns, pat)
+    end
+
+    # دمج مع القوالب الموجودة (تحديث بدل استبدال إن وجد تطابق)
+    for np in new_patterns
+        merged = false
+        for ep in engine.patterns
+            if twistor_similarity(np.center, ep.center) >= 0.85
+                ep.count += np.count
+                append!(ep.examples, np.examples)
+                ep.center = _blend_twistors(ep.center, np.center, 0.3)
+                merged = true
+                break
+            end
+        end
+        merged || push!(engine.patterns, np)
+    end
+
+    return engine.patterns
+end
+
+"""
+    _blend_twistors(a::TwistorOperator, b::TwistorOperator, alpha::Float64) -> TwistorOperator
+
+يمزج عاملين بالاستيفاء الخطي: result = (1-α)·a + α·b
+"""
+function _blend_twistors(a::TwistorOperator, b::TwistorOperator, alpha::Float64)
+    beta = 1.0 - alpha
+    blended_mv = Multivector22(
+        beta * a.mv.s + alpha * b.mv.s,
+        beta .* a.mv.v .+ alpha .* b.mv.v,
+        beta .* a.mv.b .+ alpha .* b.mv.b,
+        beta * a.mv.p + alpha * b.mv.p,
+    )
+    return TwistorOperator(blended_mv)
+end
+
+# ═══════════ الاستدلال ═══════════
+
+"""
+    predict_derivation(engine::TwistorEngine, w1::String, w2::String,
+                       query::String; vocab::Dict{String,Int}=Dict(),
+                       top_k::Int=10) -> Vector{Tuple{String,Float64}}
+
+يتنبأ باشتقاق query بناءً على مثال w1→w2:
+1. يحسب T = compute_twistor(w1, w2) من المثال
+2. يطبّق T على query ← متجه متوقع
+3. يبحث عن أقرب الكلمات في المعجم للمتجه المتوقع
+
+يرجع أعلى top_k تطابقاً مع درجات التشابه.
+
+مثال: predict_derivation(engine, "نور", "نورا", "جو") → [("جوا", 0.87), ...]
+"""
+function predict_derivation(engine::TwistorEngine, w1::String, w2::String,
+                             query::String; vocab::Dict{String,Int}=Dict(),
+                             top_k::Int=10)
+    # أولاً: جرب القوالب المتعلمة (إن وُجدت)
+    T_example = get!(engine.pair_cache, (w1, w2)) do
+        compute_twistor(w1, w2)
+    end
+
+    # ابحث عن أفضل قالب مطابق لهذا المثال
+    best_T = T_example
+    best_sim = 0.0
+    for pat in engine.patterns
+        sim = twistor_similarity(T_example, pat.center)
+        if sim > best_sim && sim > 0.5
+            best_sim = sim
+            best_T = pat.center
+        end
+    end
+
+    # طبّق T على query
+    pred_v = apply_twistor_pv(best_T, compute_word_phase_vector(query))
+
+    # ابحث عن أقرب كلمة في المعجم
+    if isempty(vocab)
+        # بدون معجم — أرجع المتجه فقط كمرجع
+        return Tuple{String,Float64}[]
+    end
+
+    results = Tuple{String,Float64}[]
+    for (word, _) in vocab
+        word == query && continue
+        word_pv = compute_word_phase_vector(word)
+        wv = word_pv[1:min(length(word_pv), 22)]
+        nw = norm(wv); np = norm(pred_v)
+        if nw > 1e-10 && np > 1e-10
+            sim = max(0.0, dot(wv, pred_v) / (nw * np))
+            push!(results, (word, sim))
+        end
+    end
+
+    sort!(results; by=x -> -x[2])
+    return results[1:min(top_k, end)]
+end
+
+"""
+    score_twistor_candidate(engine::TwistorEngine, candidate::String,
+                            query::String, T::TwistorOperator) -> Float64
+
+يقيّم مرشحاً للاشتقاق: مدى تطابق متجه المرشح مع T∘v(query).
+"""
+function score_twistor_candidate(engine::TwistorEngine, candidate::String,
+                                  query::String, T::TwistorOperator)
+    pred_v = apply_twistor_pv(T, compute_word_phase_vector(query))
+    cand_pv = compute_word_phase_vector(candidate)
+    cv = cand_pv[1:min(length(cand_pv), 22)]
+    nw = norm(cv); np = norm(pred_v)
+    if nw < 1e-10 || np < 1e-10
+        return 0.0
+    end
+    return max(0.0, dot(cv, pred_v) / (nw * np))
+end
+
+end # module MorphoTwistor

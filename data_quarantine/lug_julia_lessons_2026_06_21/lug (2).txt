@@ -1,0 +1,2073 @@
+الدرس السادس: الأنواع المخصصة (Structs)
+حتى الآن كنا نستخدم الأنواع الجاهزة مثل:
+
+julia نسخ
+Int64
+Float64
+String
+Vector
+Matrix
+لكن في البرامج الحقيقية نحتاج إلى إنشاء أنواعنا الخاصة.
+
+مثال:
+
+شخص Person
+طالب Student
+سيارة Car
+كتاب Book
+جسيم Particle
+عقدة شجرة TreeNode
+لهذا توفر Julia الكلمة:
+
+julia نسخ
+struct
+1. أول Struct
+لننشئ نوعاً يمثل شخصاً:
+
+julia نسخ
+struct Person
+    name::String
+    age::Int64
+end
+الآن أصبح لدينا نوع جديد اسمه:
+
+text نسخ
+Person
+إنشاء كائن
+julia نسخ
+p = Person("Ali", 25)
+الوصول للحقول
+julia نسخ
+p.name
+الناتج:
+
+text نسخ
+Ali
+julia نسخ
+p.age
+الناتج:
+
+text نسخ
+25
+2. عرض الكائن
+julia نسخ
+println(p)
+الناتج تقريباً:
+
+text نسخ
+Person("Ali",25)
+3. عدة كائنات
+julia نسخ
+p1 = Person("Ali",25)
+
+p2 = Person("Sara",22)
+
+p3 = Person("Omar",30)
+4. Struct غير قابل للتعديل
+لاحظ:
+
+julia نسخ
+p.age = 40
+سيظهر خطأ.
+
+لماذا؟
+
+لأن:
+
+julia نسخ
+struct
+ينشئ كائناً ثابتاً Immutable.
+
+5. Mutable Struct
+إذا أردنا السماح بالتعديل:
+
+julia نسخ
+mutable struct Person
+    name::String
+    age::Int64
+end
+الآن:
+
+julia نسخ
+p = Person("Ali",25)
+
+p.age = 40
+يعمل بدون مشكلة.
+
+6. إضافة دوال للكائن
+يمكننا كتابة:
+
+julia نسخ
+struct Person
+    name::String
+    age::Int64
+end
+ثم:
+
+julia نسخ
+function showperson(p::Person)
+
+    println("Name = ", p.name)
+    println("Age = ", p.age)
+
+end
+الاستخدام:
+
+julia نسخ
+showperson(p)
+7. Multiple Dispatch مع Struct
+هنا تظهر القوة الحقيقية.
+
+لننشئ:
+
+julia نسخ
+struct Dog
+    name::String
+end
+julia نسخ
+struct Cat
+    name::String
+end
+دالة واحدة:
+
+julia نسخ
+speak(a::Dog) =
+    println("Woof")
+نسخة أخرى:
+
+julia نسخ
+speak(a::Cat) =
+    println("Meow")
+الاستخدام:
+
+julia نسخ
+speak(Dog("Max"))
+الناتج:
+
+text نسخ
+Woof
+julia نسخ
+speak(Cat("Luna"))
+الناتج:
+
+text نسخ
+Meow
+لاحظ:
+
+نفس اسم الدالة.
+Julia اختارت التنفيذ الصحيح.
+هذه فلسفة اللغة كلها.
+
+8. Constructors
+عند كتابة:
+
+julia نسخ
+Person("Ali",25)
+فهذا Constructor تلقائي.
+
+يمكن إنشاء Constructor خاص.
+
+مثال:
+
+julia نسخ
+struct Person
+
+    name::String
+    age::Int64
+
+    function Person(name, age)
+
+        age < 0 &&
+            error("Age cannot be negative")
+
+        new(name, age)
+
+    end
+
+end
+الآن:
+
+julia نسخ
+Person("Ali",-5)
+يعطي خطأ.
+
+9. أنواع مجردة Abstract Types
+يمكن إنشاء نوع عام.
+
+julia نسخ
+abstract type Animal end
+ثم:
+
+julia نسخ
+struct Dog <: Animal
+
+    name::String
+
+end
+julia نسخ
+struct Cat <: Animal
+
+    name::String
+
+end
+هنا:
+
+text نسخ
+Animal
+├── Dog
+└── Cat
+التحقق:
+
+julia نسخ
+Dog <: Animal
+الناتج:
+
+text نسخ
+true
+10. Parametric Types
+من أقوى ميزات Julia.
+
+مثال:
+
+julia نسخ
+struct Box{T}
+
+    value::T
+
+end
+إنشاء صندوق يحتوي عدداً:
+
+julia نسخ
+b1 = Box(10)
+نوعه:
+
+julia نسخ
+Box{Int64}
+صندوق يحتوي نصاً:
+
+julia نسخ
+b2 = Box("Hello")
+نوعه:
+
+julia نسخ
+Box{String}
+هذه التقنية مستخدمة بكثرة داخل مكتبات Julia.
+
+11. مثال هندسي
+متجه ثلاثي الأبعاد:
+
+julia نسخ
+struct Vector3D
+
+    x::Float64
+    y::Float64
+    z::Float64
+
+end
+إنشاء متجه:
+
+julia نسخ
+v = Vector3D(
+    1.0,
+    2.0,
+    3.0
+)
+12. إضافة عمليات للمتجه
+جمع متجهين:
+
+julia نسخ
+function Base.+(
+    a::Vector3D,
+    b::Vector3D
+)
+
+    Vector3D(
+        a.x + b.x,
+        a.y + b.y,
+        a.z + b.z
+    )
+
+end
+الآن:
+
+julia نسخ
+v1 = Vector3D(1,2,3)
+
+v2 = Vector3D(4,5,6)
+
+v1 + v2
+الناتج:
+
+text نسخ
+Vector3D(5,7,9)
+13. حساب طول المتجه
+لدينا:
+
+التطبيق:
+
+julia نسخ
+function magnitude(v::Vector3D)
+
+    sqrt(
+        v.x^2 +
+        v.y^2 +
+        v.z^2
+    )
+
+end
+julia نسخ
+magnitude(
+    Vector3D(3,4,0)
+)
+الناتج:
+
+text نسخ
+5.0
+مثال احترافي صغير
+julia نسخ
+abstract type Shape end
+julia نسخ
+struct Circle <: Shape
+    r::Float64
+end
+julia نسخ
+struct Rectangle <: Shape
+    w::Float64
+    h::Float64
+end
+julia نسخ
+area(s::Circle) =
+    π * s.r^2
+julia نسخ
+area(s::Rectangle) =
+    s.w * s.h
+الاستخدام:
+
+julia نسخ
+area(
+    Circle(5)
+)
+julia نسخ
+area(
+    Rectangle(4,6)
+)
+لاحظ كيف أن Multiple Dispatch يجعل الكود نظيفاً وقابلاً للتوسع.
+
+ما تعلمناه
+struct
+mutable struct
+Constructors
+Abstract Types
+Parametric Types
+Multiple Dispatch مع الأنواع
+تعريف عمليات مخصصة
+بناء نماذج بيانات احترافية
+الدرس القادم
+سندخل إلى أحد أقوى أجزاء Julia:
+
+Modules و Packages
+
+وسنتعلم:
+
+إنشاء مكتبتك الخاصة.
+تقسيم المشاريع الكبيرة.
+export
+import
+using
+إدارة الحزم.
+بناء مشروع Julia احترافي متعدد الملفات.
+الدرس السابع: Modules و Packages في Julia
+عندما يصبح البرنامج كبيراً (مئات أو آلاف الأسطر)، لا يمكن وضع كل شيء في ملف واحد.
+
+لهذا توفر Julia نظام:
+
+Modules
+Packages
+وهو النظام المستخدم في جميع المكتبات الاحترافية.
+
+1. ما هو Module؟
+يمكن اعتبار Module مساحة أسماء (Namespace).
+
+مثال:
+
+بدلاً من وجود:
+
+julia نسخ
+area()
+في كل مكان،
+
+يمكن وضعها داخل:
+
+julia نسخ
+Geometry.area()
+2. إنشاء Module بسيط
+ملف:
+
+text نسخ
+MyMath.jl
+المحتوى:
+
+julia نسخ
+module MyMath
+
+square(x) = x^2
+
+cube(x) = x^3
+
+end
+3. استخدام Module
+في ملف آخر:
+
+julia نسخ
+include("MyMath.jl")
+
+using .MyMath
+النقطة:
+
+julia نسخ
+.MyMath
+تعني أن الوحدة موجودة محلياً.
+
+الاستخدام:
+
+julia نسخ
+square(5)
+الناتج:
+
+text نسخ
+25
+4. التصدير Export
+حالياً كل شيء داخل Module مخفي.
+
+يمكن جعله متاحاً تلقائياً:
+
+julia نسخ
+module MyMath
+
+export square
+export cube
+
+square(x)=x^2
+
+cube(x)=x^3
+
+end
+الآن:
+
+julia نسخ
+using .MyMath
+
+square(5)
+يعمل مباشرة.
+
+أما بدون export:
+
+julia نسخ
+MyMath.square(5)
+5. الفرق بين using و import
+لدينا:
+
+julia نسخ
+using .MyMath
+أو:
+
+julia نسخ
+import .MyMath
+using
+يستورد الأسماء المصدرة:
+
+julia نسخ
+square(5)
+import
+يبقيها داخل الوحدة:
+
+julia نسخ
+MyMath.square(5)
+في المشاريع الكبيرة يفضل كثير من المطورين:
+
+julia نسخ
+import
+لتجنب تضارب الأسماء.
+
+6. تقسيم المشروع إلى عدة ملفات
+ملف:
+
+text نسخ
+geometry.jl
+julia نسخ
+area_rectangle(w,h)=w*h
+
+area_square(s)=s*s
+ملف:
+
+text نسخ
+statistics.jl
+julia نسخ
+average(x)=sum(x)/length(x)
+ملف رئيسي:
+
+text نسخ
+main.jl
+julia نسخ
+include("geometry.jl")
+include("statistics.jl")
+include() يقوم بقراءة الملف وتنفيذه.
+
+7. Module متعدد الملفات
+مثال احترافي.
+
+هيكل المشروع:
+
+text نسخ
+MyProject
+│
+├── src
+│   ├── MyProject.jl
+│   ├── geometry.jl
+│   └── statistics.jl
+ملف:
+
+text نسخ
+MyProject.jl
+julia نسخ
+module MyProject
+
+include("geometry.jl")
+
+include("statistics.jl")
+
+export area_rectangle
+export average
+
+end
+ملف:
+
+text نسخ
+geometry.jl
+julia نسخ
+area_rectangle(w,h)=w*h
+ملف:
+
+text نسخ
+statistics.jl
+julia نسخ
+average(v)=sum(v)/length(v)
+الاستخدام:
+
+julia نسخ
+using MyProject
+8. إدارة الحزم
+ادخل REPL.
+
+ثم:
+
+julia نسخ
+]
+ستظهر بيئة الحزم.
+
+إضافة مكتبة:
+
+julia نسخ
+add DataFrames
+إضافة مكتبة رسوم:
+
+julia نسخ
+add Plots
+إضافة مكتبة تعلم آلي:
+
+julia نسخ
+add Flux
+الخروج:
+
+julia نسخ
+Backspace
+أو:
+
+julia نسخ
+Ctrl+C
+9. Project Environment
+هذه من أهم ميزات Julia.
+
+إنشاء مشروع:
+
+julia نسخ
+mkdir("MyProject")
+ثم:
+
+julia نسخ
+cd("MyProject")
+ثم:
+
+julia نسخ
+]
+activate .
+سيتم إنشاء:
+
+text نسخ
+Project.toml
+وعند تثبيت الحزم:
+
+text نسخ
+Manifest.toml
+10. Project.toml
+مثال:
+
+toml نسخ
+name = "MyProject"
+
+uuid = "..."
+
+version = "0.1.0"
+يعرف المشروع.
+
+11. Manifest.toml
+يحفظ:
+
+جميع الحزم
+جميع الإصدارات
+جميع الاعتماديات
+حتى يستطيع شخص آخر تشغيل المشروع بنفس البيئة تماماً.
+
+12. حالة الحزم
+داخل مدير الحزم:
+
+julia نسخ
+status
+أو:
+
+julia نسخ
+st
+13. تحديث الحزم
+julia نسخ
+update
+أو:
+
+julia نسخ
+up
+14. حذف حزمة
+julia نسخ
+rm DataFrames
+15. البحث عن الحزم
+يمكن زيارة:
+
+Julia Packages
+
+أو:
+
+Julia Package Registry
+
+16. إنشاء Package احترافية
+من REPL:
+
+julia نسخ
+]
+generate MyLibrary
+سيُنشئ:
+
+text نسخ
+MyLibrary
+│
+├── Project.toml
+└── src
+    └── MyLibrary.jl
+محتوى:
+
+julia نسخ
+module MyLibrary
+
+greet() =
+    println("Hello")
+
+end
+يمكن لاحقاً نشرها على:
+
+GitHub
+
+وتثبيتها من أي جهاز.
+
+17. مثال مشروع حقيقي
+text نسخ
+WeatherApp
+│
+├── Project.toml
+│
+├── src
+│   ├── WeatherApp.jl
+│   ├── models.jl
+│   ├── api.jl
+│   ├── parser.jl
+│   └── utils.jl
+│
+└── test
+    └── runtests.jl
+هذا الشكل قريب مما ستراه في المشاريع الاحترافية.
+
+أفضل الممارسات
+لا تكتب
+julia نسخ
+program.jl
+وفيه 5000 سطر.
+
+اكتب
+text نسخ
+src/
+    models.jl
+    utils.jl
+    math.jl
+    parser.jl
+ثم اجمعها داخل Module رئيسي.
+
+ما تعلمناه
+module
+include
+using
+import
+export
+Project.toml
+Manifest.toml
+Package Manager
+generate
+تنظيم المشاريع الكبيرة
+الدرس القادم (نقطة احترافية مهمة)
+سندخل إلى:
+
+نظام الأنواع المتقدم Type System
+
+وسنتعلم:
+
+Abstract Types بعمق
+Parametric Types بعمق
+Union Types
+Type Constraints
+Type Hierarchies
+Multiple Dispatch المتقدم
+وهنا تبدأ فعلياً طريقة التفكير التي تجعل مطور Julia مختلفاً عن مطور Python أو Java.
+الدرس الثامن: نظام الأنواع المتقدم (Advanced Type System)
+هذا الدرس من أهم دروس Julia على الإطلاق.
+
+في لغات كثيرة تعتبر الأنواع مجرد وسيلة للتحقق من الأخطاء.
+
+أما في Julia فالأنواع هي أساس:
+
+الأداء العالي.
+Multiple Dispatch.
+تصميم المكتبات.
+كتابة كود عام (Generic Code).
+1. مراجعة سريعة
+نعرف أن:
+
+julia نسخ
+x = 10
+نوعه:
+
+julia نسخ
+typeof(x)
+الناتج:
+
+text نسخ
+Int64
+و:
+
+julia نسخ
+y = 3.14
+نوعه:
+
+text نسخ
+Float64
+2. التسلسل الهرمي للأنواع
+يمكن معرفة النوع الأعلى:
+
+julia نسخ
+supertype(Int64)
+الناتج:
+
+text نسخ
+Signed
+ثم:
+
+julia نسخ
+supertype(Signed)
+الناتج:
+
+text نسخ
+Integer
+ثم:
+
+julia نسخ
+supertype(Integer)
+الناتج:
+
+text نسخ
+Real
+ثم:
+
+julia نسخ
+supertype(Real)
+الناتج:
+
+text نسخ
+Number
+بشكل مبسط:
+
+text نسخ
+Any
+│
+└── Number
+    │
+    ├── Real
+    │   │
+    │   ├── Integer
+    │   │   └── Int64
+    │   │
+    │   └── AbstractFloat
+    │       └── Float64
+    │
+    └── Complex
+3. Any
+كل الأنواع في Julia ترث في النهاية من:
+
+julia نسخ
+Any
+التحقق:
+
+julia نسخ
+Int64 <: Any
+الناتج:
+
+text نسخ
+true
+julia نسخ
+String <: Any
+الناتج:
+
+text نسخ
+true
+4. Abstract Types
+تعريف:
+
+julia نسخ
+abstract type Shape end
+هذا النوع:
+
+لا يمكن إنشاء كائن منه.
+يستخدم كأساس للأنواع الأخرى.
+مثال:
+
+julia نسخ
+struct Circle <: Shape
+    r::Float64
+end
+julia نسخ
+struct Rectangle <: Shape
+    w::Float64
+    h::Float64
+end
+الآن:
+
+julia نسخ
+Circle <: Shape
+الناتج:
+
+text نسخ
+true
+5. Multiple Dispatch مع الأنواع المجردة
+نسخة عامة:
+
+julia نسخ
+area(s::Shape) =
+    error("Unknown shape")
+نسخة للدائرة:
+
+julia نسخ
+area(c::Circle) =
+    π*c.r^2
+نسخة للمستطيل:
+
+julia نسخ
+area(r::Rectangle) =
+    r.w*r.h
+عند التنفيذ:
+
+julia نسخ
+area(Circle(5))
+تختار Julia النسخة الأكثر تخصصاً.
+
+6. Parametric Types
+أحد أهم مفاهيم Julia.
+
+بدلاً من:
+
+julia نسخ
+struct Box
+    value
+end
+نكتب:
+
+julia نسخ
+struct Box{T}
+    value::T
+end
+الآن:
+
+julia نسخ
+Box(10)
+نوعه:
+
+text نسخ
+Box{Int64}
+julia نسخ
+Box("Hello")
+نوعه:
+
+text نسخ
+Box{String}
+كل نوع مختلف فعلياً:
+
+text نسخ
+Box{Int64}
+Box{Float64}
+Box{String}
+7. معرفة النوع داخل Parametric Type
+julia نسخ
+struct Box{T}
+    value::T
+end
+يمكن الوصول إلى T:
+
+julia نسخ
+typeof(Box(10))
+الناتج:
+
+text نسخ
+Box{Int64}
+8. Parametric Methods
+دالة تقبل أي Box:
+
+julia نسخ
+function showbox(b::Box{T}) where T
+
+    println(T)
+
+end
+مثال:
+
+julia نسخ
+showbox(Box(10))
+الناتج:
+
+text نسخ
+Int64
+julia نسخ
+showbox(Box("abc"))
+الناتج:
+
+text نسخ
+String
+9. Union Types
+أحياناً نريد قبول أكثر من نوع.
+
+مثال:
+
+julia نسخ
+Union{Int64, Float64}
+دالة:
+
+julia نسخ
+function test(x::Union{Int64,Float64})
+
+    println(x)
+
+end
+صالحة لـ:
+
+julia نسخ
+test(5)
+julia نسخ
+test(3.14)
+لكن:
+
+julia نسخ
+test("hello")
+خطأ.
+
+10. النوع Nothing
+Julia تحتوي:
+
+julia نسخ
+nothing
+نوعه:
+
+julia نسخ
+typeof(nothing)
+الناتج:
+
+text نسخ
+Nothing
+مثال:
+
+julia نسخ
+x = nothing
+فحص:
+
+julia نسخ
+x === nothing
+11. النوع Missing
+مهم جداً في البيانات.
+
+julia نسخ
+missing
+مثال:
+
+julia نسخ
+ages = [20, 30, missing, 40]
+فحص:
+
+julia نسخ
+ismissing(ages[3])
+الناتج:
+
+text نسخ
+true
+12. Type Constraints
+يمكن تقييد النوع.
+
+بدلاً من:
+
+julia نسخ
+function f(x)
+نكتب:
+
+julia نسخ
+function f(x::Number)
+فتقبل:
+
+julia نسخ
+f(10)
+julia نسخ
+f(3.14)
+وترفض:
+
+julia نسخ
+f("hello")
+13. Generic Programming
+هذه فلسفة Julia الأساسية.
+
+بدلاً من:
+
+julia نسخ
+add_int(a::Int64,b::Int64)
+و:
+
+julia نسخ
+add_float(a::Float64,b::Float64)
+نكتب:
+
+julia نسخ
+add(a,b)=a+b
+وتتولى Julia اختيار التنفيذ المناسب.
+
+14. مثال احترافي
+julia نسخ
+struct Point{T}
+
+    x::T
+    y::T
+
+end
+إنشاء:
+
+julia نسخ
+p1 = Point(1,2)
+نوعه:
+
+text نسخ
+Point{Int64}
+julia نسخ
+p2 = Point(1.5,2.7)
+نوعه:
+
+text نسخ
+Point{Float64}
+15. تقييد النوع البارامتري
+يمكننا فرض أن T عدد:
+
+julia نسخ
+struct Point{T<:Number}
+
+    x::T
+    y::T
+
+end
+الآن:
+
+julia نسخ
+Point("a","b")
+يعطي خطأ.
+
+16. نوع المتجهات
+في Julia:
+
+julia نسخ
+Vector{Int64}
+يعني:
+
+مصفوفة أحادية البعد من Int64.
+
+julia نسخ
+Vector{Float64}
+julia نسخ
+Vector{String}
+كلها أنواع مختلفة.
+
+17. الأنواع البارامترية المتعددة
+julia نسخ
+struct PairValue{K,V}
+
+    key::K
+    value::V
+
+end
+مثال:
+
+julia نسخ
+PairValue(
+    "name",
+    25
+)
+نوعه:
+
+text نسخ
+PairValue{String,Int64}
+أهم فكرة في الدرس
+في معظم اللغات:
+
+text نسخ
+الكائن ← يحتوي بيانات
+أما في Julia:
+
+text نسخ
+النوع ← جزء أساسي من التصميم والأداء
+ولهذا تجد أن كثيراً من مكتبات Julia مبنية بالكامل على:
+
+Abstract Types
+Parametric Types
+Multiple Dispatch
+وليس على الوراثة الكلاسيكية الثقيلة الموجودة في بعض اللغات الأخرى.
+
+تمرين
+أنشئ:
+
+julia نسخ
+abstract type Animal end
+ثم:
+
+julia نسخ
+struct Dog <: Animal
+    name::String
+end
+julia نسخ
+struct Cat <: Animal
+    name::String
+end
+واكتب:
+
+julia نسخ
+speak(::Dog)
+julia نسخ
+speak(::Cat)
+ثم جرّب:
+
+julia نسخ
+speak(Dog("Max"))
+julia نسخ
+speak(Cat("Luna"))
+الدرس القادم
+سندخل إلى أحد أكثر المواضيع التي تجعل Julia قوية جداً:
+
+Metaprogramming و Macros
+
+هناك ستتعلم كيف تكتب كوداً يقوم بتوليد كود آخر أثناء الترجمة، وهي تقنية تستخدم بكثرة داخل مكتبات Julia الاحترافية مثل:
+
+DataFrames.jl
+Flux.jl
+JuMP
+وهذا ينقلنا من مستوى "مستخدم للغة" إلى مستوى "مصمم مكتبات وأطر عمل".
+الدرس التاسع: Metaprogramming و Macros في Julia
+هذا من أكثر المواضيع تميزاً في Julia.
+
+الفكرة الأساسية:
+
+في Julia يمكن للكود أن يتعامل مع الكود نفسه كبيانات.
+
+أي أن البرنامج يستطيع:
+
+إنشاء كود جديد.
+تعديل كود موجود.
+توليد دوال تلقائياً.
+تحليل التعبيرات قبل تنفيذها.
+1. الكود كبيانات
+لنكتب:
+
+julia نسخ
+x = 10 + 20
+نحن نراها عملية جمع.
+
+لكن Julia تراها شجرة تعبير (Expression Tree).
+
+إنشاء تعبير
+julia نسخ
+ex = :(10 + 20)
+طباعة التعبير:
+
+julia نسخ
+println(ex)
+الناتج:
+
+text نسخ
+10 + 20
+معرفة النوع:
+
+julia نسخ
+typeof(ex)
+الناتج:
+
+text نسخ
+Expr
+2. التعبيرات Expr
+يمكن فحص محتوياتها:
+
+julia نسخ
+ex = :(10 + 20)
+الرأس:
+
+julia نسخ
+ex.head
+الناتج:
+
+text نسخ
+:call
+المعاملات:
+
+julia نسخ
+ex.args
+الناتج تقريباً:
+
+text نسخ
+Any[:+,10,20]
+أي:
+
+text نسخ
++
+10
+20
+3. تنفيذ تعبير
+لدينا:
+
+julia نسخ
+ex = :(10 + 20)
+تنفيذه:
+
+julia نسخ
+eval(ex)
+الناتج:
+
+text نسخ
+30
+4. الاقتباس Quote
+julia نسخ
+:(x + y)
+يعني:
+
+لا تنفذ.
+
+بل خزّن التعبير.
+
+يمكن كتابة:
+
+julia نسخ
+quote
+
+    a = 10
+    b = 20
+
+    a + b
+
+end
+النوع:
+
+julia نسخ
+Expr
+أيضاً.
+
+5. Interpolation
+نفترض:
+
+julia نسخ
+x = 100
+داخل التعبير:
+
+julia نسخ
+:(1 + $x)
+الناتج يصبح:
+
+text نسخ
+1 + 100
+تنفيذه:
+
+julia نسخ
+eval(:(1 + $x))
+الناتج:
+
+text نسخ
+101
+6. أول Macro
+الماكرو يبدأ بالرمز:
+
+julia نسخ
+@
+تعريف:
+
+julia نسخ
+macro hello()
+
+    println("Expanding")
+
+    return :(println("Hello"))
+
+end
+الاستخدام:
+
+julia نسخ
+@hello
+الناتج:
+
+text نسخ
+Expanding
+Hello
+7. ماذا يفعل Macro؟
+الدالة:
+
+julia نسخ
+f(x)
+تعمل أثناء التنفيذ Runtime.
+
+أما:
+
+julia نسخ
+@something
+فيعمل أثناء التوسع Expansion.
+
+أي قبل التنفيذ.
+
+8. رؤية التوسع
+julia نسخ
+macro square(x)
+
+    :( $x * $x )
+
+end
+الاستخدام:
+
+julia نسخ
+@square 5
+الناتج:
+
+text نسخ
+25
+لكن ماذا ولّد؟
+
+julia نسخ
+@macroexpand @square 5
+الناتج:
+
+julia نسخ
+:(5 * 5)
+هذه من أهم أدوات التعلم.
+
+9. Macro مع التعبيرات
+لدينا:
+
+julia نسخ
+@square (3 + 2)
+يتوسع إلى:
+
+julia نسخ
+(3 + 2) * (3 + 2)
+ثم ينفذ.
+
+10. Macro للتتبع
+مثال مشهور:
+
+julia نسخ
+macro showvalue(x)
+
+    quote
+
+        println(
+            $(string(x)),
+            " = ",
+            $x
+        )
+
+    end
+
+end
+الاستخدام:
+
+julia نسخ
+a = 50
+
+@showvalue a
+الناتج:
+
+text نسخ
+a = 50
+11. مثال احترافي
+قياس الوقت.
+
+julia نسخ
+macro timer(ex)
+
+    quote
+
+        start = time()
+
+        result = $ex
+
+        elapsed =
+            time() - start
+
+        println(elapsed)
+
+        result
+
+    end
+
+end
+الاستخدام:
+
+julia نسخ
+@timer begin
+
+    sleep(1)
+
+end
+يطبع الزمن المستغرق.
+
+12. Hygiene
+مشكلة مهمة.
+
+لنكتب:
+
+julia نسخ
+macro bad()
+
+    quote
+
+        x = 100
+
+    end
+
+end
+قد يتعارض مع:
+
+julia نسخ
+x = 5
+في البرنامج.
+
+لهذا توفر Julia:
+
+julia نسخ
+esc(...)
+مثال:
+
+julia نسخ
+macro safe(ex)
+
+    esc(ex)
+
+end
+سنحتاج هذه الفكرة عند كتابة Macros احترافية.
+
+13. Generated Code
+تستطيع الماكرو توليد دوال كاملة.
+
+مثال:
+
+julia نسخ
+for op in (:+,:-,:*,:/)
+توليد:
+
+julia نسخ
+add(...)
+sub(...)
+mul(...)
+div(...)
+تلقائياً.
+
+هذه التقنية تستخدم داخل مكتبات كبيرة.
+
+14. متى نستخدم Macro؟
+ليس لكل شيء.
+
+كثير من المبتدئين يسيئون استخدامه.
+
+إذا أمكن كتابة:
+
+julia نسخ
+function
+فاستخدم:
+
+julia نسخ
+function
+أولاً.
+
+استخدم Macro عندما تحتاج:
+
+توليد كود.
+إنشاء DSL.
+تقليل التكرار الكبير.
+فحص الكود قبل التنفيذ.
+15. DSL
+DSL = Domain Specific Language
+
+مثال مشهور:
+
+في مكتبة JuMP:
+
+julia نسخ
+@variable(model, x >= 0)
+هذا ليس جزءاً من Julia نفسها.
+
+بل Macro يحول هذه الصيغة إلى كود Julia عادي.
+
+16. مثال بسيط على DSL
+julia نسخ
+macro say(name)
+
+    :(println("Hello ", $name))
+
+end
+الاستخدام:
+
+julia نسخ
+@say "Ali"
+الناتج:
+
+text نسخ
+Hello Ali
+17. فحص التعبير
+julia نسخ
+macro inspect(ex)
+
+    println(ex)
+
+    return ex
+
+end
+الاستخدام:
+
+julia نسخ
+@inspect 3 + 4
+يطبع التعبير نفسه قبل التنفيذ.
+
+18. الفرق بين Function و Macro
+الخاصية	Function	Macro
+تعمل أثناء التنفيذ	نعم	لا
+تستقبل القيم	نعم	لا
+تستقبل التعبيرات	لا	نعم
+تولد كوداً	لا	نعم
+تستخدم بكثرة	نعم	أقل
+مثال مهم
+دالة:
+
+julia نسخ
+square(x)=x*x
+تستقبل:
+
+julia نسخ
+5
+أما:
+
+julia نسخ
+@square 5
+فيستقبل:
+
+julia نسخ
+:(5)
+كتعبير.
+
+أهم قاعدة احترافية
+استخدم:
+
+julia نسخ
+Function
+في 95% من الحالات.
+
+واستخدم:
+
+julia نسخ
+Macro
+فقط عندما تحتاج فعلاً إلى معالجة الكود نفسه.
+
+ما بعد الماكروز؟
+بعد فهم:
+
+Structs
+Type System
+Multiple Dispatch
+Modules
+Macros
+أصبحت تملك معظم الأدوات التي تُبنى بها مكتبات Julia الاحترافية.
+
+الخطوة التالية التي تميز المطور المحترف هي:
+
+الأداء Performance
+سنتعلم:
+
+لماذا يكون كود Julia سريعاً.
+Type Stability.
+Memory Allocation.
+Profiling.
+Benchmarking.
+Loop Fusion.
+كتابة كود بسرعة قريبة من C/C++.
+وهذا من أهم الأبواب لمن يريد استخدام Julia في الحوسبة العلمية أو الذكاء الاصطناعي أو النمذجة الرياضية.
+الدرس العاشر: الأداء (Performance) في Julia
+هذا الدرس هو ما يجعل الكثير من العلماء والمهندسين يختارون Julia.
+
+فالكود الصحيح في Julia يمكن أن يصل إلى سرعة قريبة جداً من C و C++ دون الحاجة لكتابة امتدادات خارجية.
+
+لماذا تكون Julia سريعة؟
+بشكل مبسط:
+
+ترجمة JIT (Just-In-Time).
+استنتاج الأنواع Type Inference.
+Multiple Dispatch.
+توليد كود آلة متخصص لكل نوع.
+تحسينات LLVM.
+1. أول تشغيل أبطأ من البقية
+لنكتب:
+
+julia نسخ
+f(x) = x^2 + 1
+ثم:
+
+julia نسخ
+f(10)
+أول مرة:
+
+يتم التحليل.
+يتم الترجمة.
+يتم التخصص للنوع.
+بعد ذلك تصبح الاستدعاءات أسرع بكثير.
+
+2. قياس الزمن
+طريقة بسيطة:
+
+julia نسخ
+@time sum(1:1000000)
+مثال:
+
+text نسخ
+0.0021 seconds
+إذا نفذتها مرة ثانية:
+
+julia نسخ
+@time sum(1:1000000)
+ستلاحظ غالباً زمناً أقل.
+
+3. قياس الذاكرة
+julia نسخ
+@time begin
+    x = rand(1000000)
+    sum(x)
+end
+يعرض:
+
+text نسخ
+time
+memory allocations
+4. مفهوم Allocation
+كلما أنشأت كائناً جديداً:
+
+julia نسخ
+x = [1,2,3]
+تُحجز ذاكرة.
+
+إذا حدثت Allocations كثيرة:
+
+يزداد استهلاك الذاكرة.
+يعمل Garbage Collector أكثر.
+ينخفض الأداء.
+5. Type Stability
+هذه أهم قاعدة في الأداء.
+
+مثال سيئ
+julia نسخ
+function bad(x)
+
+    if x > 0
+        return 1
+    else
+        return 1.0
+    end
+
+end
+قد تعيد:
+
+text نسخ
+Int64
+أو:
+
+text نسخ
+Float64
+المترجم لا يستطيع معرفة النوع النهائي بسهولة.
+
+مثال جيد
+julia نسخ
+function good(x)
+
+    if x > 0
+        return 1.0
+    else
+        return 1.0
+    end
+
+end
+النوع دائماً:
+
+text نسخ
+Float64
+فحص استقرار الأنواع
+julia نسخ
+@code_warntype good(5)
+إذا رأيت:
+
+text نسخ
+Any
+كثيراً،
+
+فغالباً لديك مشكلة أداء.
+
+6. تجنب Any
+سيئ:
+
+julia نسخ
+v = Any[
+    1,
+    2.5,
+    "hello"
+]
+العناصر أنواع مختلفة.
+
+أفضل:
+
+julia نسخ
+v = Float64[
+    1.0,
+    2.5,
+    3.7
+]
+أو:
+
+julia نسخ
+v = Int64[
+    1,
+    2,
+    3
+]
+7. المتغيرات العالمية Global Variables
+من أشهر أخطاء المبتدئين.
+
+سيئ:
+
+julia نسخ
+x = 10
+
+function f()
+
+    x + 1
+
+end
+لأن:
+
+julia نسخ
+x
+متغير عالمي.
+
+أفضل:
+
+julia نسخ
+function f(x)
+
+    x + 1
+
+end
+ثم:
+
+julia نسخ
+f(10)
+قاعدة مهمة
+ضع معظم العمل داخل دوال.
+
+بدلاً من:
+
+julia نسخ
+for i in 1:1000000
+في المستوى الأعلى للملف،
+
+اكتب:
+
+julia نسخ
+function main()
+
+    ...
+
+end
+8. التخصيص المسبق Preallocation
+سيئ:
+
+julia نسخ
+function bad(n)
+
+    v = []
+
+    for i in 1:n
+        push!(v, i)
+    end
+
+    v
+
+end
+كل Push قد يسبب إعادة تخصيص.
+
+أفضل:
+
+julia نسخ
+function good(n)
+
+    v = Vector{Int}(undef, n)
+
+    for i in 1:n
+        v[i] = i
+    end
+
+    v
+
+end
+أسرع بكثير.
+
+9. In-Place Operations
+بدلاً من إنشاء مصفوفة جديدة:
+
+julia نسخ
+B = A .* 2
+يمكن أحياناً تعديل الموجودة.
+
+في مكتبات Julia ستلاحظ كثيراً:
+
+julia نسخ
+sort!
+push!
+append!
+وجود:
+
+text نسخ
+!
+في الاسم.
+
+هذه علامة اصطلاحية تعني:
+
+هذه الدالة تعدل البيانات الأصلية.
+
+مثال:
+
+julia نسخ
+sort!(v)
+بدلاً من:
+
+julia نسخ
+v2 = sort(v)
+10. Broadcasting
+لدينا:
+
+julia نسخ
+x = [1,2,3,4]
+تربيع العناصر:
+
+julia نسخ
+x .^ 2
+جمع:
+
+julia نسخ
+x .+ 10
+جيب:
+
+julia نسخ
+sin.(x)
+النقطة:
+
+text نسخ
+.
+من أهم رموز Julia.
+
+11. Loop Fusion
+مثال:
+
+julia نسخ
+y = sin.(x) .+ cos.(x) .+ x.^2
+Julia تدمج العمليات في حلقة واحدة.
+
+بدلاً من:
+
+text نسخ
+3 حلقات
+3 مصفوفات مؤقتة
+تولد:
+
+text نسخ
+حلقة واحدة
+وهذا سبب مهم للسرعة.
+
+12. BenchmarkTools
+الحزمة الأشهر لقياس الأداء:
+
+julia نسخ
+]
+add BenchmarkTools
+ثم:
+
+julia نسخ
+using BenchmarkTools
+قياس:
+
+julia نسخ
+@btime sum($x)
+أفضل من:
+
+julia نسخ
+@time
+لأنه:
+
+يكرر القياس.
+يقلل الضوضاء.
+يعطي نتائج أكثر دقة.
+13. عرض الكود المولد
+يمكن رؤية الكود المتخصص.
+
+مثال:
+
+julia نسخ
+f(x)=x+1
+عرض الأنواع:
+
+julia نسخ
+@code_typed f(5)
+عرض LLVM:
+
+julia نسخ
+@code_llvm f(5)
+عرض Assembly:
+
+julia نسخ
+@code_native f(5)
+هذه أدوات يستخدمها مطورو المكتبات عالية الأداء.
+
+14. مثال عملي
+سيئ:
+
+julia نسخ
+function bad()
+
+    s = 0
+
+    for i in 1:1000000
+
+        s += rand()
+
+    end
+
+    s
+
+end
+أفضل:
+
+julia نسخ
+function good()
+
+    x = rand(1000000)
+
+    sum(x)
+
+end
+لأن دوال Julia الداخلية غالباً محسنة جداً.
+
+15. قواعد الأداء الذهبية
+1
+اجعل العمل داخل دوال.
+
+2
+تجنب المتغيرات العالمية.
+
+3
+اجعل الأنواع مستقرة.
+
+4
+تجنب Any.
+
+5
+استخدم Broadcasting.
+
+6
+استخدم الدوال المنتهية بـ ! عند الحاجة.
+
+7
+خصص الذاكرة مسبقاً عند التكرارات الكبيرة.
+
+8
+قِس الأداء قبل التحسين.
+
+مثال احترافي
+بدلاً من:
+
+julia نسخ
+function square_all(v)
+
+    result = []
+
+    for x in v
+        push!(result, x^2)
+    end
+
+    result
+
+end
+اكتب:
+
+julia نسخ
+square_all(v) = v .^ 2
+أبسط وأسرع غالباً.
+
+خلاصة الأداء
+عندما يكون الكود بطيئاً في Julia، فالأسباب الأكثر شيوعاً هي:
+
+متغيرات عالمية.
+عدم استقرار الأنواع.
+استخدام Any.
+تخصيصات ذاكرة كثيرة.
+عدم الاستفادة من الدوال والمصفوفات المتجهية.
+الدرس القادم
+سنبدأ أحد أهم المجالات العملية:
+
+معالجة البيانات (Data Processing)
+وسنتعلم:
+
+DataFrames.
+CSV.
+تصفية البيانات.
+الفرز.
+التجميع Group By.
+الإحصاءات.
+التعامل مع ملفات Excel و CSV.
+وهذا هو الباب الذي يقود مباشرة إلى تحليل البيانات والذكاء الاصطناعي في Julia.

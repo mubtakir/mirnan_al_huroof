@@ -1,0 +1,168 @@
+"""
+محرك التوليد الطوري الهولوغرافي للـ PRNN — PRNN Generator.
+
+واجهة برمجية مستقلة (Standalone API) لمحرك الشبكة العصبية الرنينية الطورية.
+تعمل بمعاملات صريحة بمعزل عن MirnanGenerator لتسهيل الاختبار والتطوير.
+
+الاستخدام المدمج في المولّد الرئيسي: انظر Generator._prnn_generate في generator.jl
+"""
+module PRNNGenerator
+
+using LinearAlgebra, Random
+using ..PRNNCore: PRNNState, LowRankPRNN, simulate_stuart_landau!, bind_phase, unbind_phase
+using ..PRNNLearner: build_dense_phase_vector, train_hebbian_transitions!
+using ..Constants: TOTAL_DIM
+
+export prnn_generate_standalone, PRNNSession
+
+# ═══════════════════════════════════════════════════════════════════
+# جلسة PRNN المستقلة — تحمل كل ما يلزم لتوليد النص
+# ═══════════════════════════════════════════════════════════════════
+
+"""
+    PRNNSession
+
+بنية جلسة توليد PRNN مستقلة تحمل المعجم وروابط الانتقال
+الهيبية المُدرَّبة مسبقاً لإعادة الاستخدام بين طلبات التوليد.
+"""
+struct PRNNSession
+    vocab::Dict{String,Int}
+    id2word::Dict{Int,String}
+    base_vectors::Dict{String, Vector{ComplexF64}}
+    transitions::Vector{Tuple{Vector{ComplexF64}, Vector{ComplexF64}, Float64}}
+    active_vocab::Vector{String}
+    beta_coupling::Float64
+    N::Int
+end
+
+"""
+    PRNNSession(vocab, id2word, corpus_sentences, seed_words; 
+                beta=3.0, N=TOTAL_DIM, window=5, max_sentences=100, base_cache)
+
+بناء جلسة PRNN: يُعيِّن المفردات النشطة حول الكلمات البذرية،
+ويُدرِّب الانتقالات الهيبية الهولوغرافية من جمل الكوربوس ذات الصلة.
+"""
+function PRNNSession(vocab::Dict{String,Int}, id2word::Dict{Int,String},
+                     corpus_sentences::Vector{Vector{Int32}},
+                     seed_words::Vector{String};
+                     beta::Float64=3.0, N::Int=TOTAL_DIM,
+                     window::Int=5, max_sentences::Int=100,
+                     base_cache::Dict{String, Vector{ComplexF64}}=Dict{String, Vector{ComplexF64}}())
+    # 1. تحديد معرّفات البذور
+    seed_ids = Int32[get(vocab, w, Int32(-1)) for w in seed_words]
+    filter!(x -> x > 0, seed_ids)
+    active_ids = Set{Int32}(seed_ids)
+
+    # 2. توسيع السياق بنافذة ±window حول البذور في الجمل ذات الصلة
+    relevant = Vector{Int32}[]
+    for s in corpus_sentences
+        positions = findall(id -> id in seed_ids, s)
+        if !isempty(positions)
+            push!(relevant, s)
+            for pos in positions
+                for j in max(1, pos-window):min(length(s), pos+window)
+                    push!(active_ids, s[j])
+                end
+            end
+            length(relevant) >= max_sentences && break
+        end
+    end
+
+    # 3. بناء المفردات النشطة (عربية أبجدية فقط)
+    active_vocab = String[]
+    for id in active_ids
+        w = get(id2word, Int(id), nothing)
+        if w !== nothing && any(ch -> '\u0621' <= ch <= '\u064A', w)
+            push!(active_vocab, w)
+        end
+    end
+
+    isempty(active_vocab) && @warn "PRNNSession: لم تُوجد مفردات نشطة للبذور: $seed_words"
+
+    # 4. بناء متجهات الطور الكثيف (Geometric Phase Expansion)
+    base_vectors = Dict{String, Vector{ComplexF64}}()
+    for word in active_vocab
+        if haskey(base_cache, word)
+            base_vectors[word] = base_cache[word]
+        else
+            base_vectors[word] = build_dense_phase_vector(word, N)
+            base_cache[word] = base_vectors[word]
+        end
+    end
+
+    # 5. التدريب الهيبي الهولوغرافي
+    transitions = train_hebbian_transitions!(vocab, id2word, relevant, active_vocab, seed_ids, beta, N, base_vectors; window=window)
+
+    return PRNNSession(vocab, id2word, base_vectors, transitions, active_vocab, beta, N)
+end
+
+# ═══════════════════════════════════════════════════════════════════
+# التوليد المستقل
+# ═══════════════════════════════════════════════════════════════════
+
+"""
+    prnn_generate_standalone(session, prompt_tokens; max_words=15,
+                             mu=1.0, g_inh=0.5, gamma=2.0, tau_a=1.5,
+                             steps=40, dt=0.02, overlap_threshold=0.10) -> String
+
+توليد نص من جلسة PRNN مستقلة بالانزلاق الحتمي على حقل الجهد الفيزيائي.
+لا يعتمد على MirnanGenerator — يُستخدم للاختبار والتطوير والبحث.
+"""
+function prnn_generate_standalone(session::PRNNSession, prompt_tokens::Vector{String};
+                                   max_words::Int=15,
+                                   mu::Float64=1.0, g_inh::Float64=0.5,
+                                   gamma::Float64=2.0, tau_a::Float64=1.5,
+                                   steps::Int=40, dt::Float64=0.02,
+                                   overlap_threshold::Float64=0.10)
+    bv = session.base_vectors
+    N  = session.N
+    isempty(session.transitions) && return ""
+
+    # دالة فك التشفير الطوري
+    function decode(z_state, v_ctx)
+        z_u = unbind_phase(z_state, v_ctx)
+        best_w, best_ov = "", -Inf
+        for w in session.active_vocab
+            ov = real(dot(z_u, bv[w])) / N
+            if ov > best_ov
+                best_ov = ov; best_w = w
+            end
+        end
+        return best_w, best_ov
+    end
+
+    # تهيئة حالة المذبذبات
+    state = PRNNState(N)
+    model = LowRankPRNN(session.transitions, session.beta_coupling)
+    current_word = prompt_tokens[end]
+
+    if haskey(bv, current_word)
+        if length(prompt_tokens) >= 2 && haskey(bv, prompt_tokens[end-1])
+            state.z .= bind_phase(bv[current_word], bv[prompt_tokens[end-1]])
+        else
+            state.z .= bv[current_word]
+        end
+    end
+
+    output = String[]
+    used   = Set{String}(prompt_tokens)
+
+    for _ in 1:max_words
+        simulate_stuart_landau!(state, model;
+            mu=mu, g_inh=g_inh, gamma=gamma, tau_a=tau_a, steps=steps, dt=dt)
+
+        !haskey(bv, current_word) && break
+        next_w, ov = decode(state.z, bv[current_word])
+
+        (isempty(next_w) || next_w in used || ov < overlap_threshold) && break
+
+        push!(output, next_w)
+        push!(used, next_w)
+        state.z .= bind_phase(bv[next_w], bv[current_word])
+        current_word = next_w
+    end
+
+    return join(output, " ")
+end
+
+end # module PRNNGenerator

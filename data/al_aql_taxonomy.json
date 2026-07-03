@@ -1,0 +1,170 @@
+{
+  "version": 1,
+  "description": "قاعدة مفاتيح al_aql العامة. الكود يقرأ هذه القاعدة ولا يخزن المعرفة داخله.",
+  "classes": [
+    {
+      "name": "شيء",
+      "parents": [],
+      "attributes": {
+        "concept": "thing"
+      },
+      "properties": {},
+      "members": [],
+      "abstract_key": true
+    },
+    {
+      "name": "ذو_روح",
+      "parents": ["شيء"],
+      "attributes": {
+        "has_spirit": true
+      },
+      "properties": {},
+      "members": [],
+      "abstract_key": true
+    },
+    {
+      "name": "غير_ذي_روح",
+      "parents": ["شيء"],
+      "attributes": {
+        "has_spirit": false
+      },
+      "properties": {},
+      "members": [],
+      "abstract_key": true
+    },
+    {
+      "name": "حي",
+      "parents": ["ذو_روح"],
+      "attributes": {
+        "alive": true,
+        "needs_energy": true
+      },
+      "properties": {
+        "integrity": 0.8,
+        "energy": 0.5
+      },
+      "members": [],
+      "abstract_key": true
+    },
+    {
+      "name": "نبات",
+      "parents": ["حي"],
+      "attributes": {
+        "kingdom": "plant",
+        "has_mind": false
+      },
+      "properties": {},
+      "members": ["وردة", "الوردة", "شجرة", "نخلة", "قمح"],
+      "abstract_key": true
+    },
+    {
+      "name": "حيوان",
+      "parents": ["حي"],
+      "attributes": {
+        "kingdom": "animal",
+        "has_body": true,
+        "has_blood": true,
+        "needs_food": true
+      },
+      "properties": {
+        "motion": 0.3,
+        "awareness": 0.4
+      },
+      "members": ["أسد", "الأسد", "نمر", "ذئب", "غزال", "الغزال"],
+      "abstract_key": true
+    },
+    {
+      "name": "إنسان",
+      "parents": ["حيوان"],
+      "attributes": {
+        "species": "human",
+        "has_mind": true,
+        "rational": true
+      },
+      "properties": {
+        "awareness": 0.8
+      },
+      "members": ["إنسان", "خالد", "أحمد", "زيد", "عمرو"],
+      "abstract_key": true
+    },
+    {
+      "name": "حشرة",
+      "parents": ["حيوان"],
+      "attributes": {
+        "kind_group": "insect"
+      },
+      "properties": {},
+      "members": ["حشرة", "حشرة مفيدة", "نملة", "نحلة"],
+      "abstract_key": true
+    },
+    {
+      "name": "عاقل",
+      "parents": ["حي"],
+      "attributes": {
+        "has_mind": true,
+        "can_plan": true
+      },
+      "properties": {
+        "awareness": 0.8
+      },
+      "members": [],
+      "abstract_key": true
+    },
+    {
+      "name": "مفترس",
+      "parents": ["حيوان"],
+      "attributes": {
+        "diet": "لحم",
+        "predatory": true
+      },
+      "properties": {
+        "energy": 0.7
+      },
+      "members": ["أسد", "الأسد", "نمر", "ذئب"],
+      "abstract_key": true
+    },
+    {
+      "name": "آكل_عشب",
+      "parents": ["حيوان"],
+      "attributes": {
+        "diet": "نبات"
+      },
+      "properties": {},
+      "members": ["غزال", "الغزال"],
+      "abstract_key": true
+    },
+    {
+      "name": "جماد",
+      "parents": ["غير_ذي_روح"],
+      "attributes": {
+        "alive": false,
+        "has_mind": false
+      },
+      "properties": {
+        "stability": 0.7
+      },
+      "members": ["بيت", "الأثاث", "أثاث", "حجر"],
+      "abstract_key": true
+    },
+    {
+      "name": "آلة",
+      "parents": ["جماد"],
+      "attributes": {
+        "programmable": true
+      },
+      "properties": {},
+      "members": ["حاسوب", "الحاسوب", "آلة", "الآلة"],
+      "abstract_key": true
+    },
+    {
+      "name": "مادة",
+      "parents": ["غير_ذي_روح"],
+      "attributes": {
+        "material": true
+      },
+      "properties": {},
+      "members": ["ماء", "هواء", "تراب", "نار"],
+      "abstract_key": true
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+"""
+مرنان (Mirnan) V8 — نموذج لغوي فيزيائي ديناميكي.
+
+Physics-based Arabic/English language model using waves, complex phase dynamics,
+Clifford algebra, and semantic gravity instead of neural networks.
+"""
+module Mirnan
+
+include("preprocessing/Preprocessing.jl")
+include("physics/Physics.jl")
+include("semantics/Semantics.jl")
+include("grammar/Grammar.jl")
+include("sio/SIO.jl")
+include("api/server.jl")
+
+# إعادة تصدير الرموز الرئيسية
+using .Physics: MirnanGenerator, generate!, get_physics_report,
+                gpu_init!,
+                compute_word_phase_vector, compute_word_mass,
+                compute_word_frequency, compute_word_frequency_with_irab,
+                phase_similarity, compute_extended_phase_vector, Constants,
+                LetterDB, WordPhysics, CliffordMath,
+                get_irab_omega_bias, extract_irab, IRAB_OMEGA_BIAS, IRAB_MAP,
+                Idea, compute_idea_vector, match_sentence_to_idea, score_candidate_for_idea,
+                TwistorEngine, TwistorOperator, compute_twistor, apply_twistor,
+                learn_patterns!, predict_derivation, find_morphological_pairs,
+                score_twistor_candidate,
+                BeamReasoner, reason!, reason_steps!, explain_reasoning,
+                find_root_family, root_field_report,
+                CodePhaseEngine, generate_code_physics,
+                SymbolicMathEngine, solve_arithmetic
+using .Grammar: compute_syntax_vector, SYNTAX_ANCHORS
+using .APIServer: start_server
+
+export MirnanGenerator, generate!, get_physics_report, gpu_init!,
+       compute_word_phase_vector, compute_word_mass,
+       compute_word_frequency, compute_word_frequency_with_irab,
+       phase_similarity, compute_extended_phase_vector, compute_syntax_vector,
+       SYNTAX_ANCHORS, start_server,
+       get_irab_omega_bias, extract_irab, IRAB_OMEGA_BIAS, IRAB_MAP,
+       Idea, compute_idea_vector, match_sentence_to_idea, score_candidate_for_idea,
+       TwistorEngine, TwistorOperator, compute_twistor, apply_twistor,
+       learn_patterns!, predict_derivation, find_morphological_pairs,
+       score_twistor_candidate,
+       BeamReasoner, reason!, reason_steps!, explain_reasoning,
+       find_root_family, root_field_report,
+       CodePhaseEngine, generate_code_physics,
+       SymbolicMathEngine, solve_arithmetic
+
+end # module Mirnan

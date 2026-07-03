@@ -1,0 +1,37 @@
+"""
+وحدة النحو — Grammar (Arabic/English).
+
+المرتكزات الستة (verb, noun, prep, part, conj, kana) مع قوائم
+KANA/JAR/CONJ/NEGATION وسلاسل الجسيمات النحوية.
+"""
+module Grammar
+
+using LinearAlgebra
+using ..Physics.SyntaxFieldFull: SYNTAX_ANCHORS, KANA_VERBS, JAR_PREPS_LIST,
+      CONJUNCTIONS_LIST, NEGATIONS_LIST, SyntaxFieldCache,
+      compute_syntax_vector as syntax_field_compute_syntax_vector,
+      expected_syntax as syntax_field_expected_syntax
+
+export SYNTAX_ANCHORS, KANA_VERBS, JAR_PREPS_LIST, CONJUNCTIONS_LIST,
+       NEGATIONS_LIST, compute_syntax_vector, expected_syntax,
+       SyntaxFieldCache
+
+"""
+    compute_syntax_vector(word::String) -> Vector{Float64}
+
+مرتكز نحوي 6D مطبَّع.
+"""
+function compute_syntax_vector(word::String)
+    return syntax_field_compute_syntax_vector(word)
+end
+
+"""
+    expected_syntax(prev_word, vocab, K) -> Vector{Float64}
+
+النحو المتوقع بعد كلمة.
+"""
+function expected_syntax(prev_word::String, vocab::Dict, K)
+    return syntax_field_expected_syntax(prev_word, vocab, K)
+end
+
+end # module Grammar
